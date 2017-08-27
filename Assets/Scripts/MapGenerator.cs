@@ -37,12 +37,17 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField]
     private bool autoUpdate;
 
-    public Material terrainMaterial;
+    [SerializeField]
+    private Material terrainMaterial;
 
-    public Color[] baseColours;
+    [SerializeField]
+    private Color[] baseColours;
 
-    [Range(0,1)]
-    public float[] baseStartHeights;
+    [Range(0,1)][SerializeField]
+    private float[] baseStartHeights;
+
+    [SerializeField][Range(0,1)]
+    private float[] baseBlends;
 
     private float[,] falloffMap;
 
@@ -141,6 +146,7 @@ public class MapGenerator : MonoBehaviour {
     {
         material.SetColorArray("baseColours", baseColours);
         material.SetFloatArray("baseStartHeights", baseStartHeights);
+        material.SetFloatArray("baseBlends", baseBlends);
         material.SetInt("baseColourCount", baseColours.Length);
 
         UpdateMeshHeights(material, MinHeight, MaxHeight);
