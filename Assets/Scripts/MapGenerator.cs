@@ -34,6 +34,8 @@ public class MapGenerator : MonoBehaviour {
     [SerializeField]
     private bool autoUpdate;
 
+    public Material terrainMaterial;
+
     private float[,] falloffMap;
 
     public bool AutoUpdate
@@ -41,6 +43,22 @@ public class MapGenerator : MonoBehaviour {
         get
         {
             return autoUpdate;
+        }
+    }
+
+    public float MinHeight
+    {
+        get
+        {
+            return meshHeightMultiplier * meshHeightCurve.Evaluate(0);
+        }
+    }
+
+    public float MaxHeight
+    {
+        get
+        {
+            return meshHeightMultiplier * meshHeightCurve.Evaluate(1);
         }
     }
 
@@ -61,6 +79,8 @@ public class MapGenerator : MonoBehaviour {
                 noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x,y]);
             }
         }
+
+        UpdateMeshHeights(terrainMaterial, MinHeight, MaxHeight);
 
         MapDisplay display = FindObjectOfType<MapDisplay>();
 
@@ -96,7 +116,21 @@ public class MapGenerator : MonoBehaviour {
             octaves = 0;
         }
 
+        ApplyToMaterial(terrainMaterial);
+
         falloffMap = FallOffGenerator.GenerateFalloffMap(mapWidth, mapHeight);
+
+
+    }
+
+    private void UpdateMeshHeights(Material material, float minHeight, float maxHeight)
+    {
+        material.SetFloat("minHeight", minHeight);
+        material.SetFloat("maxHeight", maxHeight);
+    }
+
+    private void ApplyToMaterial(Material material)
+    {
 
     }
 
