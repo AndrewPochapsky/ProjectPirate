@@ -36,7 +36,14 @@ public class MapGenerator : MonoBehaviour {
 
     public Material terrainMaterial;
 
+    public Color[] baseColours;
+
+    [Range(0,1)]
+    public float[] baseStartHeights;
+
     private float[,] falloffMap;
+
+    const float constantValue = 20f;
 
     public bool AutoUpdate
     {
@@ -50,7 +57,7 @@ public class MapGenerator : MonoBehaviour {
     {
         get
         {
-            return meshHeightMultiplier * meshHeightCurve.Evaluate(0);
+            return (constantValue/5) * meshHeightMultiplier * meshHeightCurve.Evaluate(0);
         }
     }
 
@@ -58,7 +65,7 @@ public class MapGenerator : MonoBehaviour {
     {
         get
         {
-            return meshHeightMultiplier * meshHeightCurve.Evaluate(1);
+            return constantValue * meshHeightMultiplier * meshHeightCurve.Evaluate(1);
         }
     }
 
@@ -131,7 +138,11 @@ public class MapGenerator : MonoBehaviour {
 
     private void ApplyToMaterial(Material material)
     {
+        material.SetColorArray("baseColours", baseColours);
+        material.SetFloatArray("baseStartHeights", baseStartHeights);
+        material.SetInt("baseColourCount", baseColours.Length);
 
+        UpdateMeshHeights(material, MinHeight, MaxHeight);
     }
 
 }
