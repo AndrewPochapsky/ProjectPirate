@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
 
-    public enum DrawMode { NoiseMap, ColourMap, Mesh };
+    public enum DrawMode { NoiseMap, Mesh };
     public DrawMode drawMode;
 
     [SerializeField]
@@ -30,8 +30,6 @@ public class MapGenerator : MonoBehaviour {
     private float meshHeightMultiplier;
     [SerializeField]
     private AnimationCurve meshHeightCurve;
-
-    public TerrainType[] regions;
     
     [SerializeField]
     private bool autoUpdate;
@@ -55,24 +53,12 @@ public class MapGenerator : MonoBehaviour {
     {
         float[,] noiseMap = Noise.GenerateNoiseMap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
-        Color[] colourMap = new Color[mapWidth * mapHeight];
-
         for(int y = 0; y < mapHeight; y++)
         {
             for(int x = 0; x < mapWidth; x++)
             {
                 //makes map island-like
                 noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x,y]);
-
-                float currentHeight = noiseMap[x, y];
-                for(int i = 0; i < regions.Length; i++)
-                {
-                    if (currentHeight <= regions[i].height)
-                    {
-                        colourMap[y * mapWidth + x] = regions[i].colour;
-                        break;
-                    }
-                }
             }
         }
 
@@ -82,13 +68,9 @@ public class MapGenerator : MonoBehaviour {
         {
             display.DrawTexture(TextureGenerator.TextureFromHeightMap(noiseMap));
         }
-        else if(drawMode == DrawMode.ColourMap)
-        {
-            display.DrawTexture(TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight));
-        }
         else if(drawMode == DrawMode.Mesh)
         {
-            display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve), TextureGenerator.TextureFromColourMap(colourMap, mapWidth, mapHeight));
+            display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
         }
        
 
@@ -120,10 +102,4 @@ public class MapGenerator : MonoBehaviour {
 
 }
 
-[System.Serializable]
-public struct TerrainType
-{
-    public string name;
-    public float height;
-    public Color colour;
-}
+
