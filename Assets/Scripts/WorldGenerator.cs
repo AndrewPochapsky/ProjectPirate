@@ -1,16 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 //TODO consider making this static class to be called from WorldController
 public class WorldGenerator : MonoBehaviour {
 
+    /// <summary>
+    /// Holds all of the tiles
+    /// </summary>
     Transform container;
 
-    public const int worldWidth = 10;
-    public const int worldHeight = 10;
+    public const int worldWidth = 5;
+    public const int worldHeight = 5;
 
-    public const int tileSize = 50;
+    public const int tileSize = 100;
     private Vector3 tileLocation;
 
     int currentTileIndex;
@@ -44,11 +49,37 @@ public class WorldGenerator : MonoBehaviour {
             }
         }
 
+        //Add the placeholder empty tiles
         foreach(var emptyTile in EmptyTiles)
         {
             emptyTile.SetAdjacents();
         }
 
+        //Add actual tiles
+        foreach (Transform location in EmptyTiles.Select(t => t.transform).ToList())
+        {
+            AddTile(location);
+
+            Destroy(location.gameObject);
+        }
+
+    }
+
+    /// <summary>
+    /// Adds either an ocean or island tile at a specified location
+    /// </summary>
+    /// <param name="location">The location at which to add the tile</param>
+    /// <returns>The created tile</returns>
+    private Tile AddTile(Transform location)
+    {
+        //for now just creates ocean tiles:
+        Vector3 position = new Vector3(location.position.x + tileSize / 2, location.position.y, location.position.z + tileSize / 2);
+
+        GameObject obj = Instantiate(Resources.Load("Tiles/OceanTile"), position, Quaternion.Euler(new Vector3(90, 0, 0))) as GameObject;
+        obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
+        obj.transform.SetParent(container);
+
+        return obj.GetComponent<Tile>();
     }
 
     /// <summary>
