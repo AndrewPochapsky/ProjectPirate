@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapGenerator : MonoBehaviour {
+public class IslandGenerator : MonoBehaviour {
 
     [SerializeField]
-    private int mapWidth;
+    private int islandWidth;
     [SerializeField]
-    private int mapHeight;
+    private int islandHeight;
 
     [SerializeField]
     private float noiseScale;
@@ -75,7 +75,7 @@ public class MapGenerator : MonoBehaviour {
 
     private void Awake()
     {
-        falloffMap = FallOffGenerator.GenerateFalloffMap(mapWidth, mapHeight);
+        falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
     }
 
     private void OnValuesUpdated()
@@ -88,11 +88,11 @@ public class MapGenerator : MonoBehaviour {
 
     public void GenerateMap()
     {
-        float[,] noiseMap = Noise.GenerateNoiseMap(mapWidth, mapHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
 
-        for(int y = 0; y < mapHeight; y++)
+        for(int y = 0; y < islandHeight; y++)
         {
-            for(int x = 0; x < mapWidth; x++)
+            for(int x = 0; x < islandWidth; x++)
             {
                 //makes map island-like
                 noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - falloffMap[x,y]);
@@ -108,18 +108,18 @@ public class MapGenerator : MonoBehaviour {
 
     private void OnValidate()
     {
-        if(mapWidth < 1)
+        if(islandWidth < 1)
         {
-            mapWidth = 1;
+            islandWidth = 1;
         }
-        if(mapHeight < 1)
+        if(islandHeight < 1)
         {
-            mapHeight = 1;
+            islandHeight = 1;
         }
         
         ApplyToMaterial(terrainMaterial);
 
-        falloffMap = FallOffGenerator.GenerateFalloffMap(mapWidth, mapHeight);
+        falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
 
 
     }

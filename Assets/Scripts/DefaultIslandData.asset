@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 504f9024181289a45b995801bc1ebf03, type: 3}
+  m_Name: New Island Data
+  m_EditorClassIdentifier: 
+  noiseScale: 0
+  octaves: 0
+  persistance: 0
+  lacunarity: 0
+  seed: 0
+  offset: {x: 0, y: 0}
+  meshHeightMultiplier: 0
+  meshHeightCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  autoUpdate: 0
+  terrainMaterial: {fileID: 0}
+  baseColours: []
+  baseStartHeights: []
+  baseBlends: []
