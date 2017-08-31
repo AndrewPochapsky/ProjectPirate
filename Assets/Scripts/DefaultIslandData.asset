@@ -9,23 +9,58 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 504f9024181289a45b995801bc1ebf03, type: 3}
-  m_Name: New Island Data
+  m_Name: DefaultIslandData
   m_EditorClassIdentifier: 
-  noiseScale: 0
-  octaves: 0
-  persistance: 0
-  lacunarity: 0
-  seed: 0
+  noiseScale: 10
+  octaves: 6
+  persistance: 0.5
+  lacunarity: 2
   offset: {x: 0, y: 0}
-  meshHeightMultiplier: 0
+  meshHeightMultiplier: 5.5
   meshHeightCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 2
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 0.3959111
+      value: 0.026820302
+      inSlope: 0.10474606
+      outSlope: 0.10474606
+      tangentMode: 0
+    - serializedVersion: 2
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
-    m_RotationOrder: 4
-  autoUpdate: 0
-  terrainMaterial: {fileID: 0}
-  baseColours: []
-  baseStartHeights: []
-  baseBlends: []
+    m_RotationOrder: 0
+  autoUpdate: 1
+  terrainMaterial: {fileID: 2100000, guid: 280647b2f43dd0e42b48a48765ef505a, type: 2}
+  baseColours:
+  - {r: 0, g: 0.24203838, b: 0.9485294, a: 0}
+  - {r: 0.13559686, g: 0.83823526, b: 0.7510112, a: 0}
+  - {r: 0.98894525, g: 1, b: 0.19852942, a: 0}
+  - {r: 0.2205882, g: 1, b: 0.22596341, a: 0}
+  - {r: 0, g: 0.8235294, b: 0.17606486, a: 0}
+  - {r: 0.41911763, g: 0.41911763, b: 0.41911763, a: 0}
+  baseStartHeights:
+  - 0
+  - 0.044
+  - 0.101
+  - 0.238
+  - 0.423
+  - 0.87
+  baseBlends:
+  - 0
+  - 0.068
+  - 0.037
+  - 0.085
+  - 0.311
+  - 0.317

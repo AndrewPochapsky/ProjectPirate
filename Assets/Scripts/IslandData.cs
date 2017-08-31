@@ -14,8 +14,6 @@ public class IslandData : ScriptableObject {
 
     public float lacunarity;
 
-    public int seed;
-
     public Vector2 offset;
 
     public float meshHeightMultiplier;
