@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+//TODO consider using as battle squares, if so should probably be renamed
 public class EmptyTile : MonoBehaviour {
 
     public Vector2 location;

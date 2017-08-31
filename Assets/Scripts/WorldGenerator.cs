@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO consider making this static class to be called from WorldController
 public class WorldGenerator : MonoBehaviour {
 
     Transform container;

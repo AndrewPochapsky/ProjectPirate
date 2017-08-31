@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour {
 
-    public enum DrawMode { Mesh };
-    public DrawMode drawMode;
-
-
     [SerializeField]
     private int mapWidth;
     [SerializeField]
@@ -107,11 +103,7 @@ public class MapGenerator : MonoBehaviour {
 
         MapDisplay display = FindObjectOfType<MapDisplay>();
 
-        if(drawMode == DrawMode.Mesh)
-        {
-            display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
-
-        }
+        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
     }
 
     private void OnValidate()
