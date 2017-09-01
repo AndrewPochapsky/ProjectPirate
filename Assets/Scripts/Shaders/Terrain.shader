@@ -31,7 +31,7 @@
 		float inverseLerp(float a, float b, float value) {
 			return saturate((value-a)/(b-a));
 		}
-
+		
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			float heightPercent = inverseLerp(minHeight,maxHeight, IN.worldPos.y);
 			o.Albedo = heightPercent;
@@ -44,5 +44,5 @@
 
 		ENDCG
 	}
-	FallBack "Diffuse"
+	//FallBack "Diffuse"
 }

@@ -7,18 +7,28 @@ using UnityEngine;
 //TODO consider making this static class to be called from WorldController
 public class WorldGenerator : MonoBehaviour {
 
+    enum TileType { OceanTile, IslandTile }
+
+    [SerializeField]
+    private TileType tileType;
+
     /// <summary>
     /// Holds all of the tiles
     /// </summary>
     Transform container;
 
-    public const int worldWidth = 5;
-    public const int worldHeight = 5;
+    public const int worldWidth = 10;
+    public const int worldHeight = 10;
 
-    public const int tileSize = 100;
+    public const int tileSize = 50;
     private Vector3 tileLocation;
 
     int currentTileIndex;
+
+    float islandSpawnChance = 0.5f;
+
+    //TODO make this actually work
+    int newSize = tileSize * 24;
 
     static EmptyTile[] emptyTiles;
 
@@ -58,7 +68,7 @@ public class WorldGenerator : MonoBehaviour {
         //Add actual tiles
         foreach (Transform location in EmptyTiles.Select(t => t.transform).ToList())
         {
-            AddTile(location);
+            AddTile(location, GetNextTileType());
 
             Destroy(location.gameObject);
         }
@@ -70,13 +80,25 @@ public class WorldGenerator : MonoBehaviour {
     /// </summary>
     /// <param name="location">The location at which to add the tile</param>
     /// <returns>The created tile</returns>
-    private Tile AddTile(Transform location)
+    private Tile AddTile(Transform location, TileType type)
     {
-        //for now just creates ocean tiles:
-        Vector3 position = new Vector3(location.position.x + tileSize / 2, location.position.y, location.position.z + tileSize / 2);
+        Vector3 position = new Vector3(location.position.x + newSize/2, location.position.y, location.position.z + newSize / 2);
 
-        GameObject obj = Instantiate(Resources.Load("Tiles/OceanTile"), position, Quaternion.Euler(new Vector3(90, 0, 0))) as GameObject;
-        obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
+        GameObject obj = Instantiate(Resources.Load("Tiles/"+type), position, Quaternion.identity) as GameObject;
+
+        if (obj.GetComponent<IslandTile>())
+        {
+            Transform oceanTileChild = obj.transform.GetChild(1);
+            oceanTileChild.localScale = new Vector3(newSize, newSize, 1);
+            oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);
+        }
+
+        if (obj.GetComponent<OceanTile>())
+        {
+            obj.transform.localScale = new Vector3(newSize, newSize, 1);
+            obj.transform.localEulerAngles = new Vector3(90, 0, 0);
+        }
+       
         obj.transform.SetParent(container);
 
         return obj.GetComponent<Tile>();
@@ -114,16 +136,26 @@ public class WorldGenerator : MonoBehaviour {
         //The tile is currently on the edge so the next one should start new row
         if(tile.location.x + 1 == worldWidth)
         {
-            nextLocation = new Vector3(0, 0, tileLocation.z + tileSize);
+            nextLocation = new Vector3(0, 0, tileLocation.z + newSize);
         }
         else
         {
-            nextLocation = new Vector3(tileLocation.x + tileSize, 0, tileLocation.z);
+            nextLocation = new Vector3(tileLocation.x + newSize, 0, tileLocation.z);
         }
 
         return nextLocation;
     }
 
-    
+    private TileType GetNextTileType()
+    {
+        float num = UnityEngine.Random.Range(0f, 1f);
+
+        if(num <= islandSpawnChance)
+        {
+            return TileType.IslandTile;
+        }
+
+        return TileType.OceanTile;
+    }
     
 }

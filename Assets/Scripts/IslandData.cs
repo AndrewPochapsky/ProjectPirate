@@ -24,7 +24,6 @@ public class IslandData : ScriptableObject {
 
     public Material terrainMaterial;
 
-    [SerializeField]
     public Color[] baseColours;
 
     [Range(0, 1)]

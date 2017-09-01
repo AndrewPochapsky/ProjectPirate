@@ -5,13 +5,9 @@ using UnityEngine;
 
 public class IslandTile : Tile {
 
-
-
     public int Seed {  get; private set; }
 
     const int maxSeed = 10000;
-
-   
 
     private void Awake()
     {

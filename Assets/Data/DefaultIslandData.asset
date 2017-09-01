@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   noiseScale: 10
   octaves: 6
-  persistance: 0.5
+  persistance: 0.589
   lacunarity: 2
   offset: {x: 0, y: 0}
   meshHeightMultiplier: 5.5
@@ -22,19 +22,19 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 2
       time: 0
-      value: 0
+      value: 0.0062408447
       inSlope: 0
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
       time: 0.3959111
-      value: 0.026820302
+      value: 0.033061147
       inSlope: 0.10474606
       outSlope: 0.10474606
       tangentMode: 0
     - serializedVersion: 2
       time: 1
-      value: 1
+      value: 1.0062408
       inSlope: 2
       outSlope: 2
       tangentMode: 0
@@ -52,8 +52,8 @@ MonoBehaviour:
   - {r: 0.41911763, g: 0.41911763, b: 0.41911763, a: 0}
   baseStartHeights:
   - 0
-  - 0.044
-  - 0.101
+  - 0.02
+  - 0.07
   - 0.238
   - 0.423
   - 0.87

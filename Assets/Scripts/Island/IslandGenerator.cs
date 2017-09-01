@@ -4,46 +4,16 @@ using UnityEngine;
 
 public class IslandGenerator : MonoBehaviour {
 
-    [SerializeField]
-    private int islandWidth;
-    [SerializeField]
-    private int islandHeight;
+    private float islandWidth;
 
-    [SerializeField]
-    private float noiseScale;
+    private float islandHeight;
 
-    [SerializeField]
-    private int octaves;
-    [SerializeField][Range(0,1)]
-    private float persistance;
-    [SerializeField]
-    private float lacunarity;
-
-    [SerializeField]
     private int seed;
-    [SerializeField]
-    private Vector2 offset;
 
     [SerializeField]
-    private float meshHeightMultiplier;
-    [SerializeField]
-    private AnimationCurve meshHeightCurve;
+    private IslandData islandData;
 
-    
-    [SerializeField]
-    private bool autoUpdate;
-
-    [SerializeField]
-    private Material terrainMaterial;
-
-    [SerializeField]
-    private Color[] baseColours;
-
-    [Range(0,1)][SerializeField]
-    private float[] baseStartHeights;
-
-    [SerializeField][Range(0,1)]
-    private float[] baseBlends;
+    private IslandTile islandTile;
 
     private float[,] falloffMap;
 
@@ -53,7 +23,7 @@ public class IslandGenerator : MonoBehaviour {
     {
         get
         {
-            return autoUpdate;
+            return islandData.autoUpdate;
         }
     }
 
@@ -61,7 +31,7 @@ public class IslandGenerator : MonoBehaviour {
     {
         get
         {
-            return (constantValue/5) * meshHeightMultiplier * meshHeightCurve.Evaluate(0);
+            return (constantValue/5) * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(0);
         }
     }
 
@@ -69,13 +39,22 @@ public class IslandGenerator : MonoBehaviour {
     {
         get
         {
-            return constantValue * meshHeightMultiplier * meshHeightCurve.Evaluate(1);
+            return constantValue * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(1);
         }
     }
 
     private void Awake()
     {
+        //TODO add support for different sized islands
+        islandWidth = WorldGenerator.tileSize / 2;
+        islandHeight = WorldGenerator.tileSize/2;
+
         falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
+        islandTile = GetComponent<IslandTile>();
+
+        seed = islandTile.Seed;
+
+        GenerateMap();
     }
 
     private void OnValuesUpdated()
@@ -88,7 +67,7 @@ public class IslandGenerator : MonoBehaviour {
 
     public void GenerateMap()
     {
-        float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, noiseScale, octaves, persistance, lacunarity, offset);
+        float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, islandData.noiseScale, islandData.octaves, islandData.persistance, islandData.lacunarity, islandData.offset);
 
         for(int y = 0; y < islandHeight; y++)
         {
@@ -99,11 +78,11 @@ public class IslandGenerator : MonoBehaviour {
             }
         }
 
-        UpdateMeshHeights(terrainMaterial, MinHeight, MaxHeight);
+        UpdateMeshHeights(islandData.terrainMaterial, MinHeight, MaxHeight);
 
         MapDisplay display = FindObjectOfType<MapDisplay>();
 
-        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, meshHeightMultiplier, meshHeightCurve));
+        display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, islandData.meshHeightMultiplier, islandData.meshHeightCurve));
     }
 
     private void OnValidate()
@@ -117,7 +96,7 @@ public class IslandGenerator : MonoBehaviour {
             islandHeight = 1;
         }
         
-        ApplyToMaterial(terrainMaterial);
+        ApplyToMaterial(islandData.terrainMaterial);
 
         falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
 
@@ -132,10 +111,10 @@ public class IslandGenerator : MonoBehaviour {
 
     private void ApplyToMaterial(Material material)
     {
-        material.SetColorArray("baseColours", baseColours);
-        material.SetFloatArray("baseStartHeights", baseStartHeights);
-        material.SetFloatArray("baseBlends", baseBlends);
-        material.SetInt("baseColourCount", baseColours.Length);
+        material.SetColorArray("baseColours", islandData.baseColours);
+        material.SetFloatArray("baseStartHeights", islandData.baseStartHeights);
+        material.SetFloatArray("baseBlends", islandData.baseBlends);
+        material.SetInt("baseColourCount", islandData.baseColours.Length);
 
         UpdateMeshHeights(material, MinHeight, MaxHeight);
     }
