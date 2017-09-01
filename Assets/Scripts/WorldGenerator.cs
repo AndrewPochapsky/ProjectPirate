@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -25,7 +24,7 @@ public class WorldGenerator : MonoBehaviour {
 
     int currentTileIndex;
 
-    float islandSpawnChance = 0.5f;
+    float islandSpawnChance = 0.1f;
 
     //TODO make this actually work
     int newSize = tileSize * 24;
@@ -66,11 +65,11 @@ public class WorldGenerator : MonoBehaviour {
         }
 
         //Add actual tiles
-        foreach (Transform location in EmptyTiles.Select(t => t.transform).ToList())
+        foreach (EmptyTile emptyTile in EmptyTiles)
         {
-            AddTile(location, GetNextTileType());
+            AddTile(emptyTile, GetNextTileType());
 
-            Destroy(location.gameObject);
+            Destroy(emptyTile.gameObject);
         }
 
     }
@@ -78,16 +77,49 @@ public class WorldGenerator : MonoBehaviour {
     /// <summary>
     /// Adds either an ocean or island tile at a specified location
     /// </summary>
-    /// <param name="location">The location at which to add the tile</param>
+    /// <param name="emptyTile">The EmptyTile</param>
     /// <returns>The created tile</returns>
-    private Tile AddTile(Transform location, TileType type)
+    private Tile AddTile(EmptyTile emptyTile, TileType type)
     {
-        Vector3 position = new Vector3(location.position.x + newSize/2, location.position.y, location.position.z + newSize / 2);
+        Vector3 position = new Vector3(emptyTile.transform.position.x + newSize/2, emptyTile.transform.position.y, emptyTile.transform.position.z + newSize / 2);
 
         GameObject obj = Instantiate(Resources.Load("Tiles/"+type), position, Quaternion.identity) as GameObject;
 
         if (obj.GetComponent<IslandTile>())
         {
+            IslandTile islandTile = obj.GetComponent<IslandTile>();
+
+            switch (islandTile.Size)
+            {
+                case IslandTile.IslandSize.Long:
+                    float value = Random.Range(0f, 1f);
+
+                    if (emptyTile.RightEmpty != null)
+                    {
+                        Destroy(emptyTile.RightEmpty.gameObject);
+                    }
+
+                    break;
+
+                case IslandTile.IslandSize.Large:
+
+                    if (emptyTile.RightEmpty != null)
+                    {
+                        Destroy(emptyTile.RightEmpty.gameObject);
+                    }
+                    if (emptyTile.TopEmpty != null)
+                    {
+                        if(emptyTile.TopEmpty.RightEmpty != null)
+                        {
+                            Destroy(emptyTile.TopEmpty.RightEmpty.gameObject);
+                        }
+
+                        Destroy(emptyTile.TopEmpty.gameObject);
+                    }
+
+                    break;
+            }
+
             Transform oceanTileChild = obj.transform.GetChild(1);
             oceanTileChild.localScale = new Vector3(newSize, newSize, 1);
             oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);

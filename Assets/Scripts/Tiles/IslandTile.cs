@@ -1,9 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class IslandTile : Tile {
+
+    public enum IslandSize
+    {
+        Regular,
+        Long,
+        Large
+    }
+
+    public IslandSize Size { get; private set; }
 
     public int Seed {  get; private set; }
 
@@ -11,11 +19,29 @@ public class IslandTile : Tile {
 
     private void Awake()
     {
-        Seed = UnityEngine.Random.Range(0, maxSeed);
+        Size = DetermineIslandSize();
+        Seed = Random.Range(0, maxSeed);
+       
     }
 
     public override void Enable(bool value)
     {
-        throw new NotImplementedException();
+
     }
+
+    private IslandSize DetermineIslandSize()
+    {
+        float randomValue = Random.Range(0f, 1f);
+
+        if(randomValue <= 0.5f)
+        {
+            return IslandSize.Regular;
+        }
+        else if(randomValue <= 0.9f)
+        {
+            return IslandSize.Long;
+        }
+        return IslandSize.Large;
+    }
+
 }

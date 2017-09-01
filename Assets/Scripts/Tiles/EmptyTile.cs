@@ -8,8 +8,10 @@ public class EmptyTile : MonoBehaviour {
 
     public Vector2 location;
 
-    [SerializeField]
-    EmptyTile leftEmpty, rightEmpty, topEmpty, bottomEmpty;
+    public EmptyTile TopEmpty { get; private set; }
+    public EmptyTile BottomEmpty { get; private set; }
+    public EmptyTile LeftEmpty { get; private set; }
+    public EmptyTile RightEmpty { get; private set; }
 
     /// <summary>
     /// Sets the EmptyTile's adjacent tiles
@@ -19,25 +21,25 @@ public class EmptyTile : MonoBehaviour {
         //if tile is not on left edge
         if(location.x != 0)
         {
-            leftEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x - 1 && t.location.y == location.y);
+            LeftEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x - 1 && t.location.y == location.y);
         }
 
         //if tile is not on right edge
         if(location.x + 1 != WorldGenerator.worldWidth)
         {
-            rightEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x + 1 && t.location.y == location.y);
+            RightEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x + 1 && t.location.y == location.y);
         }
 
         //if tile is not on bottom edge
         if(location.y != 0)
         {
-            bottomEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x && t.location.y == location.y - 1);
+            BottomEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x && t.location.y == location.y - 1);
         }
 
         //if tile is not on top edge
         if(location.y + 1 != WorldGenerator.worldHeight)
         {
-            topEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x && t.location.y == location.y + 1);
+            TopEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x && t.location.y == location.y + 1);
         }
     }
 

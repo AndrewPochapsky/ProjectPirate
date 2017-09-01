@@ -45,12 +45,15 @@ public class IslandGenerator : MonoBehaviour {
 
     private void Awake()
     {
+        islandTile = GetComponent<IslandTile>();
+
         //TODO add support for different sized islands
         islandWidth = WorldGenerator.tileSize / 2;
-        islandHeight = WorldGenerator.tileSize/2;
+        islandHeight = WorldGenerator.tileSize / 2;
+
+        DetermineSize();
 
         falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
-        islandTile = GetComponent<IslandTile>();
 
         seed = islandTile.Seed;
 
@@ -117,6 +120,34 @@ public class IslandGenerator : MonoBehaviour {
         material.SetInt("baseColourCount", islandData.baseColours.Length);
 
         UpdateMeshHeights(material, MinHeight, MaxHeight);
+    }
+
+    private void DetermineSize()
+    {
+        switch (islandTile.Size)
+        {
+            case IslandTile.IslandSize.Long:
+
+                float value = Random.Range(0f, 1f);
+                //TODO implement this
+                /*if(value <= 0.5f)
+                {
+                    islandWidth *= 2;
+                }
+                else
+                {
+                    islandHeight *= 2;
+                }*/
+                islandWidth *= 2;
+
+                break;
+
+            case IslandTile.IslandSize.Large:
+
+                islandWidth *= 2;
+                islandHeight *= 2;
+                break;
+        }
     }
 
 }
