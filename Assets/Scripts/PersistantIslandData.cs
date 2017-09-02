@@ -3,18 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class IslandData : ScriptableObject {
-
-    public float noiseScale;
-
-    public int octaves;
-
-    [Range(0, 1)]
-    public float persistance;
+public class PersistantIslandData : ScriptableObject {
 
     public float lacunarity;
-
-    public Vector2 offset;
 
     public float meshHeightMultiplier;
 

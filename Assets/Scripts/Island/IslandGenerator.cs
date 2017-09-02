@@ -11,7 +11,7 @@ public class IslandGenerator : MonoBehaviour {
     private int seed;
 
     [SerializeField]
-    private IslandData islandData;
+    private PersistantIslandData islandData;
 
     private IslandTile islandTile;
 
@@ -47,30 +47,14 @@ public class IslandGenerator : MonoBehaviour {
     {
         islandTile = GetComponent<IslandTile>();
 
-        //TODO add support for different sized islands
         islandWidth = WorldGenerator.tileSize / 2;
         islandHeight = WorldGenerator.tileSize / 2;
-
-        DetermineSize();
-
-        falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
-
-        seed = islandTile.Seed;
-
-        GenerateMap();
-    }
-
-    private void OnValuesUpdated()
-    {
-        if (!Application.isPlaying)
-        {
-            GenerateMap();
-        }
+        seed = islandTile.UniqueIslandData.Seed;
     }
 
     public void GenerateMap()
     {
-        float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, islandData.noiseScale, islandData.octaves, islandData.persistance, islandData.lacunarity, islandData.offset);
+        float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, islandTile.UniqueIslandData.NoiseScale, islandTile.UniqueIslandData.Octaves, islandTile.UniqueIslandData.Persistance, islandData.lacunarity, islandTile.UniqueIslandData.Offset);
 
         for(int y = 0; y < islandHeight; y++)
         {
@@ -122,36 +106,26 @@ public class IslandGenerator : MonoBehaviour {
         UpdateMeshHeights(material, MinHeight, MaxHeight);
     }
 
-    private void DetermineSize()
+    public void DetermineSize()
     {
         switch (islandTile.Size)
         {
             case IslandTile.IslandSize.Long:
+                islandWidth *= 2;
+                break;
 
-                float value = Random.Range(0f, 1f);
-                
-                if(value <= 0.5f)
-                {
-                    islandWidth *= 2;
-                    islandTile.type = IslandTile.IslandType.Horizontal;
-                }
-                else
-                {
-                    islandHeight *= 2;
-                    islandTile.type = IslandTile.IslandType.Vertical;
-                }
-                
-
+            case IslandTile.IslandSize.Tall:
+                islandHeight *= 2;
                 break;
 
             case IslandTile.IslandSize.Large:
-
                 islandWidth *= 2;
                 islandHeight *= 2;
                 break;
         }
+        falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
     }
-
+    
 }
 
 

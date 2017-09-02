@@ -8,31 +8,22 @@ public class IslandTile : Tile {
     {
         Regular,
         Long,
+        Tall,
         Large
     }
 
-    /// <summary>
-    /// Only used if long island
-    /// </summary>
-    public enum IslandType
-    {
-        Horizontal,
-        Vertical,
-        None
-    }
+    public IslandSize Size { get; set; }
 
-    public IslandSize Size { get; private set; }
+    public UniqueIslandData UniqueIslandData { get; private set; }
 
-    public IslandType type = IslandType.None;
-
-    public int Seed {  get; private set; }
-
-    const int maxSeed = 10000;
+    private IslandGenerator generator;
 
     private void Awake()
     {
-        Size = DetermineIslandSize();
-        Seed = Random.Range(0, maxSeed);
+        generator = GetComponent<IslandGenerator>();
+        UniqueIslandData = new UniqueIslandData();
+
+        UniqueIslandData.Initialize();
     }
 
     public override void Enable(bool value)
@@ -40,6 +31,7 @@ public class IslandTile : Tile {
 
     }
 
+    //TODO remove this and check if the island can be created based on adjacent tiles
     private IslandSize DetermineIslandSize()
     {
         float randomValue = Random.Range(0f, 1f);
@@ -53,6 +45,15 @@ public class IslandTile : Tile {
             return IslandSize.Long;
         }
         return IslandSize.Large;
+    }
+
+    /// <summary>
+    /// Calls functions which generate island
+    /// </summary>
+    public void GenerateIsland()
+    {
+        generator.DetermineSize();
+        generator.GenerateMap();
     }
 
 }

@@ -71,7 +71,25 @@ public class WorldGenerator : MonoBehaviour {
         {
             if (emptyTile.isAvailable)
             {
-                AddTile(emptyTile, GetNextTileType());
+                float num = Random.Range(0f, 1f);
+
+                if (num <= islandSpawnChance)
+                {
+                    IslandTile.IslandSize size = DetermineIslandSize();
+
+                    if (CanGenerate(emptyTile, size))
+                    {
+                        AddIslandTile(emptyTile, size);
+                    }
+                    else
+                    {
+                        AddOceanTile(emptyTile);
+                    }
+                }
+                else
+                {
+                    AddOceanTile(emptyTile);
+                }
             }
             
             Destroy(emptyTile.gameObject);
@@ -84,23 +102,39 @@ public class WorldGenerator : MonoBehaviour {
     /// </summary>
     /// <param name="emptyTile">The EmptyTile</param>
     /// <returns>The created tile</returns>
-    private Tile AddTile(EmptyTile emptyTile, TileType type)
+    private Tile AddIslandTile(EmptyTile emptyTile, IslandTile.IslandSize islandSize)
+    {
+        Vector3 position = new Vector3(emptyTile.transform.position.x, emptyTile.transform.position.y, emptyTile.transform.position.z);
+        GameObject obj = Instantiate(Resources.Load("Tiles/IslandTile"), position, Quaternion.identity) as GameObject;
+
+        IslandTile islandTile = obj.GetComponent<IslandTile>();
+        islandTile.Size = islandSize;
+
+        islandTile.GenerateIsland();
+
+        SetUpIsland(emptyTile, obj);
+
+        obj.transform.SetParent(container);
+
+        return obj.GetComponent<Tile>();
+    }
+
+    /// <summary>
+    /// Adds an ocean tile at emptyTile location
+    /// </summary>
+    /// <param name="emptyTile">The emptyTile</param>
+    /// <returns>The created tile</returns>
+    private Tile AddOceanTile(EmptyTile emptyTile)
     {
         Vector3 position = new Vector3(emptyTile.transform.position.x, emptyTile.transform.position.y, emptyTile.transform.position.z);
 
-        GameObject obj = Instantiate(Resources.Load("Tiles/"+type), position, Quaternion.identity) as GameObject;
+        GameObject obj = Instantiate(Resources.Load("Tiles/OceanTile"), position, Quaternion.identity) as GameObject;
 
-        if (obj.GetComponent<IslandTile>())
-        {
-            SetUpIsland(emptyTile, obj);
-        }
+        obj.transform.localScale = new Vector3(newSize + oceanTileScaleAddition.x, newSize + oceanTileScaleAddition.y, 1);
 
-        if (obj.GetComponent<OceanTile>())
-        {
-            obj.transform.localScale = new Vector3(newSize, newSize, 1);
-            obj.transform.localEulerAngles = new Vector3(90, 0, 0);
-        }
-       
+
+        obj.transform.localEulerAngles = new Vector3(90, 0, 0);
+
         obj.transform.SetParent(container);
 
         return obj.GetComponent<Tile>();
@@ -114,18 +148,10 @@ public class WorldGenerator : MonoBehaviour {
     private void SetUpIsland(EmptyTile emptyTile, GameObject obj)
     {
         IslandTile islandTile = obj.GetComponent<IslandTile>();
+
         Transform oceanTileChild = obj.transform.GetChild(1);
 
         oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);
-
-        //If vertical rotate the oceanTile so it fits
-        if(islandTile.type == IslandTile.IslandType.Vertical)
-        {
-            oceanTileChild.localEulerAngles = new Vector3(
-                            oceanTileChild.localEulerAngles.x,
-                            oceanTileChild.localEulerAngles.y,
-                            90);
-        }
 
         DisableRedundantEmptyTiles(islandTile, emptyTile);
 
@@ -174,22 +200,6 @@ public class WorldGenerator : MonoBehaviour {
 
         return nextLocation;
     }
-
-    /// <summary>
-    /// Gets the next tile type randomly
-    /// </summary>
-    /// <returns>the tile type</returns>
-    private TileType GetNextTileType()
-    {
-        float num = Random.Range(0f, 1f);
-
-        if(num <= islandSpawnChance)
-        {
-            return TileType.IslandTile;
-        }
-
-        return TileType.OceanTile;
-    }
     
     /// <summary>
     /// Gets the correct island offset given its size
@@ -201,19 +211,12 @@ public class WorldGenerator : MonoBehaviour {
         switch (islandTile.Size)
         {
             case IslandTile.IslandSize.Long:
+                return new Vector3(newSize / 2, 0, 0);
 
-                switch (islandTile.type)
-                {
-                    case IslandTile.IslandType.Horizontal:
-                        return new Vector3(newSize / 2, 0, 0);
-
-                    case IslandTile.IslandType.Vertical:
-                        return new Vector3(0, 0, newSize / 2);
-                }
-                break;
+            case IslandTile.IslandSize.Tall:
+                return new Vector3(0, 0, newSize / 2);
 
             case IslandTile.IslandSize.Large:
-
                 return new Vector3(newSize / 2, 0, newSize / 2);
         }
         return Vector3.zero;
@@ -234,6 +237,9 @@ public class WorldGenerator : MonoBehaviour {
             case IslandTile.IslandSize.Long:
                 return new Vector3(newSize * 2, newSize, 1);
 
+            case IslandTile.IslandSize.Tall:
+                return new Vector3(newSize, newSize * 2, 1);
+
             case IslandTile.IslandSize.Large:
                 return new Vector3(newSize * 2, newSize * 2, 1);
         }
@@ -250,25 +256,11 @@ public class WorldGenerator : MonoBehaviour {
         switch (islandTile.Size)
         {
             case IslandTile.IslandSize.Long:
+                emptyTile.RightEmpty.isAvailable = false;
+                break;
 
-                switch (islandTile.type)
-                {
-                    case IslandTile.IslandType.Horizontal:
-
-                        if (emptyTile.RightEmpty != null)
-                        {
-                            emptyTile.RightEmpty.isAvailable = false;
-                        }
-                        break;
-
-                    case IslandTile.IslandType.Vertical:
-
-                        if (emptyTile.TopEmpty != null)
-                        {
-                            emptyTile.TopEmpty.isAvailable = false;
-                        }
-                        break;
-                }
+            case IslandTile.IslandSize.Tall:
+                emptyTile.TopEmpty.isAvailable = false;
                 break;
 
             case IslandTile.IslandSize.Large:
@@ -290,4 +282,71 @@ public class WorldGenerator : MonoBehaviour {
         }
     }
 
+    private IslandTile.IslandSize DetermineIslandSize()
+    {
+        float randomValue = Random.Range(0f, 1f);
+
+        if (randomValue <= 0.5f)
+        {
+            return IslandTile.IslandSize.Regular;
+        }
+        else if (randomValue <= 0.7f)
+        {
+            return IslandTile.IslandSize.Long;
+        }
+        else if(randomValue <= 0.9f)
+        {
+            return IslandTile.IslandSize.Tall;
+        }
+        return IslandTile.IslandSize.Large;
+    }
+
+    private bool CanGenerate(EmptyTile emptyTile, IslandTile.IslandSize size)
+    {
+        switch (size)
+        {
+            case IslandTile.IslandSize.Regular:
+                return true;
+
+            case IslandTile.IslandSize.Long:
+                if(emptyTile.RightEmpty != null)
+                {
+                    if (emptyTile.RightEmpty.isAvailable)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+
+            case IslandTile.IslandSize.Tall:
+                if(emptyTile.TopEmpty != null)
+                {
+                    if (emptyTile.TopEmpty.isAvailable)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+
+            case IslandTile.IslandSize.Large:
+                if(emptyTile.RightEmpty != null && emptyTile.TopEmpty != null && emptyTile.TopEmpty.RightEmpty != null)
+                {
+                    if (emptyTile.RightEmpty.isAvailable && emptyTile.TopEmpty.isAvailable && emptyTile.TopEmpty.RightEmpty.isAvailable)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+        }
+
+        Debug.Log("Something went wrong with island generation");
+        return true;
+    }
+
 }
+
+       
+
