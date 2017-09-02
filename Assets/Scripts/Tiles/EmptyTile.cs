@@ -8,6 +8,8 @@ public class EmptyTile : MonoBehaviour {
 
     public Vector2 location;
 
+    public bool isAvailable = true;
+
     public EmptyTile TopEmpty { get; private set; }
     public EmptyTile BottomEmpty { get; private set; }
     public EmptyTile LeftEmpty { get; private set; }

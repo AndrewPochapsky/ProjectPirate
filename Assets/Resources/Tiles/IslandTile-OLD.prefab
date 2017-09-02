@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 114493328314605728}
   - component: {fileID: 114101774772879230}
   m_Layer: 0
-  m_Name: IslandTile
+  m_Name: IslandTile-OLD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -123,9 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b5c5212eb429254abceb06bed35de0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textureRenderer: {fileID: 0}
   meshFilter: {fileID: 33474203285644300}
-  meshRenderer: {fileID: 23162940712157554}
 --- !u!114 &114281734196030614
 MonoBehaviour:
   m_ObjectHideFlags: 1

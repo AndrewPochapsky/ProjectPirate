@@ -8,9 +8,6 @@ public class WorldGenerator : MonoBehaviour {
 
     enum TileType { OceanTile, IslandTile }
 
-    [SerializeField]
-    private TileType tileType;
-
     /// <summary>
     /// Holds all of the tiles
     /// </summary>
@@ -22,16 +19,21 @@ public class WorldGenerator : MonoBehaviour {
     public const int tileSize = 50;
     private Vector3 tileLocation;
 
-    int currentTileIndex;
+    /// <summary>
+    /// Value which increases the ocean tile's scale slightly to prevent weird gaps
+    /// </summary>
+    private Vector3 oceanTileScaleAddition;
 
     float islandSpawnChance = 0.1f;
 
-    //TODO make this actually work
+    /// <summary>
+    /// This is required in order for the island tiles to match with the ocean tiles
+    /// </summary>
     int newSize = tileSize * 24;
 
-    static EmptyTile[] emptyTiles;
+    static List<EmptyTile> emptyTiles;
 
-    public static EmptyTile[] EmptyTiles
+    public static List<EmptyTile> EmptyTiles
     {
         get
         {
@@ -41,12 +43,12 @@ public class WorldGenerator : MonoBehaviour {
 
     private void Awake()
     {
+        oceanTileScaleAddition = new Vector3(50, 50, 0);
+
         container = GameObject.FindGameObjectWithTag("World").transform;
 
-        emptyTiles = new EmptyTile[worldHeight * worldWidth];
+        emptyTiles = new List<EmptyTile>();
         tileLocation = Vector3.zero;
-
-        currentTileIndex = 0;
 
         //Create the grid
         for(int y = 0; y < worldHeight; y++)
@@ -54,7 +56,7 @@ public class WorldGenerator : MonoBehaviour {
             for(int x = 0; x < worldWidth; x++)
             {
                 Vector2 location = new Vector2(x, y);
-                EmptyTiles[currentTileIndex] = AddEmptyTile(location);
+                EmptyTiles.Add(AddEmptyTile(location));
             }
         }
 
@@ -67,8 +69,11 @@ public class WorldGenerator : MonoBehaviour {
         //Add actual tiles
         foreach (EmptyTile emptyTile in EmptyTiles)
         {
-            AddTile(emptyTile, GetNextTileType());
-
+            if (emptyTile.isAvailable)
+            {
+                AddTile(emptyTile, GetNextTileType());
+            }
+            
             Destroy(emptyTile.gameObject);
         }
 
@@ -81,48 +86,13 @@ public class WorldGenerator : MonoBehaviour {
     /// <returns>The created tile</returns>
     private Tile AddTile(EmptyTile emptyTile, TileType type)
     {
-        Vector3 position = new Vector3(emptyTile.transform.position.x + newSize/2, emptyTile.transform.position.y, emptyTile.transform.position.z + newSize / 2);
+        Vector3 position = new Vector3(emptyTile.transform.position.x, emptyTile.transform.position.y, emptyTile.transform.position.z);
 
         GameObject obj = Instantiate(Resources.Load("Tiles/"+type), position, Quaternion.identity) as GameObject;
 
         if (obj.GetComponent<IslandTile>())
         {
-            IslandTile islandTile = obj.GetComponent<IslandTile>();
-
-            switch (islandTile.Size)
-            {
-                case IslandTile.IslandSize.Long:
-                    float value = Random.Range(0f, 1f);
-
-                    if (emptyTile.RightEmpty != null)
-                    {
-                        Destroy(emptyTile.RightEmpty.gameObject);
-                    }
-
-                    break;
-
-                case IslandTile.IslandSize.Large:
-
-                    if (emptyTile.RightEmpty != null)
-                    {
-                        Destroy(emptyTile.RightEmpty.gameObject);
-                    }
-                    if (emptyTile.TopEmpty != null)
-                    {
-                        if(emptyTile.TopEmpty.RightEmpty != null)
-                        {
-                            Destroy(emptyTile.TopEmpty.RightEmpty.gameObject);
-                        }
-
-                        Destroy(emptyTile.TopEmpty.gameObject);
-                    }
-
-                    break;
-            }
-
-            Transform oceanTileChild = obj.transform.GetChild(1);
-            oceanTileChild.localScale = new Vector3(newSize, newSize, 1);
-            oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);
+            SetUpIsland(emptyTile, obj);
         }
 
         if (obj.GetComponent<OceanTile>())
@@ -134,6 +104,35 @@ public class WorldGenerator : MonoBehaviour {
         obj.transform.SetParent(container);
 
         return obj.GetComponent<Tile>();
+    }
+
+    /// <summary>
+    /// Adjust island based on its size
+    /// </summary>
+    /// <param name="emptyTile">Empty tile used as a location reference</param>
+    /// <param name="obj">The instantiated island</param>
+    private void SetUpIsland(EmptyTile emptyTile, GameObject obj)
+    {
+        IslandTile islandTile = obj.GetComponent<IslandTile>();
+        Transform oceanTileChild = obj.transform.GetChild(1);
+
+        oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);
+
+        //If vertical rotate the oceanTile so it fits
+        if(islandTile.type == IslandTile.IslandType.Vertical)
+        {
+            oceanTileChild.localEulerAngles = new Vector3(
+                            oceanTileChild.localEulerAngles.x,
+                            oceanTileChild.localEulerAngles.y,
+                            90);
+        }
+
+        DisableRedundantEmptyTiles(islandTile, emptyTile);
+
+        islandTile.transform.position += GetIslandOffset(islandTile);
+
+        oceanTileChild.localScale = GetOceanTileSize(islandTile);
+        oceanTileChild.localScale += oceanTileScaleAddition;
     }
 
     /// <summary>
@@ -150,8 +149,6 @@ public class WorldGenerator : MonoBehaviour {
         tile.location = location;
 
         tileLocation = GetNextLocation(tile);
-
-        currentTileIndex++;
 
         return tile;
     }
@@ -178,9 +175,13 @@ public class WorldGenerator : MonoBehaviour {
         return nextLocation;
     }
 
+    /// <summary>
+    /// Gets the next tile type randomly
+    /// </summary>
+    /// <returns>the tile type</returns>
     private TileType GetNextTileType()
     {
-        float num = UnityEngine.Random.Range(0f, 1f);
+        float num = Random.Range(0f, 1f);
 
         if(num <= islandSpawnChance)
         {
@@ -190,4 +191,103 @@ public class WorldGenerator : MonoBehaviour {
         return TileType.OceanTile;
     }
     
+    /// <summary>
+    /// Gets the correct island offset given its size
+    /// </summary>
+    /// <param name="islandTile">The island tile</param>
+    /// <returns>The offset</returns>
+    private Vector3 GetIslandOffset(IslandTile islandTile)
+    {
+        switch (islandTile.Size)
+        {
+            case IslandTile.IslandSize.Long:
+
+                switch (islandTile.type)
+                {
+                    case IslandTile.IslandType.Horizontal:
+                        return new Vector3(newSize / 2, 0, 0);
+
+                    case IslandTile.IslandType.Vertical:
+                        return new Vector3(0, 0, newSize / 2);
+                }
+                break;
+
+            case IslandTile.IslandSize.Large:
+
+                return new Vector3(newSize / 2, 0, newSize / 2);
+        }
+        return Vector3.zero;
+    }
+
+    /// <summary>
+    /// Gets the correct oceanTileSize given the island's size
+    /// </summary>
+    /// <param name="islandTile">The island tile</param>
+    /// <returns>The offset</returns>
+    private Vector3 GetOceanTileSize(IslandTile islandTile)
+    {
+        switch (islandTile.Size)
+        {
+            case IslandTile.IslandSize.Regular:
+                return new Vector3(newSize, newSize, 1);
+
+            case IslandTile.IslandSize.Long:
+                return new Vector3(newSize * 2, newSize, 1);
+
+            case IslandTile.IslandSize.Large:
+                return new Vector3(newSize * 2, newSize * 2, 1);
+        }
+        return Vector3.zero;
+    }
+
+    /// <summary>
+    /// Disables empty tiles which are now taken up by larger island
+    /// </summary>
+    /// <param name="islandTile">The islandTile</param>
+    /// <param name="emptyTile">The emptyTile</param>
+    private void DisableRedundantEmptyTiles(IslandTile islandTile, EmptyTile emptyTile)
+    {
+        switch (islandTile.Size)
+        {
+            case IslandTile.IslandSize.Long:
+
+                switch (islandTile.type)
+                {
+                    case IslandTile.IslandType.Horizontal:
+
+                        if (emptyTile.RightEmpty != null)
+                        {
+                            emptyTile.RightEmpty.isAvailable = false;
+                        }
+                        break;
+
+                    case IslandTile.IslandType.Vertical:
+
+                        if (emptyTile.TopEmpty != null)
+                        {
+                            emptyTile.TopEmpty.isAvailable = false;
+                        }
+                        break;
+                }
+                break;
+
+            case IslandTile.IslandSize.Large:
+
+                if (emptyTile.RightEmpty != null)
+                {
+                    emptyTile.RightEmpty.isAvailable = false;
+                }
+                if (emptyTile.TopEmpty != null)
+                {
+                    if (emptyTile.TopEmpty.RightEmpty != null)
+                    {
+                        emptyTile.TopEmpty.RightEmpty.isAvailable = false;
+                    }
+
+                    emptyTile.TopEmpty.isAvailable = false;
+                }
+                break;
+        }
+    }
+
 }

@@ -11,7 +11,19 @@ public class IslandTile : Tile {
         Large
     }
 
+    /// <summary>
+    /// Only used if long island
+    /// </summary>
+    public enum IslandType
+    {
+        Horizontal,
+        Vertical,
+        None
+    }
+
     public IslandSize Size { get; private set; }
+
+    public IslandType type = IslandType.None;
 
     public int Seed {  get; private set; }
 
@@ -21,7 +33,6 @@ public class IslandTile : Tile {
     {
         Size = DetermineIslandSize();
         Seed = Random.Range(0, maxSeed);
-       
     }
 
     public override void Enable(bool value)

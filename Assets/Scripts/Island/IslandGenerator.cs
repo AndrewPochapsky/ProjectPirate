@@ -129,16 +129,18 @@ public class IslandGenerator : MonoBehaviour {
             case IslandTile.IslandSize.Long:
 
                 float value = Random.Range(0f, 1f);
-                //TODO implement this
-                /*if(value <= 0.5f)
+                
+                if(value <= 0.5f)
                 {
                     islandWidth *= 2;
+                    islandTile.type = IslandTile.IslandType.Horizontal;
                 }
                 else
                 {
                     islandHeight *= 2;
-                }*/
-                islandWidth *= 2;
+                    islandTile.type = IslandTile.IslandType.Vertical;
+                }
+                
 
                 break;
 
