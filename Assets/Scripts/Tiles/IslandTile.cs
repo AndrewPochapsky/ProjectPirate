@@ -53,7 +53,7 @@ public class IslandTile : Tile {
     public void GenerateIsland()
     {
         generator.DetermineSize();
-        generator.GenerateMap();
+        generator.GenerateIsland();
     }
 
 }

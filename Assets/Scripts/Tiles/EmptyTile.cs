@@ -44,7 +44,4 @@ public class EmptyTile : MonoBehaviour {
             TopEmpty = WorldGenerator.EmptyTiles.Single(t => t.location.x == location.x && t.location.y == location.y + 1);
         }
     }
-
-    
-
 }

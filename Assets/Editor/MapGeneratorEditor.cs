@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+//TODO remove this?
 [CustomEditor (typeof (IslandGenerator))]
 public class MapGeneratorEditor : Editor {
 
@@ -10,17 +11,9 @@ public class MapGeneratorEditor : Editor {
     {
         IslandGenerator generator = (IslandGenerator)target;
 
-        if (DrawDefaultInspector())
-        {
-            if (generator.AutoUpdate)
-            {
-                generator.GenerateMap();
-            }
-        }
-
         if (GUILayout.Button("Generate"))
         {
-            generator.GenerateMap();
+            generator.GenerateIsland();
             EditorUtility.SetDirty(target);
         }
     }

@@ -56,18 +56,18 @@ public class WorldGenerator : MonoBehaviour {
             for(int x = 0; x < worldWidth; x++)
             {
                 Vector2 location = new Vector2(x, y);
-                EmptyTiles.Add(AddEmptyTile(location));
+                emptyTiles.Add(AddEmptyTile(location));
             }
         }
 
         //Add the placeholder empty tiles
-        foreach(var emptyTile in EmptyTiles)
+        foreach(var emptyTile in emptyTiles)
         {
             emptyTile.SetAdjacents();
         }
 
         //Add actual tiles
-        foreach (EmptyTile emptyTile in EmptyTiles)
+        foreach (EmptyTile emptyTile in emptyTiles)
         {
             if (emptyTile.isAvailable)
             {
@@ -94,13 +94,13 @@ public class WorldGenerator : MonoBehaviour {
             
             Destroy(emptyTile.gameObject);
         }
-
     }
 
     /// <summary>
     /// Adds either an ocean or island tile at a specified location
     /// </summary>
     /// <param name="emptyTile">The EmptyTile</param>
+    /// <param name="islandSize">The islandSize</param>
     /// <returns>The created tile</returns>
     private Tile AddIslandTile(EmptyTile emptyTile, IslandTile.IslandSize islandSize)
     {
@@ -282,6 +282,10 @@ public class WorldGenerator : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Determine the size of which to generate the island
+    /// </summary>
+    /// <returns>The determined size</returns>
     private IslandTile.IslandSize DetermineIslandSize()
     {
         float randomValue = Random.Range(0f, 1f);
@@ -301,6 +305,12 @@ public class WorldGenerator : MonoBehaviour {
         return IslandTile.IslandSize.Large;
     }
 
+    /// <summary>
+    /// Returns true if there are no conflicts with generating the specifed size of island
+    /// </summary>
+    /// <param name="emptyTile">The emptyTile</param>
+    /// <param name="size">The specified size</param>
+    /// <returns>Whether or not the specified size can be generated at emptyTile location</returns>
     private bool CanGenerate(EmptyTile emptyTile, IslandTile.IslandSize size)
     {
         switch (size)
@@ -345,7 +355,6 @@ public class WorldGenerator : MonoBehaviour {
         Debug.Log("Something went wrong with island generation");
         return true;
     }
-
 }
 
        

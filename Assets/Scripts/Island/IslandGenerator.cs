@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IslandGenerator : MonoBehaviour {
+public sealed class IslandGenerator : MonoBehaviour {
 
     private float islandWidth;
 
@@ -19,40 +19,25 @@ public class IslandGenerator : MonoBehaviour {
 
     const float constantValue = 20f;
 
-    public bool AutoUpdate
-    {
-        get
-        {
-            return islandData.autoUpdate;
-        }
-    }
-
-    public float MinHeight
-    {
-        get
-        {
-            return (constantValue/5) * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(0);
-        }
-    }
-
-    public float MaxHeight
-    {
-        get
-        {
-            return constantValue * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(1);
-        }
-    }
+    private float minHeight;
+    private float maxHeight;
 
     private void Awake()
     {
         islandTile = GetComponent<IslandTile>();
+
+        minHeight = (constantValue / 5) * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(0);
+        maxHeight = constantValue * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(1);
 
         islandWidth = WorldGenerator.tileSize / 2;
         islandHeight = WorldGenerator.tileSize / 2;
         seed = islandTile.UniqueIslandData.Seed;
     }
 
-    public void GenerateMap()
+    /// <summary>
+    /// Generates the island
+    /// </summary>
+    public void GenerateIsland()
     {
         float[,] noiseMap = Noise.GenerateNoiseMap(islandWidth, islandHeight, seed, islandTile.UniqueIslandData.NoiseScale, islandTile.UniqueIslandData.Octaves, islandTile.UniqueIslandData.Persistance, islandData.lacunarity, islandTile.UniqueIslandData.Offset);
 
@@ -65,37 +50,31 @@ public class IslandGenerator : MonoBehaviour {
             }
         }
 
-        UpdateMeshHeights(islandData.terrainMaterial, MinHeight, MaxHeight);
+        UpdateMeshHeights(islandData.terrainMaterial, minHeight, maxHeight);
 
         MapDisplay display = FindObjectOfType<MapDisplay>();
 
         display.DrawMesh(MeshGenerator.GenerateTerrainMesh(noiseMap, islandData.meshHeightMultiplier, islandData.meshHeightCurve));
-    }
 
-    private void OnValidate()
-    {
-        if(islandWidth < 1)
-        {
-            islandWidth = 1;
-        }
-        if(islandHeight < 1)
-        {
-            islandHeight = 1;
-        }
-        
         ApplyToMaterial(islandData.terrainMaterial);
-
-        falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
-
-
     }
 
+    /// <summary>
+    /// Sets the height variables in material(shader)
+    /// </summary>
+    /// <param name="material">The material</param>
+    /// <param name="minHeight">The minHeight</param>
+    /// <param name="maxHeight">The maxHeight</param>
     private void UpdateMeshHeights(Material material, float minHeight, float maxHeight)
     {
         material.SetFloat("minHeight", minHeight);
         material.SetFloat("maxHeight", maxHeight);
     }
 
+    /// <summary>
+    /// Applies various properties to the material(shader)
+    /// </summary>
+    /// <param name="material"></param>
     private void ApplyToMaterial(Material material)
     {
         material.SetColorArray("baseColours", islandData.baseColours);
@@ -103,9 +82,12 @@ public class IslandGenerator : MonoBehaviour {
         material.SetFloatArray("baseBlends", islandData.baseBlends);
         material.SetInt("baseColourCount", islandData.baseColours.Length);
 
-        UpdateMeshHeights(material, MinHeight, MaxHeight);
+        UpdateMeshHeights(material, minHeight, maxHeight);
     }
 
+    /// <summary>
+    /// Determines the size of the island based on its IslandSize value
+    /// </summary>
     public void DetermineSize()
     {
         switch (islandTile.Size)
@@ -125,7 +107,6 @@ public class IslandGenerator : MonoBehaviour {
         }
         falloffMap = FallOffGenerator.GenerateFalloffMap(islandWidth, islandHeight);
     }
-    
 }
 
 

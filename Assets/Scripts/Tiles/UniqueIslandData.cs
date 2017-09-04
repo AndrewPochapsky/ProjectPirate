@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class UniqueIslandData {
+public sealed class UniqueIslandData {
 
     public int Seed { get; private set; }
     public float Persistance { get; private set; }
