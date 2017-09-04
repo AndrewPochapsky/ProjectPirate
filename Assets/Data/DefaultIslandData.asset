@@ -11,11 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 504f9024181289a45b995801bc1ebf03, type: 3}
   m_Name: DefaultIslandData
   m_EditorClassIdentifier: 
-  noiseScale: 10
-  octaves: 6
-  persistance: 0.589
   lacunarity: 2
-  offset: {x: 0, y: 0}
   meshHeightMultiplier: 5.5
   meshHeightCurve:
     serializedVersion: 2
