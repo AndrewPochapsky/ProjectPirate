@@ -3,24 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor (typeof (MapGenerator))]
+//TODO remove this?
+[CustomEditor (typeof (IslandGenerator))]
 public class MapGeneratorEditor : Editor {
 
     public override void OnInspectorGUI()
     {
-        MapGenerator generator = (MapGenerator)target;
-
-        if (DrawDefaultInspector())
-        {
-            if (generator.AutoUpdate)
-            {
-                generator.GenerateMap();
-            }
-        }
+        IslandGenerator generator = (IslandGenerator)target;
 
         if (GUILayout.Button("Generate"))
         {
-            generator.GenerateMap();
+            generator.GenerateIsland();
             EditorUtility.SetDirty(target);
         }
     }

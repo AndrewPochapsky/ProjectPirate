@@ -4,15 +4,15 @@ using UnityEngine;
 
 public static class FallOffGenerator  {
     
-    public static float[,] GenerateFalloffMap(int width, int height)
+    public static float[,] GenerateFalloffMap(float width, float height)
     {
-        float[,] map = new float[width, height];
+        float[,] map = new float[(int)width, (int)height];
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                float sampleX = x / (float)width * 2 - 1;
-                float sampleY = y / (float)height * 2 - 1;
+                float sampleX = x / width * 2 - 1;
+                float sampleY = y / height * 2 - 1;
 
                 float value = Mathf.Max(Mathf.Abs(sampleX), Mathf.Abs(sampleY));
                 map[x, y] = Evaluate(value);
