@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 33072862761867452}
   - component: {fileID: 23477253272990324}
   m_Layer: 0
-  m_Name: OceanTile
+  m_Name: GrassTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -55,7 +55,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 63c08de446538d840821d0500b015e05, type: 2}
+  - {fileID: 2100000, guid: d0d66e4b9d3f0064fa051b7c44af71e9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
