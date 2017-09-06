@@ -9,11 +9,18 @@ public class WorldController : MonoBehaviour {
     public const int worldWidth = 10;
     public const int worldHeight = 10;
 
+    public const int mapTileSize = 50;
+
+    /// <summary>
+    /// This is required in order for the island tiles to match with the ocean tiles
+    /// </summary>
+    int newSize = mapTileSize * 24;
+
     private void Awake()
     {
         worldGenerator = FindObjectOfType<WorldGenerator>();
 
-        worldGenerator.GenerateWorld(worldWidth, worldHeight);
-        worldGenerator.GenerateOceanTiles(addIslands: true, removeNodes: false);
+        worldGenerator.AddNodes(worldWidth, worldHeight, newSize);
+        worldGenerator.GenerateOceanTiles(addIslands: true, removeNodes: false, tileSize: newSize);
     }
 }

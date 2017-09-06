@@ -5,11 +5,11 @@ using UnityEngine;
 public class IslandTile : Tile {
 
     public enum IslandSize
-    {
-        Regular,
-        Long,
-        Tall,
-        Large
+    {               //Sizes:
+        Regular,    // 1x1
+        Long,       // 2x1
+        Tall,       // 1x2
+        Large       // 2x2
     }
 
     public IslandSize Size { get; set; }

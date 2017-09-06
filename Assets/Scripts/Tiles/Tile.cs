@@ -6,6 +6,16 @@ public abstract class Tile : MonoBehaviour {
 
     protected Vector2 gridLocation;
 
+    protected Color regularColour;
+
+    private Renderer _renderer;
+
+    private void Awake()
+    {
+        _renderer = GetComponent<Renderer>();
+        regularColour = _renderer.sharedMaterial.color;
+    }
+
     /// <summary>
     /// Enables/Disables the object according to value
     /// </summary>
@@ -22,5 +32,15 @@ public abstract class Tile : MonoBehaviour {
         {
             gridLocation = value;
         }
+    }
+
+    public void Select()
+    {
+        _renderer.material.color = Color.black;
+    }
+
+    public void Deselect()
+    {
+        _renderer.material.color = regularColour;
     }
 }

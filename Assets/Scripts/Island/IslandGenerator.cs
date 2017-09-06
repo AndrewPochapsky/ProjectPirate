@@ -29,8 +29,8 @@ public sealed class IslandGenerator : MonoBehaviour {
         minHeight = (constantValue / 5) * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(0);
         maxHeight = constantValue * islandData.meshHeightMultiplier * islandData.meshHeightCurve.Evaluate(1);
 
-        islandWidth = WorldGenerator.tileSize / 2;
-        islandHeight = WorldGenerator.tileSize / 2;
+        islandWidth = WorldController.mapTileSize / 2;
+        islandHeight = WorldController.mapTileSize / 2;
         seed = islandTile.UniqueIslandData.Seed;
     }
 
