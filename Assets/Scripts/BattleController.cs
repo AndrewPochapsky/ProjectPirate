@@ -22,10 +22,10 @@ public class BattleController : MonoBehaviour {
 
     private void Update()
     {
-        MouseRaycast();
+        Pathfinding.FindPath(WorldGenerator.Nodes[0], GetTargetNode(MouseRaycast()));
     }
 
-    private void MouseRaycast()
+    private Tile MouseRaycast()
     {
         //TODO refactor raycasting into other class
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -47,5 +47,11 @@ public class BattleController : MonoBehaviour {
                 lastSelectedTile = tile;
             }
         }
+        return lastSelectedTile;
+    }
+
+    private Node GetTargetNode(Tile tile)
+    {
+        return tile.transform.GetComponentInParent<Node>();
     }
 }

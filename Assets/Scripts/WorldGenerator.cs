@@ -22,6 +22,7 @@ public class WorldGenerator : MonoBehaviour {
     float islandSpawnChance = 0.1f;
     static List<Node> nodes;
 
+    //TODO change this
     public static List<Node> Nodes
     {
         get
