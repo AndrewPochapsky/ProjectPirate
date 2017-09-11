@@ -4,8 +4,16 @@ using UnityEngine;
 
 public static class Pathfinding {
 
-    public static List<Node> path;
+    private static List<Node> path;
 
+    public delegate void OnPathUpdated(List<Node> path);
+    public static event OnPathUpdated OnPathUpdatedEvent;
+
+    /// <summary>
+    /// Finds the path between a start and target node using A*
+    /// </summary>
+    /// <param name="startNode">The start node</param>
+    /// <param name="targetNode">The target(end) node</param>
 	public static void FindPath(Node startNode, Node targetNode)
     {
         List<Node> openSet = new List<Node>();
@@ -30,6 +38,7 @@ public static class Pathfinding {
             if(currentNode == targetNode)
             {
                 path = RetracePath(startNode, targetNode);
+                OnPathUpdatedEvent(path);
                 return;
             }
 

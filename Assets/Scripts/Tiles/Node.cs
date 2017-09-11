@@ -56,18 +56,19 @@ public class Node : MonoBehaviour {
     private void Start()
     {
         child = transform.GetChild(0).GetComponent<Tile>();
+        Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
     }
 
-    private void Update()
+    /// <summary>
+    /// Deselect any node which is not in the current path
+    /// </summary>
+    /// <param name="path">The path of nodes</param>
+    private void OnPathUpdated(List<Node> path)
     {
-        if(Pathfinding.path != null)
+        if (!path.Contains(this))
         {
-            if (!Pathfinding.path.Contains(this))
-            {
-                child.Deselect();
-            }
+            child.Deselect();
         }
-        
     }
 
     /// <summary>
