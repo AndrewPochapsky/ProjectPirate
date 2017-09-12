@@ -13,7 +13,7 @@ public class BattleController : MonoBehaviour {
 
     Tile lastSelectedTile;
 
-    GameObject player;
+    Entity player;
 
 	private void Awake()
     {
@@ -29,30 +29,35 @@ public class BattleController : MonoBehaviour {
         //TODO remove this, just for testing currently
         System.Random rnd = new System.Random();
 
-        player = Instantiate(Resources.Load("Player"), Vector3.zero, Quaternion.identity) as GameObject;
+        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
 
-        player.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
+        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
 
         int index = rnd.Next(WorldGenerator.Nodes.Count);
 
         Node startingLocation = WorldGenerator.Nodes[index];
 
-        player.transform.SetParent(startingLocation.transform);
+        playerObj.transform.SetParent(startingLocation.transform);
 
-        player.transform.localPosition = Vector3.zero;
+        playerObj.transform.localPosition = Vector3.zero;
+
+        player = playerObj.GetComponent<Entity>();
     }
 
     private void Update()
     {
         //TODO dont call this every frame
-        Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(MouseRaycast()));
+        if(!player.IsMoving)
+            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(MouseRaycast()));
     }
 
     void OnPathUpdated(List<Node> nodes)
     {
-        if (Input.GetMouseButtonDown(0))
+        Entity entity = player.GetComponent<Entity>();
+        if (!entity.IsMoving && Input.GetMouseButtonDown(0))
         {
-            MoveEntity(player, nodes[nodes.Count - 1]);
+            //MoveEntity(player.GetComponent<Entity>(), nodes);
+            entity.SetPathNodes(nodes);
         }
     }
 
@@ -86,17 +91,6 @@ public class BattleController : MonoBehaviour {
         return tile.transform.GetComponentInParent<Node>();
     }
 
-    /// <summary>
-    /// Move the given entity to the given position
-    /// </summary>
-    /// <param name="entity">Entity to move</param>
-    /// <param name="targetLocation">Position to move to</param>
-    private void MoveEntity(GameObject entity, Node targetLocation)
-    {
-        //TODO change GameObject to Entity and add actual moving rather than instant tp
-        entity.transform.SetParent(targetLocation.transform);
-        entity.transform.localPosition = Vector3.zero;
-    }
 
     
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Node : MonoBehaviour {
 
-    Tile child;
+    public Tile Child { get; private set; }
 
     public Vector2 location;
 
@@ -55,8 +55,9 @@ public class Node : MonoBehaviour {
 
     private void Start()
     {
-        child = transform.GetChild(0).GetComponent<Tile>();
+        Child = transform.GetChild(0).GetComponent<Tile>();
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
+        
     }
 
     /// <summary>
@@ -67,7 +68,7 @@ public class Node : MonoBehaviour {
     {
         if (!path.Contains(this))
         {
-            child.Deselect();
+            Child.Deselect();
         }
     }
 
