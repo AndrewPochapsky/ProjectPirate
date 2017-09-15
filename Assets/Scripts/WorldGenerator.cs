@@ -41,29 +41,72 @@ public class WorldGenerator : MonoBehaviour {
         tileLocation = Vector3.zero;
     }
 
+    public Chunk GenerateChunk(Vector2 gridLocation, Vector3 worldLocation)
+    {
+        GameObject obj = Instantiate(Resources.Load(nameof(Chunk)), worldLocation, Quaternion.identity) as GameObject;
+        Chunk chunk = obj.GetComponent<Chunk>();
+        chunk.location = gridLocation;
+
+        return chunk;
+    } 
+
+    public Vector3 GetNextChunkLocation(Chunk chunk, int tileSize)
+    {
+        //The tile is currently on the edge so the next one should start new row
+        if (chunk.location.x + 1 == WorldController.chunkSize)
+        {
+            return new Vector3(0, 0, tileLocation.z + tileSize);
+        }
+        
+        return new Vector3(tileLocation.x + tileSize, 0, tileLocation.z);
+    }
+
     /// <summary>
     /// Adds the nodes to the map
     /// </summary>
     /// <param name="worldWidth">The width</param>
     /// <param name="worldHeight">The height</param>
     /// <param name="tileSize">The tileSize</param>
-    public void AddNodes(int worldWidth, int worldHeight, int tileSize)
+    public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, Transform parent = null)
     {
+        List<Node> nodes = new List<Node>();
         //Create the grid
         for (int y = 0; y < worldHeight; y++)
         {
             for (int x = 0; x < worldWidth; x++)
             {
                 Vector2 location = new Vector2(x, y);
-                nodes.Add(AddNode(location, worldWidth, tileSize));
+                nodes.Add(AddNode(location, worldWidth, tileSize, parent));
             }
         }
 
         //Add the placeholder empty tiles
         foreach (var node in nodes)
         {
-            node.SetAdjacents();
+            //node.SetAdjacents();
         }
+        return nodes;
+    }
+
+    /// <summary>
+    /// Add a node to the grid
+    /// </summary>
+    /// <param name="location">The grid location to give to the instantiated tile(row, column)</param>
+    /// <param name="tileSize">The tileSize</param>
+    /// <returns>The created tile</returns>
+    private Node AddNode(Vector2 location, int worldWidth, int tileSize, Transform parent)
+    {
+        GameObject obj = Instantiate(Resources.Load("Tiles/" + nameof(Node)), tileLocation, Quaternion.identity) as GameObject;
+        Node tile = obj.GetComponent<Node>();
+
+        if (parent != null)
+            tile.transform.SetParent(parent);
+
+        tile.location = location;
+
+        tileLocation = GetNextLocation(tile, worldWidth, tileSize);
+
+        return tile;
     }
 
     /// <summary>
@@ -72,7 +115,7 @@ public class WorldGenerator : MonoBehaviour {
     /// <param name="addIslands">True if want to include islands</param>
     /// <param name="removeNodes">True if nodes should be removed</param>
     /// <param name="tileSize">The tileSize</param>
-    public void GenerateOceanTiles(bool addIslands, bool removeNodes, int tileSize)
+    public void GenerateOceanTiles(List<Node> nodes, bool addIslands, bool removeNodes, int tileSize, Transform parent)
     {
         Tile createdTile = null;
 
@@ -88,7 +131,7 @@ public class WorldGenerator : MonoBehaviour {
 
                     if (CanGenerate(node, size))
                     {
-                        createdTile = AddIslandTile(node, size, tileSize);
+                        createdTile = AddIslandTile(node, size, tileSize, parent);
                     }
                     else
                     {
@@ -108,7 +151,7 @@ public class WorldGenerator : MonoBehaviour {
             else
             {
                 createdTile.transform.SetParent(node.transform);
-                node.transform.SetParent(container);
+                //node.transform.SetParent(container);
             }
         }
     }
@@ -120,7 +163,7 @@ public class WorldGenerator : MonoBehaviour {
     /// <param name="islandSize">The islandSize</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>The created tile</returns>
-    private Tile AddIslandTile(Node node, IslandTile.IslandSize islandSize, int tileSize)
+    private Tile AddIslandTile(Node node, IslandTile.IslandSize islandSize, int tileSize, Transform parent)
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y, node.transform.position.z);
         GameObject obj = Instantiate(Resources.Load("Tiles/IslandTile"), position, Quaternion.identity) as GameObject;
@@ -132,7 +175,7 @@ public class WorldGenerator : MonoBehaviour {
 
         SetUpIsland(node, obj, tileSize);
 
-        obj.transform.SetParent(container);
+        obj.transform.SetParent(parent);
 
         return obj.GetComponent<Tile>();
     }
@@ -203,25 +246,6 @@ public class WorldGenerator : MonoBehaviour {
 
         oceanTileChild.localScale = GetOceanTileSize(islandTile, tileSize);
         oceanTileChild.localScale += tileScaleAddition;
-    }
-
-    /// <summary>
-    /// Add a node to the grid
-    /// </summary>
-    /// <param name="location">The grid location to give to the instantiated tile(row, column)</param>
-    /// <param name="tileSize">The tileSize</param>
-    /// <returns>The created tile</returns>
-    private Node AddNode(Vector2 location, int worldWidth, int tileSize)
-    {
-        GameObject obj = Instantiate(Resources.Load("Tiles/"+ nameof(Node)), tileLocation, Quaternion.identity) as GameObject;
-        Node tile = obj.GetComponent<Node>();
-
-        tile.transform.SetParent(container);
-        tile.location = location;
-
-        tileLocation = GetNextLocation(tile, worldWidth, tileSize);
-
-        return tile;
     }
 
     /// <summary>
