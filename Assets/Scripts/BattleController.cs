@@ -28,19 +28,13 @@ public class BattleController : MonoBehaviour {
     {
         //TODO remove this, just for testing currently
         System.Random rnd = new System.Random();
-
-        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
-
-        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
-
         int index = rnd.Next(WorldGenerator.Nodes.Count);
-
         Node startingLocation = WorldGenerator.Nodes[index];
 
+        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
+        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
         playerObj.transform.SetParent(startingLocation.transform);
-
         playerObj.transform.localPosition = Vector3.zero;
-
         player = playerObj.GetComponent<Entity>();
     }
 
@@ -51,19 +45,25 @@ public class BattleController : MonoBehaviour {
             Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(MouseRaycast()));
     }
 
+    /// <summary>
+    /// Called when Pathfinding.OnPathUpdatedEvent is invoked
+    /// </summary>
+    /// <param name="nodes"></param>
     void OnPathUpdated(List<Node> nodes)
     {
         Entity entity = player.GetComponent<Entity>();
         if (!entity.IsMoving && Input.GetMouseButtonDown(0))
         {
-            //MoveEntity(player.GetComponent<Entity>(), nodes);
             entity.SetPathNodes(nodes);
         }
     }
 
+    /// <summary>
+    /// Raycasts from mouse
+    /// </summary>
+    /// <returns>If hits tile, returns</returns>
     private Tile MouseRaycast()
     {
-        //TODO refactor raycasting into other class
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
@@ -86,11 +86,13 @@ public class BattleController : MonoBehaviour {
         return lastSelectedTile;
     }
 
+    /// <summary>
+    /// Gets the node component from the specifed tile
+    /// </summary>
+    /// <param name="tile">The tile</param>
+    /// <returns>The node component</returns>
     private Node GetTargetNode(Tile tile)
     {
         return tile.transform.GetComponentInParent<Node>();
     }
-
-
-    
 }

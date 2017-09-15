@@ -17,21 +17,29 @@ public class Entity : MonoBehaviour {
         speed = 200 * Time.deltaTime;
     }
 
+    private void Update()
+    {
+        if (nextLocation != null && ReachedNode(nextLocation))
+            nextLocation = GetNextLocation();
+
+        MoveToLocation(nextLocation);
+    }
+
     /// <summary>
-    /// Gets the next location to move to from list
+    /// Returns the next location to move to from list
     /// </summary>
-    public void GetNextLocation()
+    /// <returns>The location</returns>
+    public Node GetNextLocation()
     {
         if(nodes!= null)
         {
             if (currentNodeIndex + 1 <= nodes.Count)
             {
-                if (Mathf.Round(transform.position.x) == Mathf.Round(nodes[currentNodeIndex].transform.position.x) &&
-                   Mathf.Round(transform.position.z) == Mathf.Round(nodes[currentNodeIndex].transform.position.z))
+                if (ReachedNode(nodes[currentNodeIndex]))
                 {
                     print("reached");
                     currentNodeIndex++;
-                    nextLocation = nodes[currentNodeIndex];
+                    return nodes[currentNodeIndex];
                 }
             }
             else
@@ -41,7 +49,7 @@ public class Entity : MonoBehaviour {
             }
                
         }
-        
+        return nextLocation;
     }
 
     /// <summary>
@@ -69,15 +77,18 @@ public class Entity : MonoBehaviour {
     /// <param name="location">Location to move to</param>
     private void MoveToLocation(Node location)
     {
-        if(IsMoving)
+        if(location!=null && IsMoving)
             transform.position = Vector3.MoveTowards(transform.position, location.transform.position, speed);
     }
 
-    private void Update()
+    /// <summary>
+    /// Returns true when rounded x and z floats are equal to node
+    /// </summary>
+    /// <param name="node">The node</param>
+    /// <returns>True if reached l</returns>
+    private bool ReachedNode(Node node)
     {
-        GetNextLocation();
-        MoveToLocation(nextLocation);
+        return Mathf.Round(transform.position.x) == Mathf.Round(node.transform.position.x) &&
+                   Mathf.Round(transform.position.z) == Mathf.Round(node.transform.position.z);
     }
-
-    
 }

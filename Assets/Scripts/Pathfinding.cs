@@ -62,11 +62,16 @@ public static class Pathfinding {
                         openSet.Add(adjacentNode);
                     }
                 }
-
             }
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="startNode"></param>
+    /// <param name="endNode"></param>
+    /// <returns></returns>
     private static List<Node> RetracePath(Node startNode, Node endNode)
     {
         List<Node> path = new List<Node>();
