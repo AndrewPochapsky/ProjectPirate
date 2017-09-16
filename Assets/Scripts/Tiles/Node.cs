@@ -41,7 +41,6 @@ public class Node : BaseNode {
         }
     }
 
-    
     private void Start()
     {
         if(transform.childCount > 0)

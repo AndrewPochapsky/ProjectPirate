@@ -50,15 +50,14 @@ public class WorldGenerator : MonoBehaviour {
         return chunk;
     } 
 
-    public Vector3 GetNextChunkLocation(Chunk chunk, int tileSize)
+    public Vector3 GetNextChunkLocation(Chunk chunk, int tileSize, int numberOfTiles, Vector3 currentChunkLocation)
     {
-        //The tile is currently on the edge so the next one should start new row
-        if (chunk.location.x + 1 == WorldController.chunkSize)
+        if (chunk.location.x + 1 == WorldController.numberOfChunks)
         {
-            return new Vector3(0, 0, tileLocation.z + tileSize);
+            return new Vector3(0, 0, currentChunkLocation.z + (tileSize * numberOfTiles));
         }
         
-        return new Vector3(tileLocation.x + tileSize, 0, tileLocation.z);
+        return new Vector3(currentChunkLocation.x + (tileSize * numberOfTiles), 0, currentChunkLocation.z);
     }
 
     /// <summary>
@@ -96,15 +95,17 @@ public class WorldGenerator : MonoBehaviour {
     /// <returns>The created tile</returns>
     private Node AddNode(Vector2 location, int worldWidth, int tileSize, Transform parent)
     {
-        GameObject obj = Instantiate(Resources.Load("Tiles/" + nameof(Node)), tileLocation, Quaternion.identity) as GameObject;
+        GameObject obj = Instantiate(Resources.Load("Tiles/" + nameof(Node)), Vector3.zero, Quaternion.identity) as GameObject;
         Node tile = obj.GetComponent<Node>();
 
         if (parent != null)
             tile.transform.SetParent(parent);
 
+        obj.transform.localPosition = tileLocation;
+
         tile.location = location;
 
-        tileLocation = GetNextLocation(tile, worldWidth, tileSize);
+        tileLocation = GetNextNodeLocation(tile, worldWidth, tileSize);
 
         return tile;
     }
@@ -127,7 +128,7 @@ public class WorldGenerator : MonoBehaviour {
 
                 if (addIslands && num <= islandSpawnChance)
                 {
-                    IslandTile.IslandSize size = DetermineIslandSize();
+                    IslandTile.IslandSize size = IslandTile.DetermineIslandSize();
 
                     if (CanGenerate(node, size))
                     {
@@ -135,12 +136,12 @@ public class WorldGenerator : MonoBehaviour {
                     }
                     else
                     {
-                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize);
+                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize, parent);
                     }
                 }
                 else
                 {
-                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize);
+                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize, parent);
                 }
             }
 
@@ -187,7 +188,7 @@ public class WorldGenerator : MonoBehaviour {
     /// <param name="node">The node</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>The created tile</returns>
-    private Tile AddAnyTile(string tileName, Node node, int tileSize)
+    private Tile AddAnyTile(string tileName, Node node, int tileSize, Transform parent)
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y, node.transform.position.z);
 
@@ -197,7 +198,7 @@ public class WorldGenerator : MonoBehaviour {
 
         obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
 
-        obj.transform.SetParent(container);
+        obj.transform.SetParent(parent);
 
         return obj.GetComponent<Tile>();
     }
@@ -212,7 +213,7 @@ public class WorldGenerator : MonoBehaviour {
     {
         foreach(Node node in nodes)
         {
-            Tile createdTile = AddAnyTile(tileName, node, tileSize);
+            Tile createdTile = AddAnyTile(tileName, node, tileSize, container);
 
             if (removeNodes)
             {
@@ -242,9 +243,9 @@ public class WorldGenerator : MonoBehaviour {
 
         DisableRedundantNodes(islandTile, node);
 
-        islandTile.transform.position += GetIslandOffset(islandTile, tileSize);
+        islandTile.transform.position += IslandTile.GetIslandOffset(islandTile, tileSize);
 
-        oceanTileChild.localScale = GetOceanTileSize(islandTile, tileSize);
+        oceanTileChild.localScale = IslandTile.GetChildOceanTileOffset(islandTile, tileSize);
         oceanTileChild.localScale += tileScaleAddition;
     }
 
@@ -254,7 +255,7 @@ public class WorldGenerator : MonoBehaviour {
     /// <param name="node">The tile whose location is used</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>A Vector3 of the next location</returns>
-    private Vector3 GetNextLocation(Node node, int worldWidth, int tileSize)
+    private Vector3 GetNextNodeLocation(Node node, int worldWidth, int tileSize)
     {
         Vector3 nextLocation = Vector3.zero;
 
@@ -271,52 +272,7 @@ public class WorldGenerator : MonoBehaviour {
         return nextLocation;
     }
     
-    /// <summary>
-    /// Gets the correct island offset given its size
-    /// </summary>
-    /// <param name="islandTile">The island tile</param>
-    /// <param name="tileSize">The tileSize</param>
-    /// <returns>The offset</returns>
-    private Vector3 GetIslandOffset(IslandTile islandTile, int tileSize)
-    {
-        switch (islandTile.Size)
-        {
-            case IslandTile.IslandSize.Long:
-                return new Vector3(tileSize / 2, 0, 0);
-
-            case IslandTile.IslandSize.Tall:
-                return new Vector3(0, 0, tileSize / 2);
-
-            case IslandTile.IslandSize.Large:
-                return new Vector3(tileSize / 2, 0, tileSize / 2);
-        }
-        return Vector3.zero;
-    }
-
-    /// <summary>
-    /// Gets the correct oceanTileSize for the given island's oceanTile child
-    /// </summary>
-    /// <param name="islandTile">The island tile</param>
-    /// <param name="tileSize">The tileSize</param>
-    /// <returns>The size</returns>
-    private Vector3 GetOceanTileSize(IslandTile islandTile, int tileSize)
-    {
-        switch (islandTile.Size)
-        {
-            case IslandTile.IslandSize.Regular:
-                return new Vector3(tileSize, tileSize, 1);
-
-            case IslandTile.IslandSize.Long:
-                return new Vector3(tileSize * 2, tileSize, 1);
-
-            case IslandTile.IslandSize.Tall:
-                return new Vector3(tileSize, tileSize * 2, 1);
-
-            case IslandTile.IslandSize.Large:
-                return new Vector3(tileSize * 2, tileSize * 2, 1);
-        }
-        return Vector3.zero;
-    }
+   
 
     /// <summary>
     /// Disables nodes which are now taken up by larger island
@@ -354,28 +310,6 @@ public class WorldGenerator : MonoBehaviour {
         }
     }
 
-    /// <summary>
-    /// Determine the size of which to generate the island
-    /// </summary>
-    /// <returns>The determined size</returns>
-    private IslandTile.IslandSize DetermineIslandSize()
-    {
-        float randomValue = Random.Range(0f, 1f);
-
-        if (randomValue <= 0.5f)
-        {
-            return IslandTile.IslandSize.Regular;
-        }
-        else if (randomValue <= 0.7f)
-        {
-            return IslandTile.IslandSize.Long;
-        }
-        else if(randomValue <= 0.9f)
-        {
-            return IslandTile.IslandSize.Tall;
-        }
-        return IslandTile.IslandSize.Large;
-    }
 
     /// <summary>
     /// Returns true if there are no conflicts with generating the specifed size of island
@@ -426,6 +360,11 @@ public class WorldGenerator : MonoBehaviour {
 
         Debug.Log("Something went wrong with island generation");
         return true;
+    }
+
+    public void ResetTileLocation()
+    {
+        tileLocation = Vector3.zero;
     }
 }
 
