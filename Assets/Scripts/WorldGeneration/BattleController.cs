@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BattleController : MonoBehaviour {
 
-    WorldGenerator worldGenerator;
+    TileGenerator tileGenerator;
 
     const int battleTileSize = 50;
 
@@ -15,11 +15,14 @@ public class BattleController : MonoBehaviour {
 
     Entity player;
 
+    Transform parent;
+
 	private void Awake()
     {
-        worldGenerator = FindObjectOfType<WorldGenerator>();
-        worldGenerator.AddNodes(width, height, battleTileSize);
-        worldGenerator.GenerateTileMap("GrassTile", removeNodes: false, tileSize: battleTileSize);
+        parent = GameObject.FindGameObjectWithTag("World").transform;
+        tileGenerator = FindObjectOfType<TileGenerator>();
+        tileGenerator.AddNodes(width, height, battleTileSize);
+        tileGenerator.GenerateTileMap("GrassTile", removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
     }
@@ -28,8 +31,8 @@ public class BattleController : MonoBehaviour {
     {
         //TODO remove this, just for testing currently
         System.Random rnd = new System.Random();
-        int index = rnd.Next(WorldGenerator.Nodes.Count);
-        Node startingLocation = WorldGenerator.Nodes[index];
+        int index = rnd.Next(TileGenerator.Nodes.Count);
+        Node startingLocation = TileGenerator.Nodes[index];
 
         GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
         playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
