@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour {
 
-    public Chunk GenerateChunk(Vector2 gridLocation, Vector3 worldLocation)
+    public Chunk GenerateChunk(Vector2 gridLocation, Vector3 worldLocation, Transform parent)
     {
         GameObject obj = Instantiate(Resources.Load(nameof(Chunk)), worldLocation, Quaternion.identity) as GameObject;
         Chunk chunk = obj.GetComponent<Chunk>();
         chunk.location = gridLocation;
+
+        chunk.transform.SetParent(parent);
 
         return chunk;
     }

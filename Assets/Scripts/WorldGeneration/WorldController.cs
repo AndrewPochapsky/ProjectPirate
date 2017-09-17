@@ -29,11 +29,14 @@ public class WorldController : MonoBehaviour {
     /// </summary>
     int newSize = mapTileSize * 24;
 
+    Transform chunkParent;
+
     List<Node> nodes;
 
     private void Awake()
     {
         nodes = new List<Node>();
+        chunkParent = GameObject.FindGameObjectWithTag("World").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
         chunkGenerator = FindObjectOfType<ChunkGenerator>();
 
@@ -51,7 +54,7 @@ public class WorldController : MonoBehaviour {
             {
                 Vector2 location = new Vector2(x, y);
 
-                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation);
+                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, chunkParent);
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
 
