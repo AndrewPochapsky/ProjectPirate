@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WorldController : MonoBehaviour {
 
@@ -29,18 +30,26 @@ public class WorldController : MonoBehaviour {
     /// </summary>
     int newSize = mapTileSize * 24;
 
-    Transform chunkParent;
+    World world;
 
     List<Node> nodes;
 
+    static bool hasGenerated = false;
+
     private void Awake()
     {
-        nodes = new List<Node>();
-        chunkParent = GameObject.FindGameObjectWithTag("World").transform;
-        tileGenerator = FindObjectOfType<TileGenerator>();
-        chunkGenerator = FindObjectOfType<ChunkGenerator>();
+        world = GameObject.FindGameObjectWithTag("World").GetComponent<World>();
+        if (!hasGenerated)
+        {
+            nodes = new List<Node>();
+            tileGenerator = FindObjectOfType<TileGenerator>();
+            chunkGenerator = FindObjectOfType<ChunkGenerator>();
 
-        GenerateWorld();
+            GenerateWorld();
+            print("Generating world");
+            hasGenerated = true;
+        }
+       
     }
 
     /// <summary>
@@ -54,7 +63,7 @@ public class WorldController : MonoBehaviour {
             {
                 Vector2 location = new Vector2(x, y);
 
-                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, chunkParent);
+                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, world.transform);
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
                 
@@ -64,6 +73,19 @@ public class WorldController : MonoBehaviour {
         }
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            world.ToggleWorld(false);
+            SceneManager.LoadScene(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.M))
+        {
+            world.ToggleWorld(true);
+            SceneManager.LoadScene(0);
+        }
+    }
 
 
 

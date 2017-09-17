@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour {
 
@@ -21,13 +22,9 @@ public class BattleController : MonoBehaviour {
 
 	private void Awake()
     {
-        parent = GameObject.FindGameObjectWithTag("World").transform;
+        parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
         nodes = tileGenerator.AddNodes(width, height, battleTileSize);
-
-
-       
-
         tileGenerator.GenerateTileMap("GrassTile", nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
@@ -52,6 +49,11 @@ public class BattleController : MonoBehaviour {
         //TODO dont call this every frame
         if(!player.IsMoving)
             Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(MouseRaycast()));
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
     /// <summary>
