@@ -12,8 +12,6 @@ public class BattleController : MonoBehaviour {
     const int width = 10;
     const int height = 10;
 
-    Tile lastSelectedTile;
-
     Entity player;
 
     Transform parent;
@@ -27,11 +25,6 @@ public class BattleController : MonoBehaviour {
         nodes = tileGenerator.AddNodes(width, height, battleTileSize);
         tileGenerator.GenerateTileMap("GrassTile", nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
-        Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
-    }
-
-    private void Start()
-    {
         //TODO remove this, just for testing currently
         System.Random rnd = new System.Random();
         int index = rnd.Next(nodes.Count);
@@ -42,16 +35,25 @@ public class BattleController : MonoBehaviour {
         playerObj.transform.SetParent(startingLocation.transform);
         playerObj.transform.localPosition = Vector3.zero;
         player = playerObj.GetComponent<Entity>();
+
+        Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
+    }
+
+    private void Start()
+    {
+        
     }
 
     private void Update()
     {
+        Tile tile = MouseRaycast();
         //TODO dont call this every frame
-        if(!player.IsMoving)
-            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(MouseRaycast()));
+        if(!player.IsMoving && tile != null)
+            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
 
         if (Input.GetKeyDown(KeyCode.M))
         {
+            Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
             SceneManager.LoadScene(0);
         }
     }
@@ -72,29 +74,18 @@ public class BattleController : MonoBehaviour {
     /// <summary>
     /// Raycasts from mouse
     /// </summary>
-    /// <returns>If hits tile, returns</returns>
+    /// <returns>The tile</returns>
     private Tile MouseRaycast()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
+        Physics.Raycast(ray, out hit, int.MaxValue);
 
-        bool hasHit = Physics.Raycast(ray, out hit, int.MaxValue);
+        if(hit.collider != null)
+            return hit.collider.gameObject.GetComponent<Tile>();
 
-        if (hasHit)
-        {
-            Tile tile = hit.collider.gameObject.GetComponent<Tile>();
-            if (tile != null)
-            {
-                if (lastSelectedTile != null && tile != lastSelectedTile)
-                {
-                    lastSelectedTile.Deselect();
-                }
-                tile.Select();
-                lastSelectedTile = tile;
-            }
-        }
-        return lastSelectedTile;
+        return null;
     }
 
     /// <summary>

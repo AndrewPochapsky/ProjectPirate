@@ -38,7 +38,8 @@ public class WorldController : MonoBehaviour {
 
     private void Awake()
     {
-        world = GameObject.FindGameObjectWithTag("World").GetComponent<World>();
+        world = FindObjectOfType<World>();
+        print("called");
         if (!hasGenerated)
         {
             nodes = new List<Node>();
@@ -50,6 +51,12 @@ public class WorldController : MonoBehaviour {
             hasGenerated = true;
         }
        
+    }
+
+    private void Start()
+    {
+        //world.ToggleWorld(true);
+        World.worldInstance.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -77,13 +84,8 @@ public class WorldController : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
-            world.ToggleWorld(false);
+            World.worldInstance.gameObject.SetActive(false);
             SceneManager.LoadScene(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.M))
-        {
-            world.ToggleWorld(true);
-            SceneManager.LoadScene(0);
         }
     }
 

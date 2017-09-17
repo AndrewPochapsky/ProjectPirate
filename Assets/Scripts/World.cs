@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class World : MonoBehaviour {
 
-    private static World worldInstance;
+    public static World worldInstance;
 
     private void Awake()
     {
@@ -19,11 +19,6 @@ public class World : MonoBehaviour {
         {
             DestroyObject(gameObject);
         }
-    }
-    
-    public void ToggleWorld(bool value)
-    {
-        this.gameObject.SetActive(value);
     }
 
 

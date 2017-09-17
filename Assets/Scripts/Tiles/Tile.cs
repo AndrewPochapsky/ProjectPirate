@@ -16,6 +16,11 @@ public abstract class Tile : MonoBehaviour {
         regularColour = _renderer.sharedMaterial.color;
     }
 
+    private void Update()
+    {
+        _renderer = GetComponent<Renderer>();
+    }
+
     /// <summary>
     /// Enables/Disables the object according to value
     /// </summary>
@@ -41,6 +46,7 @@ public abstract class Tile : MonoBehaviour {
 
     public void Deselect()
     {
-        _renderer.material.color = regularColour;
+        if(_renderer != null)
+            _renderer.material.color = regularColour;
     }
 }
