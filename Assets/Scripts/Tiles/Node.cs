@@ -16,8 +16,6 @@ public class Node : BaseNode {
     //TODO make this protected and set depending on the node type
     public bool traversable = true;
 
-   
-
     /// <summary>
     /// Movement cost of moving to node
     /// </summary>

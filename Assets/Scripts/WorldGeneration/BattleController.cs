@@ -17,12 +17,18 @@ public class BattleController : MonoBehaviour {
 
     Transform parent;
 
+    List<Node> nodes;
+
 	private void Awake()
     {
         parent = GameObject.FindGameObjectWithTag("World").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
-        tileGenerator.AddNodes(width, height, battleTileSize);
-        tileGenerator.GenerateTileMap("GrassTile", removeNodes: false, tileSize: battleTileSize, parent: parent);
+        nodes = tileGenerator.AddNodes(width, height, battleTileSize);
+
+
+       
+
+        tileGenerator.GenerateTileMap("GrassTile", nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
     }
@@ -31,8 +37,8 @@ public class BattleController : MonoBehaviour {
     {
         //TODO remove this, just for testing currently
         System.Random rnd = new System.Random();
-        int index = rnd.Next(TileGenerator.Nodes.Count);
-        Node startingLocation = TileGenerator.Nodes[index];
+        int index = rnd.Next(nodes.Count);
+        Node startingLocation = nodes[index];
 
         GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
         playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);

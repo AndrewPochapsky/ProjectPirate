@@ -54,6 +54,11 @@ public class TileGenerator : MonoBehaviour {
             }
         }
 
+        foreach(Node node in nodes)
+        {
+            node.SetAdjacents(nodes, worldWidth);
+        }
+
         return nodes;
     }
 
@@ -184,7 +189,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileName">Tile name to create</param>
     /// <param name="removeNodes">If true nodes will be removed</param>
     /// <param name="tileSize">The tileSize</param>
-    public void GenerateTileMap(string tileName, bool removeNodes, int tileSize, Transform parent)
+    public void GenerateTileMap(string tileName, List<Node> nodes, bool removeNodes, int tileSize, Transform parent)
     {
         foreach(Node node in nodes)
         {

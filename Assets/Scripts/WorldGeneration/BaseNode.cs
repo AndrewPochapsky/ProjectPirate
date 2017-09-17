@@ -23,7 +23,7 @@ public class BaseNode : MonoBehaviour {
     /// <summary>
     /// Sets the EmptyTile's adjacent tiles
     /// </summary>
-    public virtual void SetAdjacents(List<Node> nodes)
+    public void SetAdjacents(List<Node> nodes, int worldLimit)
     {
         //if tile is not on left edge
         if (location.x != 0)
@@ -33,7 +33,7 @@ public class BaseNode : MonoBehaviour {
         }
 
         //if tile is not on right edge
-        if (location.x + 1 != WorldController.chunkSize)
+        if (location.x + 1 != worldLimit)
         {
             RightEmpty = nodes.Single(t => t.location.x == location.x + 1 && t.location.y == location.y);
             Adjacents.Add(RightEmpty);
@@ -47,7 +47,7 @@ public class BaseNode : MonoBehaviour {
         }
 
         //if tile is not on top edge
-        if (location.y + 1 != WorldController.chunkSize)
+        if (location.y + 1 != worldLimit)
         {
             TopEmpty = nodes.Single(t => t.location.x == location.x && t.location.y == location.y + 1);
             Adjacents.Add(TopEmpty);
