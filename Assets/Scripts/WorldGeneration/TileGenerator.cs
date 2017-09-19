@@ -14,23 +14,11 @@ public class TileGenerator : MonoBehaviour {
     /// </summary>
     private Vector3 tileScaleAddition;
 
-    float islandSpawnChance = 0.1f;
-    static List<Node> nodes;
-
-    //TODO change this, only being used by temporary battlesystem
-    public static List<Node> Nodes
-    {
-        get
-        {
-            return nodes;
-        }
-    }
+    float islandSpawnChance = 0.1f;//TODO fiddle around with this value
 
     private void Awake()
     {
-        nodes = new List<Node>();
         tileScaleAddition = new Vector3(50, 50, 0);
-
         tileLocation = Vector3.zero;
     }
 
@@ -44,7 +32,6 @@ public class TileGenerator : MonoBehaviour {
     public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, Transform parent = null)
     {
         List<Node> nodes = new List<Node>();
-        //Create the grid
         for (int y = 0; y < worldHeight; y++)
         {
             for (int x = 0; x < worldWidth; x++)

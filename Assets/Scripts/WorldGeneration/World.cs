@@ -20,8 +20,4 @@ public class World : MonoBehaviour {
             DestroyObject(gameObject);
         }
     }
-
-
-
-
 }

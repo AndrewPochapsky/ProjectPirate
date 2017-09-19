@@ -39,14 +39,10 @@ public class BattleController : MonoBehaviour {
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
     }
 
-    private void Start()
-    {
-        
-    }
-
     private void Update()
     {
         Tile tile = MouseRaycast();
+
         //TODO dont call this every frame
         if(!player.IsMoving && tile != null)
             Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));

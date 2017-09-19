@@ -16,11 +16,6 @@ public abstract class Tile : MonoBehaviour {
         regularColour = _renderer.sharedMaterial.color;
     }
 
-    private void Update()
-    {
-        _renderer = GetComponent<Renderer>();
-    }
-
     /// <summary>
     /// Enables/Disables the object according to value
     /// </summary>

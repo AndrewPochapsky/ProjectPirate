@@ -30,7 +30,7 @@ public class WorldController : MonoBehaviour {
     /// </summary>
     int newSize = mapTileSize * 24;
 
-    World world;
+    Transform world;
 
     List<Node> nodes;
 
@@ -38,8 +38,7 @@ public class WorldController : MonoBehaviour {
 
     private void Awake()
     {
-        world = FindObjectOfType<World>();
-        print("called");
+        world = FindObjectOfType<World>().transform;
         if (!hasGenerated)
         {
             nodes = new List<Node>();
@@ -47,7 +46,6 @@ public class WorldController : MonoBehaviour {
             chunkGenerator = FindObjectOfType<ChunkGenerator>();
 
             GenerateWorld();
-            print("Generating world");
             hasGenerated = true;
         }
        
@@ -55,7 +53,6 @@ public class WorldController : MonoBehaviour {
 
     private void Start()
     {
-        //world.ToggleWorld(true);
         World.worldInstance.gameObject.SetActive(true);
     }
 
@@ -70,7 +67,7 @@ public class WorldController : MonoBehaviour {
             {
                 Vector2 location = new Vector2(x, y);
 
-                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, world.transform);
+                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, world);
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
                 
@@ -84,11 +81,8 @@ public class WorldController : MonoBehaviour {
     {
         if (Input.GetKeyDown(KeyCode.B))
         {
-            World.worldInstance.gameObject.SetActive(false);
             SceneManager.LoadScene(1);
+            World.worldInstance.gameObject.SetActive(false);
         }
     }
-
-
-
 }
