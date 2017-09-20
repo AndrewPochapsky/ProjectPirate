@@ -17,8 +17,9 @@ public class BattleController : MonoBehaviour {
     Transform parent;
 
     List<Node> nodes;
+    List<Node> range;
 
-	private void Awake()
+    private void Awake()
     {
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
@@ -37,15 +38,23 @@ public class BattleController : MonoBehaviour {
         player = playerObj.GetComponent<Entity>();
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
+
+        range = Pathfinding.GetRange(nodes, player.GetComponentInParent<Node>(), 1);
+        
     }
 
     private void Update()
     {
-        Tile tile = MouseRaycast();
+        foreach (Node node in range)
+        {
+            node.Child.Select();
+        }
+
+        //Tile tile = MouseRaycast();
 
         //TODO dont call this every frame
-        if(!player.IsMoving && tile != null)
-            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
+        //if(!player.IsMoving && tile != null)
+            //Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
 
         if (Input.GetKeyDown(KeyCode.M))
         {
