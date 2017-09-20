@@ -17,44 +17,32 @@ public class BattleController : MonoBehaviour {
     Transform parent;
 
     List<Node> nodes;
-    List<Node> range;
 
     private void Awake()
     {
+        //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
         nodes = tileGenerator.AddNodes(width, height, battleTileSize);
         tileGenerator.GenerateTileMap("GrassTile", nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
-        //TODO remove this, just for testing currently
+        //TODO remove this, IN
         System.Random rnd = new System.Random();
         int index = rnd.Next(nodes.Count);
         Node startingLocation = nodes[index];
 
-        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
-        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
-        playerObj.transform.SetParent(startingLocation.transform);
-        playerObj.transform.localPosition = Vector3.zero;
-        player = playerObj.GetComponent<Entity>();
+        player = SetupPlayer(startingLocation.transform);
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
-
-        range = Pathfinding.GetRange(nodes, player.GetComponentInParent<Node>(), 1);
-        
     }
 
     private void Update()
     {
-        foreach (Node node in range)
-        {
-            node.Child.Select();
-        }
-
-        //Tile tile = MouseRaycast();
+        Tile tile = MouseRaycast();
 
         //TODO dont call this every frame
-        //if(!player.IsMoving && tile != null)
-            //Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
+        if(!player.IsMoving && tile != null)
+            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
 
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -102,4 +90,19 @@ public class BattleController : MonoBehaviour {
     {
         return tile.transform.GetComponentInParent<Node>();
     }
+
+    /// <summary>
+    /// Sets up the player
+    /// </summary>
+    /// <param name="parent">The node parent</param>
+    /// <returns>The created player</returns>
+    private Entity SetupPlayer(Transform parent)
+    {
+        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
+        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
+        playerObj.transform.SetParent(parent);
+        playerObj.transform.localPosition = Vector3.zero;
+        return playerObj.GetComponent<Entity>();
+    }
+
 }

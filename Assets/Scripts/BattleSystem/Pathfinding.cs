@@ -104,13 +104,20 @@ public static class Pathfinding {
         return (int)Mathf.Abs(nodeA.location.x - nodeB.location.x) + (int)Mathf.Abs(nodeA.location.y - nodeB.location.y);
     }
 
-    public static List<Node> GetRange(List<Node> nodes, Node currentNode, int range)
+    /// <summary>
+    /// Returns a list of nodes in range
+    /// </summary>
+    /// <param name="nodes">The list of nodes</param>
+    /// <param name="originNode">The node to start from</param>
+    /// <param name="range">The range</param>
+    /// <returns>List of nodes in range</returns>
+    public static List<Node> GetRange(List<Node> nodes, Node originNode, int range)
     {
         List<Node> rangeNodes = new List<Node>();
 
         foreach(Node node in nodes)
         {
-            node.hCost = GetDistance(currentNode, node);
+            node.hCost = GetDistance(originNode, node);
             if(node.hCost <= range)
             {
                 rangeNodes.Add(node);
