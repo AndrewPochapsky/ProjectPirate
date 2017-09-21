@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
-    float speed;
+    /// <summary>
+    /// Number of grid spaces that an enemy can move
+    /// </summary>
+    protected int Speed { get; set; }
+
+    float movementSpeed;
 
     Node nextLocation;
     List<Node> nodes;
@@ -14,7 +19,7 @@ public class Entity : MonoBehaviour {
 
     private void Start()
     {
-        speed = 200 * Time.deltaTime;
+        movementSpeed = 200 * Time.deltaTime;
     }
 
     private void Update()
@@ -78,7 +83,7 @@ public class Entity : MonoBehaviour {
     private void MoveToLocation(Node location)
     {
         if(location!=null && IsMoving)
-            transform.position = Vector3.MoveTowards(transform.position, location.transform.position, speed);
+            transform.position = Vector3.MoveTowards(transform.position, location.transform.position, movementSpeed);
     }
 
     /// <summary>
