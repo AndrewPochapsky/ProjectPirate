@@ -5,6 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour {
 
+    public delegate void OnUIValuesChanged(string turnText);
+    public event OnUIValuesChanged OnUIValuesChangedEvent;
+
+    public enum Turn { Player, Enemy }
+    public Turn CurrentTurn { get; private set; } = Turn.Player;
+
     TileGenerator tileGenerator;
 
     const int battleTileSize = 50;
@@ -13,6 +19,8 @@ public class BattleController : MonoBehaviour {
     const int height = 10;
 
     Entity player;
+
+    Entity enemy;
 
     Transform parent;
 
@@ -29,20 +37,32 @@ public class BattleController : MonoBehaviour {
         //TODO remove this, IN
         System.Random rnd = new System.Random();
         int index = rnd.Next(nodes.Count);
-        Node startingLocation = nodes[index];
+        Node playerStartingLocation = nodes[index];
+        index = rnd.Next(nodes.Count);
+        Node enemyStartingLocation = nodes[index];
 
-        player = SetupPlayer(startingLocation.transform);
+
+        player = SetupEntity(nameof(Entity), playerStartingLocation.transform);
+        enemy = SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform);        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
+    }
+
+    private void Start()
+    {
+        OnUIValuesChangedEvent(CurrentTurn.ToString());
     }
 
     private void Update()
     {
         Tile tile = MouseRaycast();
 
-        //TODO dont call this every frame
-        if(!player.IsMoving && tile != null)
-            Pathfinding.FindPath(player.GetComponentInParent<Node>(), GetTargetNode(tile));
+        //TODO change this
+        if(CurrentTurn == Turn.Player)
+        {
+            if (!player.IsMoving && tile != null)
+                Pathfinding.FindPath(player.nodeParent, GetTargetNode(tile));
+        }
 
         if (Input.GetKeyDown(KeyCode.M))
         {
@@ -92,17 +112,17 @@ public class BattleController : MonoBehaviour {
     }
 
     /// <summary>
-    /// Sets up the player
+    /// Sets up an entity
     /// </summary>
     /// <param name="parent">The node parent</param>
     /// <returns>The created player</returns>
-    private Entity SetupPlayer(Transform parent)
+    private Entity SetupEntity(string type, Transform parent)
     {
-        GameObject playerObj = Instantiate(Resources.Load("Entity"), Vector3.zero, Quaternion.identity) as GameObject;
-        playerObj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
-        playerObj.transform.SetParent(parent);
-        playerObj.transform.localPosition = Vector3.zero;
-        return playerObj.GetComponent<Entity>();
+        GameObject obj = Instantiate(Resources.Load(type), Vector3.zero, Quaternion.identity) as GameObject;
+        obj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
+        obj.transform.SetParent(parent);
+        obj.transform.localPosition = Vector3.zero;
+        return obj.GetComponent<Entity>();
     }
 
 }

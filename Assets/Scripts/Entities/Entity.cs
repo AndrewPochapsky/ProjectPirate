@@ -9,6 +9,11 @@ public class Entity : MonoBehaviour {
     /// </summary>
     protected int Speed { get; set; }
 
+    public bool canMove = true;
+
+    [HideInInspector]
+    public Node nodeParent;
+
     float movementSpeed;
 
     Node nextLocation;
@@ -19,10 +24,16 @@ public class Entity : MonoBehaviour {
 
     private void Start()
     {
+        nodeParent = GetComponentInParent<Node>();
         movementSpeed = 200 * Time.deltaTime;
     }
 
     private void Update()
+    {
+        HandleMoving();
+    }
+
+    private void HandleMoving()
     {
         if (nextLocation != null && ReachedNode(nextLocation))
             nextLocation = GetNextLocation();
@@ -51,6 +62,7 @@ public class Entity : MonoBehaviour {
             {
                 IsMoving = false;
                 transform.parent = nodes[nodes.Count - 1].transform;
+                nodeParent = GetComponentInParent<Node>();
             }
                
         }

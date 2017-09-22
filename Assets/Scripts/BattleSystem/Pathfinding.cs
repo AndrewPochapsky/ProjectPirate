@@ -99,7 +99,7 @@ public static class Pathfinding {
     /// <param name="nodeA">First node</param>
     /// <param name="nodeB">Second Node</param>
     /// <returns>The distance</returns>
-    private static int GetDistance(Node nodeA, Node nodeB)
+    public static int GetDistance(Node nodeA, Node nodeB)
     {
         return (int)Mathf.Abs(nodeA.location.x - nodeB.location.x) + (int)Mathf.Abs(nodeA.location.y - nodeB.location.y);
     }

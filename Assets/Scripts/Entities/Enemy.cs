@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Enemy : Entity {
 
+    //TODO remove this, just temporary for testing
+    int attackRange = 3;
+
     /// <summary>
     /// The current AI state chosen, int values are priority with lower meaning 
     /// higher priority
@@ -39,6 +42,12 @@ public class Enemy : Entity {
         {
             target = targets[0];
         }
+        int attackingModifier = (attackRange - Pathfinding.GetDistance(nodeParent, target.nodeParent) + Speed);
+        if (!canMove)
+        {
+            attackingModifier -= Speed;
+        }
+        print("attacking modifier: " + attackingModifier);
     }
 
 }
