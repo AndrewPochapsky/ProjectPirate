@@ -4,5 +4,10 @@ using UnityEngine;
 
 public class SampleEnemy : Enemy {
 
-	
+    private void Awake()
+    {
+        Speed = 3;
+        MaxHealth = 10;
+        CurrentHealth = MaxHealth / 2;
+    }
 }

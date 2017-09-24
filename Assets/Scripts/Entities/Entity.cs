@@ -8,6 +8,8 @@ public class Entity : MonoBehaviour {
     /// Number of grid spaces that an enemy can move
     /// </summary>
     protected int Speed { get; set; }
+    protected int MaxHealth { get; set; }
+    protected int CurrentHealth { get; set; }
 
     public bool canMove = true;
 
@@ -22,12 +24,7 @@ public class Entity : MonoBehaviour {
     int currentNodeIndex = 0;
     public bool IsMoving { get; private set; } = false;
 
-    private void Awake()
-    {
-        
-    }
-
-    private void Start()
+    protected virtual void Start()
     {
         nodeParent = GetComponentInParent<Node>();
         movementSpeed = 200 * Time.deltaTime;
