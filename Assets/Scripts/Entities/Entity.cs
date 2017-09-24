@@ -22,6 +22,11 @@ public class Entity : MonoBehaviour {
     int currentNodeIndex = 0;
     public bool IsMoving { get; private set; } = false;
 
+    private void Awake()
+    {
+        
+    }
+
     private void Start()
     {
         nodeParent = GetComponentInParent<Node>();
@@ -107,5 +112,9 @@ public class Entity : MonoBehaviour {
     {
         return Mathf.Round(transform.position.x) == Mathf.Round(node.transform.position.x) &&
                    Mathf.Round(transform.position.z) == Mathf.Round(node.transform.position.z);
+    }
+    public void RefreshParent()
+    {
+        nodeParent = GetComponentInParent<Node>();
     }
 }

@@ -35,13 +35,15 @@ public class Enemy : Entity {
     /// assignmentScore = (totalStatesNum - enum value + modifier)
     /// </summary>
     /// <param name="targets">The list of possible targets</param>
-    private void DetermineScores(List<Entity> targets)
+    public void DetermineScores(List<Entity> targets)
     {
         Entity target = null;
+        this.RefreshParent();
         if (targets.Count == 1)
         {
             target = targets[0];
         }
+        target.RefreshParent();
         int attackingModifier = (attackRange - Pathfinding.GetDistance(nodeParent, target.nodeParent) + Speed);
         if (!canMove)
         {

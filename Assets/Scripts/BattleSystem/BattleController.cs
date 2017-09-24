@@ -9,7 +9,7 @@ public class BattleController : MonoBehaviour {
     public event OnUIValuesChanged OnUIValuesChangedEvent;
 
     public enum Turn { Player, Enemy }
-    public Turn CurrentTurn { get; private set; } = Turn.Player;
+    public Turn CurrentTurn { get; private set; } = Turn.Enemy;
 
     TileGenerator tileGenerator;
 
@@ -18,9 +18,9 @@ public class BattleController : MonoBehaviour {
     const int width = 10;
     const int height = 10;
 
-    Entity player;
+    List<Entity> friendlies;
 
-    Entity enemy;
+    List<Entity> enemies;
 
     Transform parent;
 
@@ -28,6 +28,9 @@ public class BattleController : MonoBehaviour {
 
     private void Awake()
     {
+        friendlies = new List<Entity>();
+        enemies = new List<Entity>();
+
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
@@ -41,9 +44,8 @@ public class BattleController : MonoBehaviour {
         index = rnd.Next(nodes.Count);
         Node enemyStartingLocation = nodes[index];
 
-
-        player = SetupEntity(nameof(Entity), playerStartingLocation.transform);
-        enemy = SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform);        
+        friendlies.Add(SetupEntity(nameof(Entity), playerStartingLocation.transform));
+        enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform));        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
     }
@@ -51,6 +53,7 @@ public class BattleController : MonoBehaviour {
     private void Start()
     {
         OnUIValuesChangedEvent(CurrentTurn.ToString());
+        enemies[0].GetComponent<Enemy>().DetermineScores(friendlies);
     }
 
     private void Update()
@@ -60,8 +63,8 @@ public class BattleController : MonoBehaviour {
         //TODO change this
         if(CurrentTurn == Turn.Player)
         {
-            if (!player.IsMoving && tile != null)
-                Pathfinding.FindPath(player.nodeParent, GetTargetNode(tile));
+            if (!friendlies[0].IsMoving && tile != null)
+                Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile));
         }
 
         if (Input.GetKeyDown(KeyCode.M))
@@ -77,7 +80,7 @@ public class BattleController : MonoBehaviour {
     /// <param name="nodes"></param>
     void OnPathUpdated(List<Node> nodes)
     {
-        Entity entity = player.GetComponent<Entity>();
+        Entity entity = friendlies[0].GetComponent<Entity>();
         if (!entity.IsMoving && Input.GetMouseButtonDown(0))
         {
             entity.SetPathNodes(nodes);
