@@ -9,7 +9,7 @@ public class Entity : MonoBehaviour {
     /// </summary>
     protected int Speed { get; set; }
     protected int MaxHealth { get; set; }
-    protected int CurrentHealth { get; set; }
+    public int CurrentHealth { get; protected set; }
 
     public bool canMove = true;
 
@@ -110,8 +110,16 @@ public class Entity : MonoBehaviour {
         return Mathf.Round(transform.position.x) == Mathf.Round(node.transform.position.x) &&
                    Mathf.Round(transform.position.z) == Mathf.Round(node.transform.position.z);
     }
+
     public void RefreshParent()
     {
         nodeParent = GetComponentInParent<Node>();
+    }
+
+    public void Heal(int value)
+    {
+        CurrentHealth += value;
+        if (CurrentHealth > MaxHealth)
+            CurrentHealth = MaxHealth;
     }
 }

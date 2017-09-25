@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : Entity {
@@ -9,22 +10,29 @@ public class Enemy : Entity {
     /// higher priority
     /// </summary>
     public enum State {
-        Attacking = 2,
-        Healing = 1,
+        Attacking,
+        ConsumeConsumable,
         Sleep
     }
 
     //Actual score values for each state, general formula is:
     //assignmentScore = (totalStatesNum - enum value + modifier)
-    int attackingScore, healingScore;
+    int attackingScore, consumableScore;
 
+    //TODO put these under entity as player will also need them most likely
     List<Attack> attacks;
+    List<Consumable> consumables;
 
     private void Awake()
     {
         attacks = new List<Attack>
         {
             new Attack("Basic Attack", 2, 4)
+        };
+
+        consumables = new List<Consumable>
+        {
+            new HealingConsumable("Potion", 3)
         };
     }
 
@@ -46,21 +54,53 @@ public class Enemy : Entity {
     {
         bool move = false;
 
+
         Entity target = null;
         this.RefreshParent();
         if (targets.Count == 1)
         {
             target = targets[0];
         }
+
+        int distanceToTarget = Pathfinding.GetDistance(nodeParent, target.nodeParent);
+
         target.RefreshParent();
 
-        int attackingModifier = (attacks[0].Range - Pathfinding.GetDistance(nodeParent, target.nodeParent) + Speed);
-        if (!canMove)
+        Attack currentAttack = null;
+
+        List<Attack> attacksInRange = new List<Attack>();
+        foreach(Attack attack in attacks)
         {
-            attackingModifier -= Speed;
+            int value = attack.Range - distanceToTarget;
+
+            if (canMove) { value += Speed; }
+
+            if(value >= 0)
+            {
+                attacksInRange.Add(attack);
+            }
+        }
+        
+        //If there is an attack in range, increase score by X
+        if(attacksInRange.Count > 0)
+        {
+            attackingScore += 5;
         }
 
-        print("attacking modifier: " + attackingModifier);
+        
+
+      
+
+        attackingScore = (attacks[0].Range -  + Speed);
+
+        
+
+        if (!canMove)
+        {
+            attackingScore -= Speed;
+        }
+
+        print("attacking score: " + attackingScore);
     }
 
 }
