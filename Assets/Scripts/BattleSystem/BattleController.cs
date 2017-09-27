@@ -8,6 +8,9 @@ public class BattleController : MonoBehaviour {
     public delegate void OnUIValuesChanged(string turnText);
     public event OnUIValuesChanged OnUIValuesChangedEvent;
 
+    public delegate void OnEnemyTurn(List<Entity> targets);
+    public event OnEnemyTurn OnEnemyTurnEvent;
+
     public enum Turn { Player, Enemy }
     public Turn CurrentTurn { get; private set; } = Turn.Enemy;
 
@@ -48,12 +51,14 @@ public class BattleController : MonoBehaviour {
         enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform));        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
+
+       
     }
 
     private void Start()
     {
         OnUIValuesChangedEvent(CurrentTurn.ToString());
-        enemies[0].GetComponent<Enemy>().DetermineScores(friendlies);
+        //enemies[0].GetComponent<Enemy>().DetermineScores(friendlies);
     }
 
     private void Update()
@@ -65,6 +70,10 @@ public class BattleController : MonoBehaviour {
         {
             if (!friendlies[0].IsMoving && tile != null)
                 Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile));
+        }
+        else
+        {
+            OnEnemyTurnEvent(friendlies);
         }
 
         if (Input.GetKeyDown(KeyCode.M))

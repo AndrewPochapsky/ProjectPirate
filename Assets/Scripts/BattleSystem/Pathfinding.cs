@@ -125,4 +125,23 @@ public static class Pathfinding {
         }
         return rangeNodes;
     }
+
+    public static Node GetClosestNode(Node startingNode, Node targetNode, int minDistance)
+    {
+        //TODO fix this
+        int distance = GetDistance(startingNode, targetNode);
+        if(targetNode.transform.childCount == 1 && distance <= minDistance)
+        {
+            return targetNode;
+        }
+        for(int i = 0; i < targetNode.Adjacents.Count; i++)
+        {
+            if (targetNode.Adjacents[i] != null)
+            {
+                GetClosestNode(startingNode, targetNode.Adjacents[i], minDistance);
+            }
+        }
+
+        return null;
+    }
 }

@@ -6,7 +6,7 @@ public class SampleEnemy : Enemy {
 
     private void Awake()
     {
-        Speed = 3;
+        Speed = 15;
         MaxHealth = 10;
         CurrentHealth = MaxHealth / 2;
     }

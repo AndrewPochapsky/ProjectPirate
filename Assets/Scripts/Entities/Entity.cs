@@ -116,10 +116,12 @@ public class Entity : MonoBehaviour {
         nodeParent = GetComponentInParent<Node>();
     }
 
-    public void Heal(int value)
+    public void ModifyHealth(int value)
     {
         CurrentHealth += value;
         if (CurrentHealth > MaxHealth)
             CurrentHealth = MaxHealth;
     }
+
+   
 }

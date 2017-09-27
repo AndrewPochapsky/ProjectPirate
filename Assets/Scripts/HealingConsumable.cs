@@ -14,6 +14,6 @@ public class HealingConsumable : Consumable
 
     public override void Consume(Entity target)
     {
-        target.Heal(HealingValue);
+        target.ModifyHealth(HealingValue);
     }
 }
