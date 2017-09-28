@@ -44,7 +44,7 @@ public static class Pathfinding {
 
             foreach(Node adjacentNode in currentNode.Adjacents)
             {
-                if(!adjacentNode.traversable || closedSet.Contains(adjacentNode))
+                if(!adjacentNode.isTraversable || closedSet.Contains(adjacentNode))
                 {
                     continue;
                 }
@@ -129,6 +129,8 @@ public static class Pathfinding {
     public static Node GetClosestNode(Node startingNode, Node targetNode, int minDistance)
     {
         //TODO fix this
+        Node node = null;
+
         int distance = GetDistance(startingNode, targetNode);
         if(targetNode.transform.childCount == 1 && distance <= minDistance)
         {
@@ -138,10 +140,10 @@ public static class Pathfinding {
         {
             if (targetNode.Adjacents[i] != null)
             {
-                GetClosestNode(startingNode, targetNode.Adjacents[i], minDistance);
+                node = GetClosestNode(startingNode, targetNode.Adjacents[i], minDistance);
             }
         }
 
-        return null;
+        return node;
     }
 }

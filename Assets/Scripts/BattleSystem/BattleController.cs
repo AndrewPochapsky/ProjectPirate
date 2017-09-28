@@ -27,7 +27,7 @@ public class BattleController : MonoBehaviour {
 
     Transform parent;
 
-    List<Node> nodes;
+    public List<Node> Nodes { get; private set; }
 
     private void Awake()
     {
@@ -37,15 +37,15 @@ public class BattleController : MonoBehaviour {
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
-        nodes = tileGenerator.AddNodes(width, height, battleTileSize);
-        tileGenerator.GenerateTileMap("GrassTile", nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
+        Nodes = tileGenerator.AddNodes(width, height, battleTileSize);
+        tileGenerator.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         //TODO remove this, IN
         System.Random rnd = new System.Random();
-        int index = rnd.Next(nodes.Count);
-        Node playerStartingLocation = nodes[index];
-        index = rnd.Next(nodes.Count);
-        Node enemyStartingLocation = nodes[index];
+        int index = rnd.Next(Nodes.Count);
+        Node playerStartingLocation = Nodes[index];
+        index = rnd.Next(Nodes.Count);
+        Node enemyStartingLocation = Nodes[index];
 
         friendlies.Add(SetupEntity(nameof(Entity), playerStartingLocation.transform));
         enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform));        
@@ -134,7 +134,12 @@ public class BattleController : MonoBehaviour {
         obj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
         obj.transform.SetParent(parent);
         obj.transform.localPosition = Vector3.zero;
-        return obj.GetComponent<Entity>();
+
+        Entity entity = obj.GetComponent<Entity>();
+        //entity.RefreshParent();
+        //entity.nodeParent.isTraversable = false;
+
+        return entity;
     }
 
 }
