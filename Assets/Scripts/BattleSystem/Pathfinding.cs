@@ -14,7 +14,7 @@ public static class Pathfinding {
     /// </summary>
     /// <param name="startNode">The start node</param>
     /// <param name="targetNode">The target(end) node</param>
-	public static void FindPath(Node startNode, Node targetNode)
+	public static List<Node> FindPath(Node startNode, Node targetNode)
     {
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
@@ -39,7 +39,7 @@ public static class Pathfinding {
             {
                 path = RetracePath(startNode, targetNode);
                 OnPathUpdatedEvent(path);
-                return;
+                return path;
             }
 
             foreach(Node adjacentNode in currentNode.Adjacents)
@@ -64,6 +64,7 @@ public static class Pathfinding {
                 }
             }
         }
+        return null;
     }
 
     /// <summary>
@@ -85,10 +86,10 @@ public static class Pathfinding {
 
         path.Reverse();
 
-        foreach(Node node in path)
+        /*foreach(Node node in path)
         {
-            node.transform.GetChild(0).GetComponent<Tile>().Select();
-        }
+            node.transform.GetChild(0).GetComponent<Tile>().Select(Color.black);
+        }*/
 
         return path;
     }

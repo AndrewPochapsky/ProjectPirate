@@ -15,6 +15,7 @@ public class BattleController : MonoBehaviour {
     public Turn CurrentTurn { get; private set; } = Turn.Enemy;
 
     TileGenerator tileGenerator;
+    BattleSystemUI uiController;
 
     const int battleTileSize = 50;
 
@@ -34,6 +35,8 @@ public class BattleController : MonoBehaviour {
         friendlies = new List<Entity>();
         enemies = new List<Entity>();
 
+        uiController = FindObjectOfType<BattleSystemUI>();
+
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
@@ -52,7 +55,7 @@ public class BattleController : MonoBehaviour {
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
-       
+        uiController.CreateGrid(width, height, battleTileSize);
     }
 
     private void Start()
@@ -136,8 +139,8 @@ public class BattleController : MonoBehaviour {
         obj.transform.localPosition = Vector3.zero;
 
         Entity entity = obj.GetComponent<Entity>();
-        //entity.RefreshParent();
-        //entity.nodeParent.isTraversable = false;
+        entity.RefreshParent();
+        entity.nodeParent.isTraversable = false;
 
         return entity;
     }

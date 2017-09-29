@@ -19,10 +19,10 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4235622957588254}
-  - component: {fileID: 114781194693336120}
   - component: {fileID: 33072862761867452}
   - component: {fileID: 23477253272990324}
   - component: {fileID: 65029961857771160}
+  - component: {fileID: 114946088296927238}
   m_Layer: 0
   m_Name: GrassTile
   m_TagString: Untagged
@@ -94,7 +94,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.0000002, z: 6.123235e-17}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114781194693336120
+--- !u!114 &114946088296927238
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

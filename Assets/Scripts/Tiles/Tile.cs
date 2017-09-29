@@ -34,9 +34,9 @@ public abstract class Tile : MonoBehaviour {
         }
     }
 
-    public void Select()
+    public void Select(Color colour)
     {
-        _renderer.material.color = Color.black;
+        _renderer.material.color = colour;
     }
 
     public void Deselect()
