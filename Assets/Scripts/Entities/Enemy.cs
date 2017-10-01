@@ -6,8 +6,7 @@ using UnityEngine;
 public class Enemy : Entity {
 
     /// <summary>
-    /// The current AI state chosen, int values are priority with lower meaning 
-    /// higher priority
+    /// AI states
     /// </summary>
     public enum State {
         Attack,
@@ -29,13 +28,6 @@ public class Enemy : Entity {
 
     BattleController battleController;
 
-    private void Awake()
-    {
-       
-
-       
-    }
-
     protected override void Start()
     {
         attacks = new List<Attack>
@@ -56,73 +48,61 @@ public class Enemy : Entity {
         }
     }
 
+    /// <summary>
+    /// Logic to be executed on enemy turn
+    /// </summary>
+    /// <param name="targets">List of possible targets</param>
     private void OnEnemyTurn(List<Entity> targets)
     {
-        Attack attack = DetermineAttackScore(targets);
+        Entity target = GetTarget(targets);
+        Attack attack = DetermineAttackScore(target);
         state = GetState();
-        //TODO only execute on attack state
-        if (attack != null && move)
-        {
-            Node nodeToMoveTo = null;
-            print("Speed: " + Speed);
-            print("Range: " + attack.Range);
-            List<Node> _nodes = Pathfinding.GetRange(battleController.Nodes, nodeParent, (Speed));
-            //
-
-            /*foreach(Node n in nodes)
-            {
-                n.Child.Select();
-            }*/
-
-            int minDistance = int.MaxValue;
-            for(int i = 0; i < _nodes.Count; i++)
-            {
-                if (nodeParent != _nodes[i])
-                {
-                    List<Node> range = Pathfinding.GetRange(battleController.Nodes, _nodes[i], attack.Range);
-
-                    int currentDistance = (Pathfinding.GetDistance(targets[0].nodeParent, _nodes[i]));
-                    if (currentDistance < minDistance)
-                    {
-                        minDistance = currentDistance;
-                        nodeToMoveTo = _nodes[i];
-                    }
-                }
-              
-            }
-            //nodeToMoveTo.Child.Select();
-            
-            List<Node> path = Pathfinding.FindPath(nodeParent, nodeToMoveTo);
-            for(int i = 0; i < path.Count; i++)
-            {
-                List<Node> range = Pathfinding.GetRange(battleController.Nodes, path[i], attack.Range);
-                if (range.Contains(targets[0].nodeParent))
-                {
-                    path = Pathfinding.FindPath(nodeParent, path[i]);
-                    break;
-                }
-            }
-            //print(nodeToMoveTo.location);
-           
-            //Displays attack range from the new location of enemy
-            /*foreach (Node n in Pathfinding.GetRange(battleController.Nodes, path[path.Count - 1], attack.Range))
-            {
-                n.Child.Select(Color.black);
-            }*/
-            foreach (Node node in path)
-            {
-                node.Child.Select(Color.gray);
-            }
-        }
-
-       /* switch (state)
+        
+        switch (state)
         {
             case State.Attack:
+                if (attack!= null && move)//TODO remove the first condition
+                {
+                    Node nodeToMoveTo = null;
+                    List<Node> movementRangeNodes = Pathfinding.GetRange(battleController.Nodes, nodeParent, (Speed));
+
+                    int minDistance = int.MaxValue;
+                    for (int i = 0; i < movementRangeNodes.Count; i++)
+                    {
+                        if (nodeParent != movementRangeNodes[i])
+                        {
+                            List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], attack.Range);
+
+                            int currentDistance = Pathfinding.GetDistance(target.nodeParent, movementRangeNodes[i]);
+                            if (currentDistance < minDistance)
+                            {
+                                minDistance = currentDistance;
+                                nodeToMoveTo = movementRangeNodes[i];
+                            }
+                        }
+                    }
+
+                    List<Node> path = Pathfinding.FindPath(nodeParent, nodeToMoveTo);
+                    for (int i = 0; i < path.Count; i++)
+                    {
+                        int distance = Pathfinding.GetDistance(path[i], target.nodeParent);
+                        if (distance <= attack.Range)
+                        {
+                            path = Pathfinding.FindPath(nodeParent, path[i]);
+                            break;
+                        }
+                    }
+
+                    foreach (Node node in path)
+                    {
+                        node.Child.Select(Color.gray);
+                    }
+                }
                 break;
 
             case State.Consumable:
                 break;
-        }*/
+        }
     }
 
     /// <summary>
@@ -136,58 +116,58 @@ public class Enemy : Entity {
     }
 
     /// <summary>
-    /// Sets all of the score values, formula:
-    /// assignmentScore = (totalStatesNum - enum value + modifier)
+    /// Gets target entity from list of entities
     /// </summary>
-    /// <param name="targets">The list of possible targets</param>
-    public void DetermineScores(List<Entity> targets)
+    /// <param name="targets">List of entities</param>
+    /// <returns>The chosen target</returns>
+    public Entity GetTarget(List<Entity> targets)
     {
-        //Reset scores from last turn
-        attackingScore = 0;
-        consumableScore = 0;
+        if(targets.Count == 1)
+        {
+            return targets[0];
+        }
+        return null;
     }
 
-    private Attack DetermineAttackScore(List<Entity> targets)
+    /// <summary>
+    /// Determines the attack score
+    /// </summary>
+    /// <param name="target">The target</param>
+    /// <returns>The chosen attack</returns>
+    private Attack DetermineAttackScore(Entity target)
     {
-        Entity target = null;
         this.RefreshParent();
-        if (targets.Count == 1)
-        {
-            target = targets[0];
-        }
-
         int distanceToTarget = Pathfinding.GetDistance(nodeParent, target.nodeParent);
 
         target.RefreshParent();
 
         Attack currentAttack = null;
 
+        List<Attack> allAttacks = new List<Attack>();
         List<Attack> attacksInReadyRange = new List<Attack>();
         List<Attack> attacksInMovementRange = new List<Attack>();
 
         foreach (Attack attack in attacks)
         {
             int valueOne, valueTwo; 
-            valueOne = valueTwo = attack.Range - distanceToTarget;
+            valueOne = valueTwo = (attack.Range - distanceToTarget);
 
             if (canMove)
                 valueTwo += Speed;
 
-            //TODO find a better way to incorporate speed
-            //if (canMove) { value += Speed; move = true; }
-
-            //Attack is able to attack
+            //entity is able to attack
             if (valueOne >= 0)
             {
+                allAttacks.Add(attack);
                 attacksInReadyRange.Add(attack);
-                print("attack in ready range");
                 attackingScore += 10;
                 move = false;
             }
+            //Entity can attack if moves
             else if(valueTwo >= 0)
             {
+                allAttacks.Add(attack);
                 attacksInMovementRange.Add(attack);
-                print("attack in movement range");
                 attackingScore += Speed;
                 move = true;
             }
@@ -198,16 +178,16 @@ public class Enemy : Entity {
         else if (attacksInMovementRange.Count > 0)
             currentAttack = attacksInMovementRange[0];
 
+       
         //Get the attack with heighest damage
-        //TODO re-enable this
         //TODO factor in other values such as armour piercing
-        /*for (int i = 1; i < attacksInReadyRange.Count; i++)
+        for (int i = 1; i < allAttacks.Count; i++)
         {
-            if (attacksInReadyRange[i].Damage > currentAttack.Damage)
+            if (allAttacks[i].Damage > currentAttack.Damage)
             {
-                currentAttack = attacksInReadyRange[i];
+                currentAttack = allAttacks[i];
             }
-        }*/
+        }
 
         //target can be killed in one hit
         if (currentAttack != null && target.CurrentHealth <= currentAttack.Damage)
@@ -219,7 +199,11 @@ public class Enemy : Entity {
         return currentAttack;
     }
 
-
+    /// <summary>
+    /// Deal attack's damage to target entity
+    /// </summary>
+    /// <param name="attack">The specified attack</param>
+    /// <param name="target">The target</param>
     private void AttackTarget(Attack attack, Entity target)
     {
         target.ModifyHealth((-1) * attack.Damage);

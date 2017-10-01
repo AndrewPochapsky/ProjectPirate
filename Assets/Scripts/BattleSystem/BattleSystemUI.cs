@@ -27,6 +27,12 @@ public class BattleSystemUI : MonoBehaviour {
         this.turnText.text = _turnText;
     }
 
+    /// <summary>
+    /// Populates world space canvas with grid borders
+    /// </summary>
+    /// <param name="width">The width</param>
+    /// <param name="height">The height</param>
+    /// <param name="size">The size</param>
     public void CreateGrid(int width, int height, int size)
     {
         Vector3 nextPosition = Vector3.zero;
@@ -44,7 +50,7 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
-    private Vector3 NextGridPosition(Vector2 currentGridPosition,Vector3 currentPosition, int width, int height, int size)
+    private Vector3 NextGridPosition(Vector2 currentGridPosition, Vector3 currentPosition, int width, int height, int size)
     {
         if(currentGridPosition.x + 1 == width)
         {
@@ -52,6 +58,4 @@ public class BattleSystemUI : MonoBehaviour {
         }
         return new Vector3(currentPosition.x + size, currentPosition.y, -1);
     }
-
-    
 }

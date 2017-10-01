@@ -61,7 +61,6 @@ public class BattleController : MonoBehaviour {
     private void Start()
     {
         OnUIValuesChangedEvent(CurrentTurn.ToString());
-        //enemies[0].GetComponent<Enemy>().DetermineScores(friendlies);
     }
 
     private void Update()
