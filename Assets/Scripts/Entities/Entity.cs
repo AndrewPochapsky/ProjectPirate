@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
+    public delegate void OnEndTurn();
+    public event OnEndTurn OnEndTurnEvent; 
+
     /// <summary>
     /// Number of grid spaces that an enemy can move
     /// </summary>
@@ -12,6 +15,7 @@ public class Entity : MonoBehaviour {
     public int CurrentHealth { get; protected set; }
 
     public bool canMove = true;
+    protected bool reached = false;
 
     [HideInInspector]
     public Node nodeParent;
@@ -19,7 +23,7 @@ public class Entity : MonoBehaviour {
     float movementSpeed;
 
     Node nextLocation;
-    List<Node> nodes;
+    protected List<Node> pathNodes;
 
     int currentNodeIndex = 0;
     public bool IsMoving { get; private set; } = false;
@@ -49,22 +53,22 @@ public class Entity : MonoBehaviour {
     /// <returns>The location</returns>
     public Node GetNextLocation()
     {
-        if(nodes!= null)
+        if(pathNodes!= null)
         {
-            if (currentNodeIndex + 1 <= nodes.Count)
+            if (currentNodeIndex + 1 <= pathNodes.Count)
             {
-                if (ReachedNode(nodes[currentNodeIndex]))
+                if (ReachedNode(pathNodes[currentNodeIndex]))
                 {
-                    print("reached");
                     currentNodeIndex++;
-                    return nodes[currentNodeIndex];
+                    return pathNodes[currentNodeIndex];
                 }
             }
             else
             {
-                IsMoving = false;
-                transform.parent = nodes[nodes.Count - 1].transform;
+                transform.parent = pathNodes[pathNodes.Count - 1].transform;
                 nodeParent = GetComponentInParent<Node>();
+                IsMoving = false;
+                reached = true;
             }
                
         }
@@ -78,7 +82,7 @@ public class Entity : MonoBehaviour {
     public void SetPathNodes(List<Node> _nodes)
     {
         currentNodeIndex = 0;
-        nodes = _nodes;
+        pathNodes = _nodes;
         nextLocation = _nodes[currentNodeIndex];
         
         //TODO maybe use an event instead of doing this here
@@ -86,7 +90,7 @@ public class Entity : MonoBehaviour {
         {
             node.Child.Deselect();
         }
-
+        reached = false;
         IsMoving = true;
     }
 
@@ -122,6 +126,10 @@ public class Entity : MonoBehaviour {
         if (CurrentHealth > MaxHealth)
             CurrentHealth = MaxHealth;
     }
-
+       
+    protected void RaiseEndTurnEvent()
+    {
+        OnEndTurnEvent();
+    }
    
 }

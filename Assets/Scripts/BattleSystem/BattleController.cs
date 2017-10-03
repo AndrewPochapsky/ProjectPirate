@@ -55,6 +55,9 @@ public class BattleController : MonoBehaviour {
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
+        friendlies[0].OnEndTurnEvent += OnEndTurn;
+        enemies[0].OnEndTurnEvent += OnEndTurn;
+
         uiController.CreateGrid(width, height, battleTileSize);
     }
 
@@ -144,4 +147,17 @@ public class BattleController : MonoBehaviour {
         return entity;
     }
 
+    private void OnEndTurn()
+    {
+        print("Ending turn");
+        if (CurrentTurn == Turn.Enemy)
+        {
+            CurrentTurn = Turn.Player;
+        }
+        else
+        {
+            CurrentTurn = Turn.Enemy;
+        }
+        OnUIValuesChangedEvent(CurrentTurn.ToString());
+    }
 }

@@ -74,7 +74,7 @@ public class Enemy : Entity {
                             List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], attack.Range);
 
                             int currentDistance = Pathfinding.GetDistance(target.nodeParent, movementRangeNodes[i]);
-                            if (currentDistance < minDistance)
+                            if (currentDistance <= minDistance)
                             {
                                 minDistance = currentDistance;
                                 nodeToMoveTo = movementRangeNodes[i];
@@ -97,6 +97,19 @@ public class Enemy : Entity {
                     {
                         node.Child.Select(Color.gray);
                     }
+                    
+                    if (!IsMoving)
+                    {
+                        //Do action and end turn
+                        //print("Raising event");
+                        RaiseEndTurnEvent();
+                    }
+                    SetPathNodes(path);
+                }
+                else if(attack != null)
+                {
+                    print("Attacking");
+                    RaiseEndTurnEvent();
                 }
                 break;
 
