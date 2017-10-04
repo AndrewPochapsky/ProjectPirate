@@ -15,7 +15,6 @@ public class Entity : MonoBehaviour {
     public int CurrentHealth { get; protected set; }
 
     public bool canMove = true;
-    protected bool reached = false;
 
     [HideInInspector]
     public Node nodeParent;
@@ -30,6 +29,7 @@ public class Entity : MonoBehaviour {
 
     protected virtual void Start()
     {
+        pathNodes = new List<Node>();
         nodeParent = GetComponentInParent<Node>();
         movementSpeed = 200 * Time.deltaTime;
     }
@@ -41,7 +41,7 @@ public class Entity : MonoBehaviour {
 
     private void HandleMoving()
     {
-        if (nextLocation != null && ReachedNode(nextLocation))
+        if (pathNodes.Count > 0 && nextLocation != null && ReachedNode(nextLocation))
             nextLocation = GetNextLocation();
 
         MoveToLocation(nextLocation);
@@ -57,7 +57,7 @@ public class Entity : MonoBehaviour {
         {
             if (currentNodeIndex + 1 <= pathNodes.Count)
             {
-                if (ReachedNode(pathNodes[currentNodeIndex]))
+                if (ReachedNode(pathNodes[currentNodeIndex]) && currentNodeIndex + 1 != pathNodes.Count)
                 {
                     currentNodeIndex++;
                     return pathNodes[currentNodeIndex];
@@ -67,8 +67,8 @@ public class Entity : MonoBehaviour {
             {
                 transform.parent = pathNodes[pathNodes.Count - 1].transform;
                 nodeParent = GetComponentInParent<Node>();
+                pathNodes = new List<Node>();
                 IsMoving = false;
-                reached = true;
             }
                
         }
@@ -81,6 +81,7 @@ public class Entity : MonoBehaviour {
     /// <param name="_nodes">List of nodes which is set to this.nodes</param>
     public void SetPathNodes(List<Node> _nodes)
     {
+        print("setting nodes");
         currentNodeIndex = 0;
         pathNodes = _nodes;
         nextLocation = _nodes[currentNodeIndex];
@@ -90,7 +91,6 @@ public class Entity : MonoBehaviour {
         {
             node.Child.Deselect();
         }
-        reached = false;
         IsMoving = true;
     }
 

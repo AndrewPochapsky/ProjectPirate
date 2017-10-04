@@ -64,6 +64,10 @@ public class BattleController : MonoBehaviour {
     private void Start()
     {
         OnUIValuesChangedEvent(CurrentTurn.ToString());
+        /*if(CurrentTurn == Turn.Enemy)
+        {
+            OnEnemyTurnEvent(friendlies);
+        }*/
     }
 
     private void Update()
@@ -76,8 +80,10 @@ public class BattleController : MonoBehaviour {
             if (!friendlies[0].IsMoving && tile != null)
                 Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile));
         }
+        //TODO do not do this
         else
         {
+            print("ON enemy turn");
             OnEnemyTurnEvent(friendlies);
         }
 

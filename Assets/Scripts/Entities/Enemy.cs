@@ -93,18 +93,22 @@ public class Enemy : Entity {
                         }
                     }
 
-                    foreach (Node node in path)
+                    /*foreach (Node node in path)
                     {
                         node.Child.Select(Color.gray);
-                    }
+                    }*/
                     
-                    if (!IsMoving)
+                    if (!IsMoving && nodeParent == path[path.Count-1])
                     {
                         //Do action and end turn
-                        //print("Raising event");
+                        print("Raising event");
                         RaiseEndTurnEvent();
                     }
-                    SetPathNodes(path);
+                    if(pathNodes.Count == 0)
+                    {
+                        SetPathNodes(path);
+                    }
+                    
                 }
                 else if(attack != null)
                 {
