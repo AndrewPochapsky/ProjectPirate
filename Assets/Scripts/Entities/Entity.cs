@@ -67,6 +67,7 @@ public class Entity : MonoBehaviour {
             {
                 if(pathNodes.Count > 0)
                 {
+                    RefreshParent();
                     transform.parent = pathNodes[pathNodes.Count - 1].transform;
                     nodeParent = GetComponentInParent<Node>();
                     pathNodes = new List<Node>();
@@ -121,6 +122,7 @@ public class Entity : MonoBehaviour {
     public void RefreshParent()
     {
         nodeParent = GetComponentInParent<Node>();
+        nodeParent.isTraversable = false;
     }
 
     public void ModifyHealth(int value)

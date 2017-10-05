@@ -69,7 +69,7 @@ public class Enemy : Entity {
                     int minDistance = int.MaxValue;
                     for (int i = 0; i < movementRangeNodes.Count; i++)
                     {
-                        if (nodeParent != movementRangeNodes[i])
+                        if (nodeParent != movementRangeNodes[i] && target.nodeParent != movementRangeNodes[i])
                         {
                             List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], attack.Range);
 
@@ -77,7 +77,6 @@ public class Enemy : Entity {
                             if (currentDistance < minDistance)
                             {
                                 minDistance = currentDistance;
-                                print("doing this");
                                 nodeToMoveTo = movementRangeNodes[i];
                             }
                         }
@@ -101,7 +100,6 @@ public class Enemy : Entity {
                     if (nodeParent == path[path.Count-1])
                     {
                         //Do action and end turn
-                        print("Raising event");
                         RaiseEndTurnEvent();
                     }
                     if(pathNodes.Count == 0)

@@ -148,7 +148,6 @@ public class BattleController : MonoBehaviour {
 
         Entity entity = obj.GetComponent<Entity>();
         entity.RefreshParent();
-        entity.nodeParent.isTraversable = false;
 
         return entity;
     }
