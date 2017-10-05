@@ -78,7 +78,7 @@ public class BattleController : MonoBehaviour {
         if(CurrentTurn == Turn.Player)
         {
             if (!friendlies[0].IsMoving && tile != null)
-                Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile));
+                Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile), reverse: true);
         }
         //TODO do not do this
         else

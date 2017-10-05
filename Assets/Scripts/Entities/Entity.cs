@@ -41,7 +41,7 @@ public class Entity : MonoBehaviour {
 
     private void HandleMoving()
     {
-        if (pathNodes.Count > 0 && nextLocation != null && ReachedNode(nextLocation))
+        if (nextLocation != null && ReachedNode(nextLocation))
             nextLocation = GetNextLocation();
 
         MoveToLocation(nextLocation);
@@ -55,7 +55,7 @@ public class Entity : MonoBehaviour {
     {
         if(pathNodes!= null)
         {
-            if (currentNodeIndex + 1 <= pathNodes.Count)
+            if (currentNodeIndex + 1 < pathNodes.Count)
             {
                 if (ReachedNode(pathNodes[currentNodeIndex]) && currentNodeIndex + 1 != pathNodes.Count)
                 {
@@ -65,10 +65,13 @@ public class Entity : MonoBehaviour {
             }
             else
             {
-                transform.parent = pathNodes[pathNodes.Count - 1].transform;
-                nodeParent = GetComponentInParent<Node>();
-                pathNodes = new List<Node>();
-                IsMoving = false;
+                if(pathNodes.Count > 0)
+                {
+                    transform.parent = pathNodes[pathNodes.Count - 1].transform;
+                    nodeParent = GetComponentInParent<Node>();
+                    pathNodes = new List<Node>();
+                    IsMoving = false;
+                }
             }
                
         }

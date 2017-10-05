@@ -74,21 +74,22 @@ public class Enemy : Entity {
                             List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], attack.Range);
 
                             int currentDistance = Pathfinding.GetDistance(target.nodeParent, movementRangeNodes[i]);
-                            if (currentDistance <= minDistance)
+                            if (currentDistance < minDistance)
                             {
                                 minDistance = currentDistance;
+                                print("doing this");
                                 nodeToMoveTo = movementRangeNodes[i];
                             }
                         }
                     }
 
-                    List<Node> path = Pathfinding.FindPath(nodeParent, nodeToMoveTo);
+                    List<Node> path = Pathfinding.FindPath(nodeParent, nodeToMoveTo, reverse: true);
                     for (int i = 0; i < path.Count; i++)
                     {
                         int distance = Pathfinding.GetDistance(path[i], target.nodeParent);
                         if (distance <= attack.Range)
                         {
-                            path = Pathfinding.FindPath(nodeParent, path[i]);
+                            path = Pathfinding.FindPath(nodeParent, path[i], reverse: true);
                             break;
                         }
                     }
@@ -97,8 +98,7 @@ public class Enemy : Entity {
                     {
                         node.Child.Select(Color.gray);
                     }*/
-                    
-                    if (!IsMoving && nodeParent == path[path.Count-1])
+                    if (nodeParent == path[path.Count-1])
                     {
                         //Do action and end turn
                         print("Raising event");

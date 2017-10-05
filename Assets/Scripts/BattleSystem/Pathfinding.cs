@@ -14,7 +14,7 @@ public static class Pathfinding {
     /// </summary>
     /// <param name="startNode">The start node</param>
     /// <param name="targetNode">The target(end) node</param>
-	public static List<Node> FindPath(Node startNode, Node targetNode)
+	public static List<Node> FindPath(Node startNode, Node targetNode, bool reverse)
     {
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
@@ -37,7 +37,7 @@ public static class Pathfinding {
 
             if(currentNode == targetNode)
             {
-                path = RetracePath(startNode, targetNode);
+                path = RetracePath(startNode, targetNode, reverse);
                 OnPathUpdatedEvent(path);
                 return path;
             }
@@ -73,7 +73,7 @@ public static class Pathfinding {
     /// <param name="startNode"></param>
     /// <param name="endNode"></param>
     /// <returns></returns>
-    private static List<Node> RetracePath(Node startNode, Node endNode)
+    private static List<Node> RetracePath(Node startNode, Node endNode, bool reverse)
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
@@ -83,8 +83,8 @@ public static class Pathfinding {
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
-
-        path.Reverse();
+        if(reverse)
+            path.Reverse();
 
         /*foreach(Node node in path)
         {
