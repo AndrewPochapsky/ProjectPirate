@@ -72,18 +72,21 @@ public class BattleController : MonoBehaviour {
 
     private void Update()
     {
-        Tile tile = MouseRaycast();
+        Tile raycastTile = MouseRaycast();
 
         //TODO change this
         if(CurrentTurn == Turn.Player)
         {
-            if (!friendlies[0].IsMoving && tile != null)
-                Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(tile), reverse: true);
+            if (!friendlies[0].IsMoving && raycastTile != null)
+            {
+                List<Node> path = Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(raycastTile), reverse: true);
+                Pathfinding.SelectNodes(path, Color.gray);
+            }
+               
         }
         //TODO do not do this
         else
         {
-            print("ON enemy turn");
             OnEnemyTurnEvent(friendlies);
         }
 
@@ -98,12 +101,14 @@ public class BattleController : MonoBehaviour {
     /// Called when Pathfinding.OnPathUpdatedEvent is invoked
     /// </summary>
     /// <param name="nodes"></param>
-    void OnPathUpdated(List<Node> nodes)
+    private void OnPathUpdated(List<Node> nodes)
     {
         Entity entity = friendlies[0].GetComponent<Entity>();
         if (!entity.IsMoving && Input.GetMouseButtonDown(0))
         {
             entity.SetPathNodes(nodes);
+            Pathfinding.DeselectNodes(nodes);
+            print("deselecting");
         }
     }
 

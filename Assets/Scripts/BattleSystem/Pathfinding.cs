@@ -147,4 +147,20 @@ public static class Pathfinding {
 
         return node;
     }
+
+    public static void SelectNodes(List<Node> nodes, Color colour)
+    {
+        foreach(Node node in nodes)
+        {
+            node.Child.Select(colour);
+        }
+    }
+
+    public static void DeselectNodes(List<Node> nodes)
+    {
+        foreach(Node node in nodes)
+        {
+            node.Child.Deselect();
+        }
+    }
 }

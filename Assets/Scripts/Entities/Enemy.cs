@@ -20,26 +20,12 @@ public class Enemy : Entity {
     //assignmentScore = (totalStatesNum - enum value + modifier)
     int attackingScore, consumableScore;
 
-    //TODO put these under entity as player will also need them most likely
-    List<Attack> attacks;
-    List<Consumable> consumables;
-
     bool move = true;
 
     BattleController battleController;
 
     protected override void Start()
     {
-        attacks = new List<Attack>
-        {
-            new Attack("Basic Attack", 2, 4)
-        };
-
-        consumables = new List<Consumable>
-        {
-            new HealingConsumable("Potion", 3)
-        };
-
         base.Start();
         battleController = FindObjectOfType<BattleController>();
         if (battleController != null)
@@ -56,6 +42,7 @@ public class Enemy : Entity {
     {
         Entity target = GetTarget(targets);
         Attack attack = DetermineAttackScore(target);
+        Consumable consumable = DetermineConsumableScore();
         state = GetState();
         
         switch (state)
@@ -93,10 +80,6 @@ public class Enemy : Entity {
                         }
                     }
 
-                    /*foreach (Node node in path)
-                    {
-                        node.Child.Select(Color.gray);
-                    }*/
                     if (nodeParent == path[path.Count-1])
                     {
                         //Do action and end turn
@@ -116,6 +99,9 @@ public class Enemy : Entity {
                 break;
 
             case State.Consumable:
+                print("consuming");
+                //TODO allow selecting other targets(party members)
+                consumable.Consume(target: this);
                 break;
         }
     }
@@ -126,8 +112,12 @@ public class Enemy : Entity {
     /// <returns></returns>
     public State GetState()
     {
-        
-        return State.Attack;
+        if(attackingScore > consumableScore)
+        {
+            return State.Attack;
+        }
+
+        return State.Consumable;
     }
 
     /// <summary>
@@ -213,6 +203,51 @@ public class Enemy : Entity {
         //TODO create method called ChooseAttack which takes in attacksInRange List
         return currentAttack;
     }
+
+    private Consumable DetermineConsumableScore()
+    {
+        //Get all types of consumables 
+        //Check if a specific type exists, if so then increase points
+        //For example, if need health and contains HealingConsumable, increase points and set that to selectedConsumable
+        //Store all types in list, List<HealingConsumable>...
+
+        Consumable selectedAbsoluteConsumable = null;
+        HealingConsumable selectedHealingConsumable = null;
+        //Seperate all current consumables into list
+        List<HealingConsumable> healingConsumables = consumables.Where(c => c is HealingConsumable)
+                                                                .Select(c => c as HealingConsumable)
+                                                                .ToList();
+        int healingScore = -1;
+        if (MaxHealth != CurrentHealth && healingConsumables.Count > 0)
+        {
+            selectedHealingConsumable = healingConsumables[0];
+            healingScore = (MaxHealth - CurrentHealth) + selectedHealingConsumable.HealingValue;
+            for (int i = 1; i < healingConsumables.Count; i++)
+            {
+                int _value = (MaxHealth - CurrentHealth) + healingConsumables[i].HealingValue;
+                if (_value < healingScore)
+                {
+                    healingScore = _value;
+                    selectedHealingConsumable = healingConsumables[i];
+                }
+            }
+        }
+
+        if(selectedHealingConsumable != null)
+        {
+            int healthDifference = MaxHealth - CurrentHealth;
+            //Potion would replenish all health
+            if(healingScore == healthDifference)
+            {
+                consumableScore = 900;
+            }
+            //else if(healingScore < healthDifference && healthDiffernce > )
+        }
+
+        return selectedAbsoluteConsumable;
+    }
+
+
 
     /// <summary>
     /// Deal attack's damage to target entity

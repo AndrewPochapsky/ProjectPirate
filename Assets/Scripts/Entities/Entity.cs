@@ -16,6 +16,9 @@ public class Entity : MonoBehaviour {
 
     public bool canMove = true;
 
+    protected List<Attack> attacks;
+    protected List<Consumable> consumables;
+
     [HideInInspector]
     public Node nodeParent;
 
@@ -67,7 +70,7 @@ public class Entity : MonoBehaviour {
             {
                 if(pathNodes.Count > 0)
                 {
-                    RefreshParent();
+                    nodeParent.isTraversable = true;
                     transform.parent = pathNodes[pathNodes.Count - 1].transform;
                     nodeParent = GetComponentInParent<Node>();
                     pathNodes = new List<Node>();
@@ -85,17 +88,11 @@ public class Entity : MonoBehaviour {
     /// <param name="_nodes">List of nodes which is set to this.nodes</param>
     public void SetPathNodes(List<Node> _nodes)
     {
-        print("setting nodes");
         currentNodeIndex = 0;
         pathNodes = _nodes;
         nextLocation = _nodes[currentNodeIndex];
-        
-        //TODO maybe use an event instead of doing this here
-        foreach(Node node in _nodes)
-        {
-            node.Child.Deselect();
-        }
-        IsMoving = true;
+
+        IsMoving = true; 
     }
 
     /// <summary>
