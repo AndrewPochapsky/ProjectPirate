@@ -11,14 +11,14 @@ public class Enemy : Entity {
     public enum State {
         Attack,
         Consumable,
-        Sleep
+        Move
     }
 
     State state;
 
     //Actual score values for each state, general formula is:
     //assignmentScore = (totalStatesNum - enum value + modifier)
-    int attackingScore, consumableScore;
+    int attackingScore, consumableScore, moveScore;
 
     bool move = true;
 
@@ -43,6 +43,9 @@ public class Enemy : Entity {
         Entity target = GetTarget(targets);
         Attack attack = DetermineAttackScore(target);
         Consumable consumable = DetermineConsumableScore();
+
+        DetermineMoveScore(canAttack: attack != null, canConsume: consumable != null);
+
         state = GetState();
         
         switch (state)
@@ -101,7 +104,18 @@ public class Enemy : Entity {
             case State.Consumable:
                 print("consuming");
                 //TODO allow selecting other targets(party members)
-                consumable.Consume(target: this);
+                RaiseEndTurnEvent();//TOD remove this, it is here temp. so game is playable
+                //consumable.Consume(target: this);
+                break;
+
+            case State.Move:
+                print("Moving...");
+                //TODO write logic for moving
+                //Find path to target node(selected by DetermineMoveScore()
+                //Check if it has reached the target node
+                //If so, send EndTurn event
+                //Refer to Case State.Attack: ...
+                RaiseEndTurnEvent();
                 break;
         }
     }
@@ -112,12 +126,15 @@ public class Enemy : Entity {
     /// <returns></returns>
     public State GetState()
     {
-        if(attackingScore > consumableScore)
+        if(attackingScore > consumableScore && attackingScore > moveScore)
         {
             return State.Attack;
         }
-
-        return State.Consumable;
+        else if (attackingScore < consumableScore && consumableScore < moveScore)
+        {
+            return State.Consumable;
+        }
+        return State.Move;
     }
 
     /// <summary>
@@ -242,12 +259,21 @@ public class Enemy : Entity {
                 consumableScore = 900;
             }
             //else if(healingScore < healthDifference && healthDiffernce > )
+            //TODO change this
+            selectedAbsoluteConsumable = selectedHealingConsumable;
         }
 
         return selectedAbsoluteConsumable;
     }
 
-
+    private void DetermineMoveScore(bool canAttack, bool canConsume)
+    {
+        //IF cant attack or consume, then moving is the only option
+        if(!canAttack && !canConsume)
+        {
+            moveScore = 1000;
+        }
+    }
 
     /// <summary>
     /// Deal attack's damage to target entity
