@@ -6,6 +6,8 @@ TagManager:
   tags:
   - World
   - BattleZone
+  - AttacksButton
+  - ConsumablesButton
   layers:
   - Default
   - TransparentFX

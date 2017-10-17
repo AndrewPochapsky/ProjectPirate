@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class BattleController : MonoBehaviour {
 
-    public delegate void OnUIValuesChanged(string turnText);
+    public delegate void OnUIValuesChanged(Turn turn);
     public event OnUIValuesChanged OnUIValuesChangedEvent;
 
     public delegate void OnEnemyTurn(List<Entity> targets);
@@ -29,6 +29,8 @@ public class BattleController : MonoBehaviour {
     Transform parent;
 
     public List<Node> Nodes { get; private set; }
+
+    bool canDisplayTiles = true;
 
     private void Awake()
     {
@@ -63,7 +65,7 @@ public class BattleController : MonoBehaviour {
 
     private void Start()
     {
-        OnUIValuesChangedEvent(CurrentTurn.ToString());
+        OnUIValuesChangedEvent(CurrentTurn);
         /*if(CurrentTurn == Turn.Enemy)
         {
             OnEnemyTurnEvent(friendlies);
@@ -73,14 +75,18 @@ public class BattleController : MonoBehaviour {
     private void Update()
     {
         Tile raycastTile = MouseRaycast();
-
         //TODO change this
         if(CurrentTurn == Turn.Player)
         {
             if (!friendlies[0].IsMoving && raycastTile != null)
             {
                 List<Node> path = Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(raycastTile), reverse: true);
-                Pathfinding.SelectNodes(path, Color.gray);
+                if (canDisplayTiles)
+                {
+                    Pathfinding.SelectNodes(path, Color.gray);
+                    print("selecting tiles");
+                }
+                
             }
                
         }
@@ -108,6 +114,7 @@ public class BattleController : MonoBehaviour {
         {
             entity.SetPathNodes(nodes);
             Pathfinding.DeselectNodes(nodes);
+            canDisplayTiles = false;
             print("deselecting");
         }
     }
@@ -157,17 +164,20 @@ public class BattleController : MonoBehaviour {
         return entity;
     }
 
-    private void OnEndTurn()
+    public void OnEndTurn()
     {
         print("Ending turn");
         if (CurrentTurn == Turn.Enemy)
         {
+            canDisplayTiles = true;
             CurrentTurn = Turn.Player;
         }
         else
         {
             CurrentTurn = Turn.Enemy;
         }
-        OnUIValuesChangedEvent(CurrentTurn.ToString());
+        OnUIValuesChangedEvent(CurrentTurn);
     }
+
+
 }
