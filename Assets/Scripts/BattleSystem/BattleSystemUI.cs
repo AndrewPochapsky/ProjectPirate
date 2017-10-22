@@ -27,7 +27,9 @@ public class BattleSystemUI : MonoBehaviour {
     [SerializeField]
     private Button[] buttons;
 
-    private Button currentPressedButton;
+    private Button[] attackButtons;
+
+    private Button currentPressedButton, currentPressedAttackButton;
 
     Color pressedColor = Color.gray;
     BattleController battleController;
@@ -38,18 +40,12 @@ public class BattleSystemUI : MonoBehaviour {
         battleController.OnUIValuesChangedEvent += UpdateUI;
     }
 
-    private void Start()
-    {
-        GenerateButton(attackPanel);
-        GenerateButton(attackPanel);
-        GenerateButton(attackPanel);
-    }
-
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
         {
             DeactivatePanel();
+            battleController.Attacking = false;
         }
     }
 
@@ -57,6 +53,15 @@ public class BattleSystemUI : MonoBehaviour {
     {
         this.turnText.text = turn.ToString();
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
+    }
+
+    public void GenerateAttackButtons(Entity player)
+    {
+        attackButtons = new Button[player.Attacks.Count];
+        for(int i = 0; i < player.Attacks.Count; i++)
+        {
+            attackButtons[i] = GenerateButton(attackPanel, player.Attacks[i], player);
+        }
     }
 
     /// <summary>
@@ -97,7 +102,7 @@ public class BattleSystemUI : MonoBehaviour {
     public void OnAnyButtonPressed()
     {
         GameObject button = EventSystem.current.currentSelectedGameObject;
-        FindPressedButton(buttons, button.tag);
+        FindPressedButton(buttons, button.GetComponent<Button>(), attackButton: false);
     }
 
     /// <summary>
@@ -108,15 +113,24 @@ public class BattleSystemUI : MonoBehaviour {
         attackPanel.gameObject.SetActive(true);
     }
 
-    private void FindPressedButton(Button[] buttons, string tag)
+    private void FindPressedButton(Button[] buttons, Button pressedButton, bool attackButton)
     {
         foreach (Button button in buttons)
         {
-            if (button.CompareTag(tag))
+            if (button == pressedButton)
             {
                 button.GetComponent<Image>().color = pressedColor;
-                currentPressedButton = button;
-                if (!button.CompareTag("AttacksButton"))
+                print("match");
+                if (attackButton)
+                {
+                    currentPressedAttackButton = button;
+                }
+                else
+                {
+                    currentPressedButton = button;
+                }
+                
+                if (!attackButton && !button.CompareTag("AttacksButton"))
                 {
                     attackPanel.gameObject.SetActive(false);
                 }
@@ -138,16 +152,35 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
-    private void GenerateButton(RectTransform parent)
+    private Button GenerateButton(RectTransform parent, Attack attack, Entity player)
     {
         GameObject button = (GameObject)Instantiate(buttonPrefab);
         button.transform.SetParent(parent, false);
         button.transform.localScale = Vector3.one;
 
-        //How to add onClick events to the buttons
-        /* Button tempButton = button.GetComponent<Button>();
-             int tempInt = i;
+        button.transform.GetChild(0).GetComponent<Text>().text = attack.Name;
+
+        Button tempButton = button.GetComponent<Button>();
  
-             tempButton.onClick.AddListener(() => ButtonClicked(tempInt));*/
+        tempButton.onClick.AddListener(() => OnAttackButtonClicked(attack, tempButton, player));
+        return button.GetComponent<Button>();
+    }
+
+    private void OnAttackButtonClicked(Attack attack, Button button, Entity player)
+    {
+        if(currentPressedAttackButton == null)
+        {
+            currentPressedAttackButton = button;
+        }
+
+        List<Node> rangeNodes = Pathfinding.GetRange(battleController.Nodes, player.nodeParent, attack.Range);
+
+        Pathfinding.DeselectNodes(battleController.Nodes);
+        Pathfinding.SelectNodes(rangeNodes, Color.cyan);
+
+        FindPressedButton(attackButtons, button, attackButton: true);
+
+        battleController.Attacking = true;
+
     }
 }

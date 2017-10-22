@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class BattleController : MonoBehaviour {
 
@@ -12,7 +13,7 @@ public class BattleController : MonoBehaviour {
     public event OnEnemyTurn OnEnemyTurnEvent;
 
     public enum Turn { Player, Enemy }
-    public Turn CurrentTurn { get; private set; } = Turn.Enemy;
+    public Turn CurrentTurn { get; private set; } = Turn.Player;
 
     TileGenerator tileGenerator;
     BattleSystemUI uiController;
@@ -28,14 +29,30 @@ public class BattleController : MonoBehaviour {
 
     Transform parent;
 
+    List<Node> playerMovementRange;
+
+    /// <summary>
+    /// The nodes that make up the battle grid
+    /// </summary>
     public List<Node> Nodes { get; private set; }
 
-    bool canDisplayTiles = true;
+    /// <summary>
+    /// Determines if path should be displayed
+    /// </summary>
+    bool canDisplayPathTiles = true;
+    public bool Attacking { get; set; } = false;
+
+    //Colours:
+    Color pathColour, movementRangeColour;
 
     private void Awake()
     {
         friendlies = new List<Entity>();
         enemies = new List<Entity>();
+
+        //Colours:
+        pathColour = Color.grey;
+        movementRangeColour = new Color32(183, 183, 183, 1);
 
         uiController = FindObjectOfType<BattleSystemUI>();
 
@@ -52,7 +69,7 @@ public class BattleController : MonoBehaviour {
         index = rnd.Next(Nodes.Count);
         Node enemyStartingLocation = Nodes[index];
 
-        friendlies.Add(SetupEntity(nameof(Entity), playerStartingLocation.transform));
+        friendlies.Add(SetupEntity(nameof(Player), playerStartingLocation.transform));
         enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform));        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
@@ -60,7 +77,11 @@ public class BattleController : MonoBehaviour {
         friendlies[0].OnEndTurnEvent += OnEndTurn;
         enemies[0].OnEndTurnEvent += OnEndTurn;
 
+        playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
+
+        //Generate the UI
         uiController.CreateGrid(width, height, battleTileSize);
+        uiController.GenerateAttackButtons(friendlies[0]);
     }
 
     private void Start()
@@ -74,19 +95,19 @@ public class BattleController : MonoBehaviour {
 
     private void Update()
     {
-        Tile raycastTile = MouseRaycast();
+        Tile raycastTile = MouseRaycast(playerMovementRange);
         //TODO change this
         if(CurrentTurn == Turn.Player)
         {
-            if (!friendlies[0].IsMoving && raycastTile != null)
+            if (raycastTile != null && !friendlies[0].IsMoving && !Attacking)
             {
                 List<Node> path = Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(raycastTile), reverse: true);
-                if (canDisplayTiles)
+                if (canDisplayPathTiles)
                 {
-                    Pathfinding.SelectNodes(path, Color.gray);
+                    Pathfinding.SelectNodes(playerMovementRange, movementRangeColour);
+                    Pathfinding.SelectNodes(path, pathColour);
                     print("selecting tiles");
                 }
-                
             }
                
         }
@@ -114,7 +135,7 @@ public class BattleController : MonoBehaviour {
         {
             entity.SetPathNodes(nodes);
             Pathfinding.DeselectNodes(nodes);
-            canDisplayTiles = false;
+            canDisplayPathTiles = false;
             print("deselecting");
         }
     }
@@ -123,17 +144,18 @@ public class BattleController : MonoBehaviour {
     /// Raycasts from mouse
     /// </summary>
     /// <returns>The tile</returns>
-    private Tile MouseRaycast()
+    private Tile MouseRaycast(List<Node> movementRange)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
         Physics.Raycast(ray, out hit, int.MaxValue);
 
-        if(hit.collider != null)
+        if (hit.collider != null && !EventSystem.current.IsPointerOverGameObject() && movementRange.Contains(GetTargetNode(hit.collider.gameObject.GetComponent<Tile>())))
             return hit.collider.gameObject.GetComponent<Tile>();
 
         return null;
+        
     }
 
     /// <summary>
@@ -169,7 +191,8 @@ public class BattleController : MonoBehaviour {
         print("Ending turn");
         if (CurrentTurn == Turn.Enemy)
         {
-            canDisplayTiles = true;
+            canDisplayPathTiles = true;
+            playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
             CurrentTurn = Turn.Player;
         }
         else

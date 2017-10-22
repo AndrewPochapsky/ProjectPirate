@@ -169,7 +169,7 @@ public class Enemy : Entity {
         List<Attack> attacksInReadyRange = new List<Attack>();
         List<Attack> attacksInMovementRange = new List<Attack>();
 
-        foreach (Attack attack in attacks)
+        foreach (Attack attack in Attacks)
         {
             int valueOne, valueTwo; 
             valueOne = valueTwo = (attack.Range - distanceToTarget);
@@ -231,7 +231,7 @@ public class Enemy : Entity {
         Consumable selectedAbsoluteConsumable = null;
         HealingConsumable selectedHealingConsumable = null;
         //Seperate all current consumables into list
-        List<HealingConsumable> healingConsumables = consumables.Where(c => c is HealingConsumable)
+        List<HealingConsumable> healingConsumables = Consumables.Where(c => c is HealingConsumable)
                                                                 .Select(c => c as HealingConsumable)
                                                                 .ToList();
         int healingScore = -1;

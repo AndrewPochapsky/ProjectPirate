@@ -10,14 +10,15 @@ public class Entity : MonoBehaviour {
     /// <summary>
     /// Number of grid spaces that an enemy can move
     /// </summary>
-    protected int Speed { get; set; }
+    public int Speed { get; protected set; }
     protected int MaxHealth { get; set; }
     public int CurrentHealth { get; protected set; }
 
+    [HideInInspector]
     public bool canMove = true;
 
-    protected List<Attack> attacks;
-    protected List<Consumable> consumables;
+    public List<Attack> Attacks { get; protected set; }
+    public List<Consumable> Consumables { get; protected set; }
 
     [HideInInspector]
     public Node nodeParent;
