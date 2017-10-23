@@ -134,5 +134,15 @@ public class Entity : MonoBehaviour {
     {
         OnEndTurnEvent();
     }
-   
+
+    /// <summary>
+    /// Deal attack's damage to target entity
+    /// </summary>
+    /// <param name="attack">The specified attack</param>
+    /// <param name="target">The target</param>
+    protected void AttackTarget(Attack attack, Entity target)//TODO consider making this virtual
+    {
+        target.ModifyHealth((-1) * attack.Damage);
+    }
+
 }

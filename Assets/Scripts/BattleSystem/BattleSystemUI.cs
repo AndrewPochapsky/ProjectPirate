@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class BattleSystemUI : MonoBehaviour {
 
+    private enum ButtonType { Regular, Attack, Consumable };
+
     [SerializeField]
     private Text turnText;
 
@@ -45,7 +47,11 @@ public class BattleSystemUI : MonoBehaviour {
         if (Input.GetMouseButtonDown(1))
         {
             DeactivatePanel();
-            battleController.Attacking = false;
+            if (battleController.Attacking)
+            {
+                Pathfinding.DeselectNodes(battleController.Nodes);
+                battleController.Attacking = false;
+            }
         }
     }
 
@@ -53,6 +59,10 @@ public class BattleSystemUI : MonoBehaviour {
     {
         this.turnText.text = turn.ToString();
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
+
+        DeactivatePanel();
+        battleController.Attacking = false;
+        Pathfinding.DeselectNodes(battleController.Nodes);
     }
 
     public void GenerateAttackButtons(Entity player)
@@ -102,7 +112,7 @@ public class BattleSystemUI : MonoBehaviour {
     public void OnAnyButtonPressed()
     {
         GameObject button = EventSystem.current.currentSelectedGameObject;
-        FindPressedButton(buttons, button.GetComponent<Button>(), attackButton: false);
+        FindPressedButton(buttons, button.GetComponent<Button>(), ButtonType.Regular);
     }
 
     /// <summary>
@@ -113,7 +123,7 @@ public class BattleSystemUI : MonoBehaviour {
         attackPanel.gameObject.SetActive(true);
     }
 
-    private void FindPressedButton(Button[] buttons, Button pressedButton, bool attackButton)
+    private void FindPressedButton(Button[] buttons, Button pressedButton, ButtonType buttonType)
     {
         foreach (Button button in buttons)
         {
@@ -121,16 +131,16 @@ public class BattleSystemUI : MonoBehaviour {
             {
                 button.GetComponent<Image>().color = pressedColor;
                 print("match");
-                if (attackButton)
+                if (buttonType == ButtonType.Attack)
                 {
                     currentPressedAttackButton = button;
                 }
-                else
+                else if(buttonType == ButtonType.Regular)
                 {
                     currentPressedButton = button;
                 }
                 
-                if (!attackButton && !button.CompareTag("AttacksButton"))
+                if (buttonType != ButtonType.Attack && !button.CompareTag("AttacksButton"))
                 {
                     attackPanel.gameObject.SetActive(false);
                 }
@@ -149,6 +159,12 @@ public class BattleSystemUI : MonoBehaviour {
         if(currentPressedButton != null)
         {
             currentPressedButton.GetComponent<Image>().color = Color.white;
+            currentPressedButton = null;
+        }
+        if(currentPressedAttackButton != null)
+        {
+            currentPressedAttackButton.GetComponent<Image>().color = Color.white;
+            currentPressedAttackButton = null;
         }
     }
 
@@ -178,9 +194,8 @@ public class BattleSystemUI : MonoBehaviour {
         Pathfinding.DeselectNodes(battleController.Nodes);
         Pathfinding.SelectNodes(rangeNodes, Color.cyan);
 
-        FindPressedButton(attackButtons, button, attackButton: true);
+        FindPressedButton(attackButtons, button, ButtonType.Attack);
 
         battleController.Attacking = true;
-
     }
 }
