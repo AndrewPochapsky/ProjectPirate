@@ -30,6 +30,8 @@ public class BattleController : MonoBehaviour {
     Transform parent;
 
     List<Node> playerMovementRange;
+    [HideInInspector]
+    public Attack lastSelectedAttack;
 
     /// <summary>
     /// The nodes that make up the battle grid
@@ -95,21 +97,35 @@ public class BattleController : MonoBehaviour {
 
     private void Update()
     {
-        Tile raycastTile = MouseRaycast(playerMovementRange);
+        //TODO dont constantly raycast
+        GameObject raycastObject = MouseRaycast(playerMovementRange);
         //TODO change this
         if(CurrentTurn == Turn.Player)
         {
-            if (raycastTile != null && !friendlies[0].IsMoving && !Attacking)
+            if(raycastObject != null)
             {
-                List<Node> path = Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(raycastTile), reverse: true);
-                if (canDisplayPathTiles)
+                if (!friendlies[0].IsMoving && !Attacking)
                 {
-                    Pathfinding.SelectNodes(playerMovementRange, movementRangeColour);
-                    Pathfinding.SelectNodes(path, pathColour);
-                    print("selecting tiles");
+                    List<Node> path = Pathfinding.FindPath(friendlies[0].nodeParent, GetTargetNode(raycastObject.GetComponent<Tile>()), reverse: true);
+                    if (canDisplayPathTiles)
+                    {
+                        Pathfinding.SelectNodes(playerMovementRange, movementRangeColour);
+                        Pathfinding.SelectNodes(path, pathColour);
+                    }
+                }
+
+                else if (Attacking)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        Entity entity = raycastObject.GetComponent<Entity>();
+                        print("Attacking: " + entity.name);
+                        //End turn once attacked
+                        OnEndTurn();
+                    }
                 }
             }
-               
+           
         }
         //TODO do not do this
         else
@@ -144,16 +160,25 @@ public class BattleController : MonoBehaviour {
     /// Raycasts from mouse
     /// </summary>
     /// <returns>The tile</returns>
-    private Tile MouseRaycast(List<Node> movementRange)
+    private GameObject MouseRaycast(List<Node> movementRange)
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
         Physics.Raycast(ray, out hit, int.MaxValue);
 
-        if (hit.collider != null && !EventSystem.current.IsPointerOverGameObject() && movementRange.Contains(GetTargetNode(hit.collider.gameObject.GetComponent<Tile>())))
-            return hit.collider.gameObject.GetComponent<Tile>();
+        if(hit.collider != null && !EventSystem.current.IsPointerOverGameObject())
+        {
+            Tile tile = hit.collider.gameObject.GetComponent<Tile>();
+            Enemy enemy = hit.collider.gameObject.GetComponent<Enemy>();
 
+            //For movement
+            if (tile != null && !Attacking && movementRange.Contains(GetTargetNode(tile)))
+                return hit.collider.gameObject;
+            //For attacking
+            else if (enemy != null && Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, lastSelectedAttack.Range).Contains(enemy.nodeParent))
+                return hit.collider.gameObject;
+        }
         return null;
         
     }

@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 23411291209925040}
   - component: {fileID: 54672744360598260}
   - component: {fileID: 114466340335639776}
+  - component: {fileID: 65317188520654216}
   m_Layer: 0
   m_Name: SampleEnemy
   m_TagString: Untagged
@@ -97,6 +98,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &65317188520654216
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1548199070762142}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114466340335639776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -108,3 +121,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4154f51fc3144dc46a0ae2fc3f502ff2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canMove: 1
+  nodeParent: {fileID: 0}

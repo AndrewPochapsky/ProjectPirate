@@ -130,7 +130,6 @@ public class BattleSystemUI : MonoBehaviour {
             if (button == pressedButton)
             {
                 button.GetComponent<Image>().color = pressedColor;
-                print("match");
                 if (buttonType == ButtonType.Attack)
                 {
                     currentPressedAttackButton = button;
@@ -196,6 +195,7 @@ public class BattleSystemUI : MonoBehaviour {
 
         FindPressedButton(attackButtons, button, ButtonType.Attack);
 
+        battleController.lastSelectedAttack = attack;
         battleController.Attacking = true;
     }
 }

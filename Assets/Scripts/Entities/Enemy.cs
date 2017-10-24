@@ -40,6 +40,8 @@ public class Enemy : Entity {
     /// <param name="targets">List of possible targets</param>
     private void OnEnemyTurn(List<Entity> targets)
     {
+        print("onEnemyTurn");
+
         Entity target = GetTarget(targets);
         Attack attack = DetermineAttackScore(target);
         Consumable consumable = DetermineConsumableScore();
