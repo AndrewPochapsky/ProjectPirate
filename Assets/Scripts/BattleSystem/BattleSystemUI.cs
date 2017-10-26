@@ -9,7 +9,7 @@ public class BattleSystemUI : MonoBehaviour {
     private enum ButtonType { Regular, Attack, Consumable };
 
     [SerializeField]
-    private Text turnText;
+    private Text turnText, healthText, canMoveText;
 
     [SerializeField]
     private Transform canvas;
@@ -39,7 +39,8 @@ public class BattleSystemUI : MonoBehaviour {
     private void Awake()
     {
         battleController = FindObjectOfType<BattleController>();
-        battleController.OnUIValuesChangedEvent += UpdateUI;
+        battleController.OnTurnValueChangedEvent += UpdateTurnUI;
+        battleController.OnPlayerInfoChangedEvent += UpdatePlayerUI;
     }
 
     private void Update()
@@ -55,7 +56,7 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
-    private void UpdateUI(BattleController.Turn turn)
+    private void UpdateTurnUI(BattleController.Turn turn)
     {
         this.turnText.text = turn.ToString();
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
@@ -63,6 +64,19 @@ public class BattleSystemUI : MonoBehaviour {
         DeactivatePanel();
         battleController.Attacking = false;
         Pathfinding.DeselectNodes(battleController.Nodes);
+    }
+
+    private void UpdatePlayerUI(int? maxHealth, int? currentHealth, string canMove)
+    {
+        if(maxHealth != null)
+        {
+            healthText.text = "HP:" + currentHealth + "/" + maxHealth;
+        }
+        
+        if(canMove != null)
+        {
+            canMoveText.text = "Move:" + canMove;
+        }
     }
 
     public void GenerateAttackButtons(Entity player)

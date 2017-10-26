@@ -12,6 +12,8 @@ public class Player : Entity {
             new Attack("Super Attack", 4, 4)
         };
         Speed = 4;
+        MaxHealth = 15;
+        CurrentHealth = MaxHealth;
     }
 
     

@@ -6,8 +6,11 @@ using UnityEngine.EventSystems;
 
 public class BattleController : MonoBehaviour {
 
-    public delegate void OnUIValuesChanged(Turn turn);
-    public event OnUIValuesChanged OnUIValuesChangedEvent;
+    public delegate void OnTurnValueChanged(Turn turn);
+    public event OnTurnValueChanged OnTurnValueChangedEvent;
+
+    public delegate void OnPlayerInfoChanged(int? maxHealth = null, int? currentHealth = null, string canMove = null);
+    public event OnPlayerInfoChanged OnPlayerInfoChangedEvent;
 
     public delegate void OnEnemyTurn(List<Entity> targets);
     public event OnEnemyTurn OnEnemyTurnEvent;
@@ -43,6 +46,7 @@ public class BattleController : MonoBehaviour {
     /// </summary>
     bool canDisplayPathTiles = true;
     public bool Attacking { get; set; } = false;
+    private bool canMove = true;
 
     //Colours:
     Color pathColour, movementRangeColour;
@@ -88,7 +92,8 @@ public class BattleController : MonoBehaviour {
 
     private void Start()
     {
-        OnUIValuesChangedEvent(CurrentTurn);
+        OnTurnValueChangedEvent(CurrentTurn);
+        OnPlayerInfoChangedEvent(friendlies[0].MaxHealth, friendlies[0].CurrentHealth, canMove.ToString());
         /*if(CurrentTurn == Turn.Enemy)
         {
             OnEnemyTurnEvent(friendlies);
@@ -120,7 +125,10 @@ public class BattleController : MonoBehaviour {
                     {
                         Entity entity = raycastObject.GetComponent<Entity>();
                         print("Attacking: " + entity.name);
+                        Attack.AttackTarget(lastSelectedAttack, entity);
                         //End turn once attacked
+                        canMove = true;
+                        OnPlayerInfoChangedEvent(canMove: canMove.ToString());
                         OnEndTurn();
                     }
                 }
@@ -147,12 +155,13 @@ public class BattleController : MonoBehaviour {
     private void OnPathUpdated(List<Node> nodes)
     {
         Entity entity = friendlies[0].GetComponent<Entity>();
-        if (!entity.IsMoving && Input.GetMouseButtonDown(0))
+        if (!entity.IsMoving && canMove && Input.GetMouseButtonDown(0))
         {
             entity.SetPathNodes(nodes);
             Pathfinding.DeselectNodes(nodes);
             canDisplayPathTiles = false;
-            print("deselecting");
+            canMove = false;
+            OnPlayerInfoChangedEvent(canMove: canMove.ToString());
         }
     }
 
@@ -201,9 +210,9 @@ public class BattleController : MonoBehaviour {
     private Entity SetupEntity(string type, Transform parent)
     {
         GameObject obj = Instantiate(Resources.Load(type), Vector3.zero, Quaternion.identity) as GameObject;
-        obj.transform.localScale = new Vector3(battleTileSize, 1, battleTileSize);
+        obj.transform.localScale = new Vector3(battleTileSize, battleTileSize, battleTileSize);
         obj.transform.SetParent(parent);
-        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localPosition = new Vector3(0, battleTileSize / 2, 0);
 
         Entity entity = obj.GetComponent<Entity>();
         entity.RefreshParent();
@@ -218,13 +227,16 @@ public class BattleController : MonoBehaviour {
         {
             canDisplayPathTiles = true;
             playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
+
+            canMove = true;
+            OnPlayerInfoChangedEvent(friendlies[0].MaxHealth, friendlies[0].CurrentHealth, canMove.ToString());
             CurrentTurn = Turn.Player;
         }
         else
         {
             CurrentTurn = Turn.Enemy;
         }
-        OnUIValuesChangedEvent(CurrentTurn);
+        OnTurnValueChangedEvent(CurrentTurn);
     }
 
 

@@ -11,7 +11,7 @@ public class Entity : MonoBehaviour {
     /// Number of grid spaces that an enemy can move
     /// </summary>
     public int Speed { get; protected set; }
-    protected int MaxHealth { get; set; }
+    public int MaxHealth { get; protected set; }
     public int CurrentHealth { get; protected set; }
 
     [HideInInspector]
@@ -103,7 +103,8 @@ public class Entity : MonoBehaviour {
     private void MoveToLocation(Node location)
     {
         if(location!=null && IsMoving)
-            transform.position = Vector3.MoveTowards(transform.position, location.transform.position, movementSpeed);
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(location.transform.position.x, 
+                transform.position.y, location.transform.position.z), movementSpeed);
     }
 
     /// <summary>
@@ -134,15 +135,4 @@ public class Entity : MonoBehaviour {
     {
         OnEndTurnEvent();
     }
-
-    /// <summary>
-    /// Deal attack's damage to target entity
-    /// </summary>
-    /// <param name="attack">The specified attack</param>
-    /// <param name="target">The target</param>
-    protected void AttackTarget(Attack attack, Entity target)//TODO consider making this virtual
-    {
-        target.ModifyHealth((-1) * attack.Damage);
-    }
-
 }

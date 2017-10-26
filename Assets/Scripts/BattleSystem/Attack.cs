@@ -14,4 +14,14 @@ public class Attack {
         Damage = damage;
         Range = range;
     }
+
+    /// <summary>
+    /// Deal attack's damage to target entity
+    /// </summary>
+    /// <param name="attack">The specified attack</param>
+    /// <param name="target">The target</param>
+    public static void AttackTarget(Attack attack, Entity target)
+    {
+        target.ModifyHealth((-1) * attack.Damage);
+    }
 }

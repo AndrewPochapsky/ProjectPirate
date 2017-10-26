@@ -139,7 +139,8 @@ public static class Pathfinding {
     {
         foreach(Node node in nodes)
         {
-            node.Child.Deselect();
+            if(node != null && node.Child != null)
+                node.Child.Deselect();
         }
     }
 }
