@@ -28,7 +28,7 @@ public class BattleController : MonoBehaviour {
 
     List<Entity> friendlies;
 
-    List<Entity> enemies;
+    List<Enemy> enemies;
 
     Transform parent;
 
@@ -47,6 +47,7 @@ public class BattleController : MonoBehaviour {
     bool canDisplayPathTiles = true;
     public bool Attacking { get; set; } = false;
     private bool canMove = true;
+    private bool eventCalled = false;
 
     //Colours:
     Color pathColour, movementRangeColour;
@@ -54,7 +55,7 @@ public class BattleController : MonoBehaviour {
     private void Awake()
     {
         friendlies = new List<Entity>();
-        enemies = new List<Entity>();
+        enemies = new List<Enemy>();
 
         //Colours:
         pathColour = Color.grey;
@@ -76,7 +77,7 @@ public class BattleController : MonoBehaviour {
         Node enemyStartingLocation = Nodes[index];
 
         friendlies.Add(SetupEntity(nameof(Player), playerStartingLocation.transform));
-        enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform));        
+        enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
@@ -136,8 +137,9 @@ public class BattleController : MonoBehaviour {
            
         }
         //TODO do not do this
-        else
+        else if(CurrentTurn==Turn.Enemy && !eventCalled)
         {
+            eventCalled = true;
             OnEnemyTurnEvent(friendlies);
         }
 
@@ -224,6 +226,11 @@ public class BattleController : MonoBehaviour {
     {
         if (CurrentTurn == Turn.Enemy)
         {
+            foreach(Enemy enemy in enemies)
+            {
+                enemy.ResetScores();
+            }
+            eventCalled = false;
             canDisplayPathTiles = true;
             playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
 

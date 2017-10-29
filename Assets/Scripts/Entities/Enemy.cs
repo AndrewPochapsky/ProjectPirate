@@ -18,13 +18,15 @@ public class Enemy : Entity {
 
     //Actual score values for each state, general formula is:
     //assignmentScore = (totalStatesNum - enum value + modifier)
-    int attackingScore, consumableScore, moveScore;
+    int attackingScore, consumableScore = -1, moveScore;
 
-    bool move = true;
-
+    bool moveForAttack = true;
+    bool checkForLocationReached = false;
     BattleController battleController;
 
     Node node = null;
+    Attack currentAttack = null;
+    Entity target = null;
 
     protected override void Start()
     {
@@ -36,27 +38,45 @@ public class Enemy : Entity {
         }
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (checkForLocationReached)
+        {
+            if (nodeParent == node)
+            {
+                if (currentAttack != null)
+                {
+                    Attack.AttackTarget(currentAttack, target);
+                    currentAttack = null;
+                    target = null;
+                }
+                print("ending turn");
+                node = null;
+                //Do action and end turn
+                checkForLocationReached = false;
+                RaiseEndTurnEvent();
+            }
+        }
+    }
+
     /// <summary>
     /// Logic to be executed on enemy turn
     /// </summary>
     /// <param name="targets">List of possible targets</param>
     private void OnEnemyTurn(List<Entity> targets)
     {
-        Entity target = GetTarget(targets);
-        Attack attack = DetermineAttackScore(target);
+        target = GetTarget(targets);
+        currentAttack = DetermineAttackScore(target);
         Consumable consumable = DetermineConsumableScore();
-        if(node == null)
-        {
-            node = DetermineMoveScore(target, canAttack: attack != null, canConsume: consumable != null); 
-        }
-
-        if(state != State.Move) 
-            state = GetState();
+        node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
+        state = GetState();
+
         switch (state)
         {
             case State.Attack:
-                if (attack!= null && move)//TODO remove the first condition
+                if (currentAttack!= null && moveForAttack)//TODO remove the first condition
                 {
                     Node nodeToMoveTo = null;
                     List<Node> movementRangeNodes = Pathfinding.GetRange(battleController.Nodes, nodeParent, (Speed));
@@ -66,7 +86,7 @@ public class Enemy : Entity {
                     {
                         if (nodeParent != movementRangeNodes[i] && target.nodeParent != movementRangeNodes[i])
                         {
-                            List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], attack.Range);
+                            List<Node> attackRangeNodes = Pathfinding.GetRange(battleController.Nodes, movementRangeNodes[i], currentAttack.Range);
 
                             int currentDistance = Pathfinding.GetDistance(target.nodeParent, movementRangeNodes[i]);
                             if (currentDistance < minDistance)
@@ -81,28 +101,20 @@ public class Enemy : Entity {
                     for (int i = 0; i < path.Count; i++)
                     {
                         int distance = Pathfinding.GetDistance(path[i], target.nodeParent);
-                        if (distance <= attack.Range)
+                        if (distance <= currentAttack.Range)
                         {
                             path = Pathfinding.FindPath(nodeParent, path[i], reverse: true);
                             break;
                         }
                     }
+                    SetPathNodes(path);
+                    node = path[path.Count - 1];
+                    checkForLocationReached = true;
 
-                    if (nodeParent == path[path.Count-1])
-                    {
-                        //Do action and end turn
-                        RaiseEndTurnEvent();
-                    }
-                    if(pathNodes.Count == 0)
-                    {
-                        SetPathNodes(path);
-                    }
-                    
                 }
-                else if(attack != null)
+                else if(currentAttack != null)
                 {
-                    print("Enemy Attacking");
-                    Attack.AttackTarget(attack, target);
+                    Attack.AttackTarget(currentAttack, target);
                     RaiseEndTurnEvent();
                 }
                 break;
@@ -116,26 +128,11 @@ public class Enemy : Entity {
 
             case State.Move:
                 print("Moving...");
-                //TODO write logic for moving
-                //Find path to target node(selected by DetermineMoveScore()
-                //Check if it has reached the target node
-                //If so, send EndTurn event
-                //Refer to Case State.Attack: ...
-
                 List<Node> _path = Pathfinding.FindPath(nodeParent, node, reverse: true);
-                if (nodeParent == node)
-                {
-                    print("ending turn");
-                    node = null;
-                    //Do action and end turn
-                    RaiseEndTurnEvent();
-                }
-                else if (pathNodes.Count == 0)
-                {
-                    print("setting path nodes");
-                    SetPathNodes(_path);
-                }
 
+                SetPathNodes(_path);
+                node = _path[_path.Count - 1];
+                checkForLocationReached = true;
                 break;
         }
     }
@@ -203,15 +200,16 @@ public class Enemy : Entity {
                 allAttacks.Add(attack);
                 attacksInReadyRange.Add(attack);
                 attackingScore += 10;
-                move = false;
+                moveForAttack = false;
             }
             //Entity can attack if moves
             else if(valueTwo >= 0)
             {
+                print("gonna haveta move");
                 allAttacks.Add(attack);
                 attacksInMovementRange.Add(attack);
                 attackingScore += Speed;
-                move = true;
+                moveForAttack = true;
             }
         }
 
@@ -220,8 +218,7 @@ public class Enemy : Entity {
         else if (attacksInMovementRange.Count > 0)
             currentAttack = attacksInMovementRange[0];
 
-       
-        //Get the attack with heighest damage
+        //Get the attack with highest damage
         //TODO factor in other values such as armour piercing
         for (int i = 1; i < allAttacks.Count; i++)
         {
@@ -234,10 +231,13 @@ public class Enemy : Entity {
         //target can be killed in one hit
         if (currentAttack != null && target.CurrentHealth <= currentAttack.Damage)
         {
-            attackingScore += 999;
+            attackingScore = 999;
+        }
+        else if(currentAttack != null)
+        {
+            attackingScore = 50;
         }
 
-        //TODO create method called ChooseAttack which takes in attacksInRange List
         return currentAttack;
     }
 
@@ -298,6 +298,7 @@ public class Enemy : Entity {
         //IF cant attack or consume, then moving is the only option
         if(!canAttack && !canConsume)
         {
+            print("cant attack or comsume");
             moveScore = 1000;
         }
         
@@ -337,8 +338,14 @@ public class Enemy : Entity {
                 }
             }
         }
+        moveScore = 20;
 
         return node;
+    }
+
+    public void ResetScores()
+    {
+        attackingScore = consumableScore = moveScore = 0;
     }
 
 }

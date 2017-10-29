@@ -38,7 +38,7 @@ public class Entity : MonoBehaviour {
         movementSpeed = 200 * Time.deltaTime;
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         HandleMoving();
     }
@@ -92,7 +92,6 @@ public class Entity : MonoBehaviour {
         currentNodeIndex = 0;
         pathNodes = _nodes;
         nextLocation = _nodes[currentNodeIndex];
-
         IsMoving = true; 
     }
 
