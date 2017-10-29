@@ -6,13 +6,14 @@ public class SampleEnemy : Enemy {
 
     private void Awake()
     {
-        Speed = 5;
+        Speed = 1;
         MaxHealth = 10;
-        CurrentHealth = MaxHealth / 2;
+        CurrentHealth = MaxHealth;
 
         Attacks = new List<Attack>
         {
-            new Attack("Basic Attack", 2, 4)
+            new Attack("Basic Attack", 2, 1),
+            //new Attack("Super Attack", 3, 4)
         };
 
         Consumables = new List<Consumable>

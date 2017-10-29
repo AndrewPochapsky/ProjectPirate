@@ -24,6 +24,8 @@ public class Enemy : Entity {
 
     BattleController battleController;
 
+    Node node = null;
+
     protected override void Start()
     {
         base.Start();
@@ -43,10 +45,13 @@ public class Enemy : Entity {
         Entity target = GetTarget(targets);
         Attack attack = DetermineAttackScore(target);
         Consumable consumable = DetermineConsumableScore();
+        if(node == null)
+        {
+            node = DetermineMoveScore(target, canAttack: attack != null, canConsume: consumable != null); 
+        }
 
-        DetermineMoveScore(canAttack: attack != null, canConsume: consumable != null);
-
-        state = GetState();
+        if(state != State.Move) 
+            state = GetState();
         
         switch (state)
         {
@@ -116,7 +121,21 @@ public class Enemy : Entity {
                 //Check if it has reached the target node
                 //If so, send EndTurn event
                 //Refer to Case State.Attack: ...
-                RaiseEndTurnEvent();
+
+                List<Node> _path = Pathfinding.FindPath(nodeParent, node, reverse: true);
+                if (nodeParent == node)
+                {
+                    print("ending turn");
+                    node = null;
+                    //Do action and end turn
+                    RaiseEndTurnEvent();
+                }
+                else if (pathNodes.Count == 0)
+                {
+                    print("setting path nodes");
+                    SetPathNodes(_path);
+                }
+
                 break;
         }
     }
@@ -267,13 +286,59 @@ public class Enemy : Entity {
         return selectedAbsoluteConsumable;
     }
 
-    private void DetermineMoveScore(bool canAttack, bool canConsume)
+    private Node DetermineMoveScore(Entity target, bool canAttack, bool canConsume)
     {
+        Node node = null;
+        if (!canMove)
+        {
+            moveScore = -1000;
+            return null;
+        }
+
         //IF cant attack or consume, then moving is the only option
         if(!canAttack && !canConsume)
         {
             moveScore = 1000;
         }
+        
+        Attack highestRangeAttack = Attacks[0];
+        for(int i = 1; i < Attacks.Count; i++)
+        {
+            if(Attacks[i].Range > highestRangeAttack.Range)
+            {
+                highestRangeAttack = Attacks[i];
+            }
+        }
+
+        int minDistance = int.MaxValue;
+        List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, Speed);
+
+        foreach (Node _node in movementRange)
+        {
+            int distance = Pathfinding.GetDistance(_node, target.nodeParent);
+            if(distance < minDistance && distance >= highestRangeAttack.Range)
+            {
+                node = _node;
+                minDistance = distance;
+            }
+        }
+
+        minDistance = int.MaxValue;
+
+        if(node == null)
+        {
+            foreach(Node _node in movementRange)
+            {
+                int distance = Pathfinding.GetDistance(_node, target.nodeParent);
+                if(distance < minDistance)
+                {
+                    minDistance = distance;
+                    node = _node;
+                }
+            }
+        }
+
+        return node;
     }
 
 }

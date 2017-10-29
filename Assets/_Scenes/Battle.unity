@@ -140,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   turnText: {fileID: 2104846075}
   healthText: {fileID: 1155994004}
-  canMoveText: {fileID: 0}
+  canMoveText: {fileID: 317261139}
   canvas: {fileID: 905889779}
   tileOutline: {fileID: 224564093826142178, guid: 746c9434bc5f8fd44a52f0581cea6839,
     type: 2}

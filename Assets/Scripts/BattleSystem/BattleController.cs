@@ -222,7 +222,6 @@ public class BattleController : MonoBehaviour {
 
     public void OnEndTurn()
     {
-        print("Ending turn");
         if (CurrentTurn == Turn.Enemy)
         {
             canDisplayPathTiles = true;
