@@ -355,6 +355,9 @@ public class Enemy : Entity {
     }
 
 
+    /// <summary>
+    /// Resets the scores
+    /// </summary>
     public void ResetScores()
     {
         attackingScore = consumableScore = moveScore = 0;
