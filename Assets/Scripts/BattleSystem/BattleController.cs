@@ -21,6 +21,9 @@ public class BattleController : MonoBehaviour {
     TileGenerator tileGenerator;
     BattleSystemUI uiController;
 
+    [SerializeField]
+    private Camera raycastCamera;
+
     const int battleTileSize = 50;
 
     const int width = 10;
@@ -173,10 +176,12 @@ public class BattleController : MonoBehaviour {
     /// <returns>The tile</returns>
     private GameObject MouseRaycast(List<Node> movementRange)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
+        Ray ray = raycastCamera.ScreenPointToRay(Input.mousePosition);
+        
+        Vector3 rayDirection = Input.mousePosition - raycastCamera.transform.position;
+        //Ray ray = new Ray(raycastCamera.transform.position, rayDirection);
         RaycastHit hit;
-        Physics.Raycast(ray, out hit, int.MaxValue);
+        Physics.Raycast(ray, out hit, Mathf.Infinity);
 
         if(hit.collider != null && !EventSystem.current.IsPointerOverGameObject())
         {
@@ -224,6 +229,7 @@ public class BattleController : MonoBehaviour {
 
     public void OnEndTurn()
     {
+        print("Ending Turn...");
         if (CurrentTurn == Turn.Enemy)
         {
             foreach(Enemy enemy in enemies)
@@ -232,9 +238,9 @@ public class BattleController : MonoBehaviour {
             }
             eventCalled = false;
             canDisplayPathTiles = true;
-            playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
-
             canMove = true;
+
+            playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
             OnPlayerInfoChangedEvent(friendlies[0].MaxHealth, friendlies[0].CurrentHealth, canMove.ToString());
             CurrentTurn = Turn.Player;
         }

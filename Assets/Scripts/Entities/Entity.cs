@@ -132,6 +132,7 @@ public class Entity : MonoBehaviour {
        
     protected void RaiseEndTurnEvent()
     {
+        canMove = true;
         OnEndTurnEvent();
     }
 }

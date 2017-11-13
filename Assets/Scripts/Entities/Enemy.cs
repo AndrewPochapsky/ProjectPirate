@@ -45,17 +45,21 @@ public class Enemy : Entity {
         {
             if (nodeParent == node)
             {
+                node = null;
+                checkForLocationReached = false;
+                canMove = false;
+
+                //If move was initiated as part of attacking
                 if (currentAttack != null)
                 {
                     Attack.AttackTarget(currentAttack, target);
                     currentAttack = null;
                     target = null;
+                    RaiseEndTurnEvent();
                 }
-                print("ending turn");
-                node = null;
-                //Do action and end turn
-                checkForLocationReached = false;
-                RaiseEndTurnEvent();
+                ResetScores();
+                //Do another action
+                OnEnemyTurn(new List<Entity>() { target });
             }
         }
     }
@@ -67,15 +71,23 @@ public class Enemy : Entity {
     private void OnEnemyTurn(List<Entity> targets)
     {
         target = GetTarget(targets);
+
         currentAttack = DetermineAttackScore(target);
         Consumable consumable = DetermineConsumableScore();
         node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
+        //If enemy cant do anything just end turn
+        if(currentAttack == null && consumable == null && !canMove)
+        {
+            RaiseEndTurnEvent();
+        }
+
         state = GetState();
 
         switch (state)
         {
             case State.Attack:
+                print("Attacking...");
                 if (currentAttack!= null && moveForAttack)//TODO remove the first condition
                 {
                     Node nodeToMoveTo = null;
@@ -161,7 +173,7 @@ public class Enemy : Entity {
     /// <returns>The chosen target</returns>
     public Entity GetTarget(List<Entity> targets)
     {
-        if(targets.Count == 1)
+        if(targets.Count == 1)//TODO choose targets when there are more than one
         {
             return targets[0];
         }
@@ -205,7 +217,6 @@ public class Enemy : Entity {
             //Entity can attack if moves
             else if(valueTwo >= 0)
             {
-                print("gonna haveta move");
                 allAttacks.Add(attack);
                 attacksInMovementRange.Add(attack);
                 attackingScore += Speed;
@@ -342,6 +353,7 @@ public class Enemy : Entity {
 
         return node;
     }
+
 
     public void ResetScores()
     {
