@@ -8,24 +8,29 @@
 
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
 		_LerpSpeed ("Lerp Speed", Float) = 1
+		_BumpMap ("Normal Map", 2D) = "bump" {}
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
-		LOD 200
+		LOD 300
 		
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
+		#pragma surface surf Standard fullforwardshadows vertex:vert
+		//#pragma surface surf Lambert alpha vertex:vert
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
 
 		sampler2D _MainTex;
 		sampler2D _NoiseTex;
+		sampler2D _BumpMap;
 
 		struct Input {
 			float2 uv_MainTex;
 			float4 screenPos;
+			float2 uv_BumpMap;
+			INTERNAL_DATA
 		};
 
 		half _Glossiness;
@@ -41,18 +46,34 @@
 			// put more per-instance properties here
 		UNITY_INSTANCING_CBUFFER_END
 
+		
+		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
+			float t = sin(_Time[1]) * _LerpSpeed;
+			return lerp(colorA, colorB, t);
+		}
+
+		void vert (inout appdata_full v) {
+			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
+
+    		float phase = _Time[1] * 10;
+   			float offset = (wpos.x + (wpos.z * 0.2)) * 0.5;
+    		wpos.y = sin(phase + offset) * 0.2;
+			
+            v.vertex = mul(unity_WorldToObject, wpos);
+			
+		}
+ 
+
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			
 			//float lerpValue = tex2Dlod( _NoiseTex, float4(0,IN.vertex.y / 100  + _Time[1]/25 ,0,0)).r;
 
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _ColorA;
-
-			float t = sin(_Time[1]) * _LerpSpeed;
-
-			c = lerp(_ColorA, _ColorB, t);
-
-
+			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * colorLerp(_ColorA, _ColorB);
+			
 			o.Albedo = c.rgb;
+
+			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
