@@ -9,7 +9,7 @@ public class Player : Entity {
         Attacks = new List<Attack>
         {
             new Attack("Basic Attack", 2, 3),
-            new Attack("Super Attack", 4, 4)
+            new Attack("Super Attack", 5, 4)
         };
         Speed = 4;
         MaxHealth = 15;

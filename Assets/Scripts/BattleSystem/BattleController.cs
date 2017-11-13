@@ -128,7 +128,7 @@ public class BattleController : MonoBehaviour {
                     if (Input.GetMouseButtonDown(0))
                     {
                         Entity entity = raycastObject.GetComponent<Entity>();
-                        print("Attacking: " + entity.name);
+                        //print("Attacking: " + entity.name);
                         Attack.AttackTarget(lastSelectedAttack, entity);
                         //End turn once attacked
                         canMove = true;
@@ -229,7 +229,7 @@ public class BattleController : MonoBehaviour {
 
     public void OnEndTurn()
     {
-        print("Ending Turn...");
+        //print("Ending Turn...");
         if (CurrentTurn == Turn.Enemy)
         {
             foreach(Enemy enemy in enemies)

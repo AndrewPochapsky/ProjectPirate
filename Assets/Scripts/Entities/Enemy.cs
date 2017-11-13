@@ -50,16 +50,21 @@ public class Enemy : Entity {
                 canMove = false;
 
                 //If move was initiated as part of attacking
-                if (currentAttack != null)
+                if (state == State.Attack)
                 {
                     Attack.AttackTarget(currentAttack, target);
                     currentAttack = null;
                     target = null;
                     RaiseEndTurnEvent();
                 }
-                ResetScores();
-                //Do another action
-                OnEnemyTurn(new List<Entity>() { target });
+                else
+                {
+                    ResetScores();
+                    //Do another action
+                    print("Recursion");
+                    OnEnemyTurn(new List<Entity>() { target });
+                }
+               
             }
         }
     }
@@ -76,6 +81,8 @@ public class Enemy : Entity {
         Consumable consumable = DetermineConsumableScore();
         node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
+        print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
+
         //If enemy cant do anything just end turn
         if(currentAttack == null && consumable == null && !canMove)
         {
@@ -87,7 +94,7 @@ public class Enemy : Entity {
         switch (state)
         {
             case State.Attack:
-                print("Attacking...");
+                //print("Attacking...");
                 if (currentAttack!= null && moveForAttack)//TODO remove the first condition
                 {
                     Node nodeToMoveTo = null;
@@ -132,14 +139,15 @@ public class Enemy : Entity {
                 break;
 
             case State.Consumable:
-                print("consuming");
+                //print("consuming");
+                consumable.Consume(this);
+                print("Consuming "+consumable.Name);
                 //TODO allow selecting other targets(party members)
-                RaiseEndTurnEvent();//TOD remove this, it is here temp. so game is playable
-                //consumable.Consume(target: this);
+                RaiseEndTurnEvent();
                 break;
 
             case State.Move:
-                print("Moving...");
+                //print("Moving...");
                 List<Node> _path = Pathfinding.FindPath(nodeParent, node, reverse: true);
 
                 SetPathNodes(_path);
@@ -159,7 +167,7 @@ public class Enemy : Entity {
         {
             return State.Attack;
         }
-        else if (attackingScore < consumableScore && consumableScore < moveScore)
+        else if (consumableScore > attackingScore && consumableScore > moveScore)
         {
             return State.Consumable;
         }
@@ -177,6 +185,7 @@ public class Enemy : Entity {
         {
             return targets[0];
         }
+
         return null;
     }
 
@@ -242,6 +251,7 @@ public class Enemy : Entity {
         //target can be killed in one hit
         if (currentAttack != null && target.CurrentHealth <= currentAttack.Damage)
         {
+            print("Setting attack score to max");
             attackingScore = 999;
         }
         else if(currentAttack != null)
@@ -284,11 +294,17 @@ public class Enemy : Entity {
         if(selectedHealingConsumable != null)
         {
             int healthDifference = MaxHealth - CurrentHealth;
+            print("Healing score: "+ healingScore + " health diff: "+healthDifference);
             //Potion would replenish all health
-            if(healingScore == healthDifference)
+            if(selectedHealingConsumable.HealingValue == healthDifference)
             {
-                consumableScore = 900;
+                consumableScore += 75;
             }
+            else if(selectedHealingConsumable.HealingValue < healthDifference )
+            {
+                consumableScore += 150;
+            }
+           
             //else if(healingScore < healthDifference && healthDiffernce > )
             //TODO change this
             selectedAbsoluteConsumable = selectedHealingConsumable;
@@ -299,6 +315,8 @@ public class Enemy : Entity {
 
     private Node DetermineMoveScore(Entity target, bool canAttack, bool canConsume)
     {
+        List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, Speed);
+
         Node node = null;
         if (!canMove)
         {
@@ -312,7 +330,29 @@ public class Enemy : Entity {
             print("cant attack or comsume");
             moveScore = 1000;
         }
-        
+        //TODO do stuff if health is slow aka RETREAT
+        //if health low
+        //Move as far as you can away
+        //Use healing consumable
+
+       
+        int minDistance = int.MinValue; 
+        if(CurrentHealth <= MaxHealth/2 && canConsume)
+        {
+            //Find node farthest from target but within range
+            foreach(Node _node in movementRange)
+            {
+                int distance = Pathfinding.GetDistance(_node, target.nodeParent);
+                if(distance > minDistance)
+                {
+                    node = _node;
+                    minDistance = distance;
+                }
+            }
+            moveScore += 200;
+        }
+
+        //Get highest range attack
         Attack highestRangeAttack = Attacks[0];
         for(int i = 1; i < Attacks.Count; i++)
         {
@@ -322,18 +362,21 @@ public class Enemy : Entity {
             }
         }
 
-        int minDistance = int.MaxValue;
-        List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, Speed);
-
-        foreach (Node _node in movementRange)
-        {
-            int distance = Pathfinding.GetDistance(_node, target.nodeParent);
-            if(distance < minDistance && distance >= highestRangeAttack.Range)
+        
+       if(node == null)
+       {
+            //Get closest node that is within the range
+            foreach (Node _node in movementRange)
             {
-                node = _node;
-                minDistance = distance;
+                int distance = Pathfinding.GetDistance(_node, target.nodeParent);
+                if(distance < minDistance && distance >= highestRangeAttack.Range)
+                {
+                    node = _node;
+                    minDistance = distance;
+                }
             }
-        }
+       }
+       
 
         minDistance = int.MaxValue;
 
@@ -349,7 +392,7 @@ public class Enemy : Entity {
                 }
             }
         }
-        moveScore = 20;
+        moveScore += 20;
 
         return node;
     }
