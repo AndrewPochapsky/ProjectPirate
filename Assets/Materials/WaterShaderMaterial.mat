@@ -75,9 +75,10 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _WaveDampener: 0.3
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.2078287, g: 0.38745362, b: 0.9117647, a: 1}
-    - _ColorA: {r: 0, g: 0.0963488, b: 0.7352941, a: 1}
+    - _ColorA: {r: 0, g: 0.46237344, b: 0.6911765, a: 1}
     - _ColorB: {r: 0, g: 0.26338753, b: 0.7794118, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

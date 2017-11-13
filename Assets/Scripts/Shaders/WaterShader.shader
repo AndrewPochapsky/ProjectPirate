@@ -9,6 +9,7 @@
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
 		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
+		_WaveDampener ("Wave Dampener", Float) = 0.2
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -38,6 +39,7 @@
 		fixed4 _ColorA;
 		fixed4 _ColorB;
 		float _LerpSpeed;
+		float _WaveDampener;
 		
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -56,22 +58,17 @@
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
 
     		float phase = _Time[1] * 10;
-   			float offset = (wpos.x + (wpos.z * 0.2)) * 0.5;
-    		wpos.y = sin(phase + offset) * 0.2;
-			
+   			float offset1 = (wpos.x + (wpos.z * 0.2)) * 0.5; 
+
+			wpos.y = sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
             v.vertex = mul(unity_WorldToObject, wpos);
-			
 		}
  
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			
-			//float lerpValue = tex2Dlod( _NoiseTex, float4(0,IN.vertex.y / 100  + _Time[1]/25 ,0,0)).r;
-
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * colorLerp(_ColorA, _ColorB);
-			
+			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _ColorA;
 			o.Albedo = c.rgb;
-
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
 			// Metallic and smoothness come from slider variables
