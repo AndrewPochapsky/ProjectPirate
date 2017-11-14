@@ -21,7 +21,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// In a specific direction, actual number is numberOfChunks^2
     /// </summary>
-    public const int numberOfChunks = 5;
+    public const int numberOfChunks = 1;
 
     public const int mapTileSize = 32;
 
@@ -71,7 +71,7 @@ public class WorldController : MonoBehaviour {
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
                 
-                tileGenerator.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
+                tileGenerator.GenerateOceanTiles(nodes, addIslands: false, removeNodes: true, tileSize: newSize, parent: chunk.transform);
                 tileGenerator.ResetTileLocation();
             }
         }

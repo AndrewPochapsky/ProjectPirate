@@ -8,9 +8,9 @@ public abstract class Tile : MonoBehaviour {
 
     protected Color regularColour;
 
-    private Renderer _renderer;
+    protected Renderer _renderer;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         _renderer = GetComponent<Renderer>();
         regularColour = _renderer.sharedMaterial.color;

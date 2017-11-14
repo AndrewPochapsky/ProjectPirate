@@ -31,13 +31,14 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="parent">The parent</param>
     public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, Transform parent = null)
     {
+        int offset = 20;
         List<Node> nodes = new List<Node>();
         for (int y = 0; y < worldHeight; y++)
         {
             for (int x = 0; x < worldWidth; x++)
             {
                 Vector2 location = new Vector2(x, y);
-                nodes.Add(AddNode(location, worldWidth, tileSize, parent));
+                nodes.Add(AddNode(location, worldWidth, tileSize-offset, parent));
             }
         }
 
@@ -102,12 +103,12 @@ public class TileGenerator : MonoBehaviour {
                     }
                     else
                     {
-                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize, parent);
+                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent);
                     }
                 }
                 else
                 {
-                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize, parent);
+                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent);
                 }
             }
 
@@ -159,11 +160,11 @@ public class TileGenerator : MonoBehaviour {
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y, node.transform.position.z);
 
-        Quaternion rotation = Quaternion.Euler(new Vector3(90, 0, 0));
+        Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
         GameObject obj = Instantiate(Resources.Load("Tiles/"+ tileName), position, rotation) as GameObject;
 
-        obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
+        obj.transform.localScale = new Vector3(tileSize, 1, tileSize);
 
         obj.transform.SetParent(parent);
 

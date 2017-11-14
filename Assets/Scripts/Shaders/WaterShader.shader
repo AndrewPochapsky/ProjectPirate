@@ -6,10 +6,13 @@
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 
-		_NoiseTex ("Noise Texture", 2D) = "white" {}
+		//_NoiseTex ("Noise Texture", 2D) = "white" {}
 		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 		_WaveMultiplier ("Wave Multiplier", Float) = 80
+
+		//[HideInInspector]
+		//_StartTime ("Start Time", Float) = 0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -24,7 +27,7 @@
 		#pragma target 3.0
 
 		sampler2D _MainTex;
-		sampler2D _NoiseTex;
+		//sampler2D _NoiseTex;
 		sampler2D _BumpMap;
 
 		struct Input {
@@ -41,6 +44,7 @@
 		fixed4 _ColorB;
 		float _LerpSpeed;
 		float _WaveMultiplier;
+		float _StartTime;
 		
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -51,7 +55,7 @@
 
 		
 		float calculateSurface(float x) {
-   		 	float y = (sin(x * 1.0 + _Time[1] * 1.0) + sin(x * 2.3 + _Time[1] * 1.5) + sin(x * 3.3 + _Time[1] )) * _WaveMultiplier	;
+   		 	float y = (sin(x * 1.0 + (_Time[1] - _StartTime) * 1.0) + sin(x * 2.3 + (_Time[1] - _StartTime) * 1.5) + sin(x * 3.3 + (_Time[1] - _StartTime) )) * _WaveMultiplier	;
     		return y;
 		}
 
