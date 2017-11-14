@@ -11,6 +11,8 @@
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 		_WaveMultiplier ("Wave Multiplier", Float) = 80
 
+		//_BeginWaves ("Begin Waves", Float) = 0
+
 		//[HideInInspector]
 		//_StartTime ("Start Time", Float) = 0
 	}
@@ -38,13 +40,16 @@
 			INTERNAL_DATA
 		};
 
+		uniform float BEGIN_WAVES;
+		uniform float START_TIME;
+
 		half _Glossiness;
 		half _Metallic;
 		fixed4 _ColorA;
 		fixed4 _ColorB;
 		float _LerpSpeed;
 		float _WaveMultiplier;
-		float _StartTime;
+		
 		
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -55,7 +60,10 @@
 
 		
 		float calculateSurface(float x) {
-   		 	float y = (sin(x * 1.0 + (_Time[1] - _StartTime) * 1.0) + sin(x * 2.3 + (_Time[1] - _StartTime) * 1.5) + sin(x * 3.3 + (_Time[1] - _StartTime) )) * _WaveMultiplier	;
+   		 	float y = (sin(x * 1.0 + (_Time[1] - START_TIME) * 1.0) 
+				+ sin(x * 2.3 + (_Time[1] - START_TIME) * 1.5) 
+				+ sin(x * 3.3 + (_Time[1] - START_TIME) )) 
+				* _WaveMultiplier	;
     		return y;
 		}
 
@@ -70,10 +78,10 @@
 			//float y = (sin(wpos.z * 1.0 + _Time[1] * 1.0) + sin(wpos.x * 2.3 + _Time[1] * 1.5) + sin(wpos.x * 3.3 + _Time[1] * 0.4)) / 3.0;
     		float phase = _Time[1] * 10;
    			float offset1 = (wpos.x + (wpos.z * 0.2)) * 0.5; 
-			
-			wpos.y = calculateSurface(wpos.x);//sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
+			wpos.y += calculateSurface(wpos.x);//sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
 			wpos.y += calculateSurface(wpos.z);
-			wpos.y -= calculateSurface(0.0);
+			//wpos.y -= calculateSurface(0.0);
+			
 		    v.vertex = mul(unity_WorldToObject, wpos);
 		}
  

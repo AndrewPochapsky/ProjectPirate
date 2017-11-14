@@ -8,6 +8,7 @@ TagManager:
   - BattleZone
   - AttacksButton
   - ConsumablesButton
+  - Original
   layers:
   - Default
   - TransparentFX

@@ -13,7 +13,7 @@ public abstract class Tile : MonoBehaviour {
     protected virtual void Awake()
     {
         _renderer = GetComponent<Renderer>();
-        regularColour = _renderer.sharedMaterial.color;
+        //regularColour = _renderer.sharedMaterial.color;
     }
 
     /// <summary>
