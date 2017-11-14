@@ -9,7 +9,7 @@
 		_NoiseTex ("Noise Texture", 2D) = "white" {}
 		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
-		_WaveDampener ("Wave Dampener", Float) = 0.2
+		_WaveMultiplier ("Wave Multiplier", Float) = 80
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -31,6 +31,7 @@
 			float2 uv_MainTex;
 			float4 screenPos;
 			float2 uv_BumpMap;
+			float2 uv_NoiseTex;
 			INTERNAL_DATA
 		};
 
@@ -39,7 +40,7 @@
 		fixed4 _ColorA;
 		fixed4 _ColorB;
 		float _LerpSpeed;
-		float _WaveDampener;
+		float _WaveMultiplier;
 		
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -49,6 +50,11 @@
 		UNITY_INSTANCING_CBUFFER_END
 
 		
+		float calculateSurface(float x) {
+   		 	float y = (sin(x * 1.0 + _Time[1] * 1.0) + sin(x * 2.3 + _Time[1] * 1.5) + sin(x * 3.3 + _Time[1] )) * _WaveMultiplier	;
+    		return y;
+		}
+
 		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
 			float t = sin(_Time[1]) * _LerpSpeed;
 			return lerp(colorA, colorB, t);
@@ -56,12 +62,15 @@
 
 		void vert (inout appdata_full v) {
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
-
+			//fixed4 noise = tex2D(_NoiseTex, float2(wpos.y / 50, _Time[1]/20) ).r;
+			//float y = (sin(wpos.z * 1.0 + _Time[1] * 1.0) + sin(wpos.x * 2.3 + _Time[1] * 1.5) + sin(wpos.x * 3.3 + _Time[1] * 0.4)) / 3.0;
     		float phase = _Time[1] * 10;
    			float offset1 = (wpos.x + (wpos.z * 0.2)) * 0.5; 
-
-			wpos.y = sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
-            v.vertex = mul(unity_WorldToObject, wpos);
+			
+			wpos.y = calculateSurface(wpos.x);//sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
+			wpos.y += calculateSurface(wpos.z);
+			wpos.y -= calculateSurface(0.0);
+		    v.vertex = mul(unity_WorldToObject, wpos);
 		}
  
 
