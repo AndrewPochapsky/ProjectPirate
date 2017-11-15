@@ -31,7 +31,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="parent">The parent</param>
     public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, Transform parent = null)
     {
-        int offset = 20;
+        int offset = 8;
         List<Node> nodes = new List<Node>();
         for (int y = 0; y < worldHeight; y++)
         {

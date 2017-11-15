@@ -19,9 +19,9 @@ public class ChunkGenerator : MonoBehaviour {
     {
         if (chunk.location.x + 1 == WorldController.numberOfChunks)
         {
-            return new Vector3(0, 0, currentChunkLocation.z + (tileSize * numberOfTiles));
+            return new Vector3(0, 0, currentChunkLocation.z + (tileSize * numberOfTiles - (8 * numberOfTiles)));
         }
 
-        return new Vector3(currentChunkLocation.x + (tileSize * numberOfTiles), 0, currentChunkLocation.z);
+        return new Vector3(currentChunkLocation.x + (tileSize * numberOfTiles - (8 * numberOfTiles)), 0, currentChunkLocation.z);
     }
 }
