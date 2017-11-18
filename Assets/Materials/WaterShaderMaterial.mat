@@ -78,10 +78,11 @@ Material:
     - _StartTime: 0
     - _UVSec: 0
     - _WaveDampener: 0.3
-    - _WaveMultiplier: 10
+    - _WaveMultiplier: 7
     - _ZWrite: 1
     m_Colors:
+    - _BaseColor: {r: 0, g: 0, b: 1, a: 1}
     - _Color: {r: 0.2078287, g: 0.38745362, b: 0.9117647, a: 1}
-    - _ColorA: {r: 0.28676468, g: 0.61632866, b: 1, a: 1}
-    - _ColorB: {r: 0, g: 0.26338753, b: 0.7794118, a: 1}
+    - _ColorA: {r: 0.08109864, g: 0.46832126, b: 0.9191176, a: 1}
+    - _ColorB: {r: 0.14035465, g: 0.86764705, b: 0.7773625, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

@@ -1,12 +1,14 @@
-﻿Shader "Custom/WaterShader" {
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+Shader "Custom/WaterShader" {
 	Properties {
+		_BaseColor ("Base Color", Color) = (1,1,1,1)
 		_ColorA ("ColorA", Color) = (1,1,1,1)
 		_ColorB ("ColorB", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
 		_Metallic ("Metallic", Range(0,1)) = 0.0
 
-		//_NoiseTex ("Noise Texture", 2D) = "white" {}
 		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
 		_WaveMultiplier ("Wave Multiplier", Float) = 80
@@ -29,22 +31,26 @@
 		#pragma target 3.0
 
 		sampler2D _MainTex;
-		//sampler2D _NoiseTex;
 		sampler2D _BumpMap;
 
 		struct Input {
 			float2 uv_MainTex;
-			float4 screenPos;
 			float2 uv_BumpMap;
-			float2 uv_NoiseTex;
-			INTERNAL_DATA
+			float3 localPos;
+			float4 worldPos;
+			float3 centerPos;
 		};
-
+		//Globals
 		uniform float BEGIN_WAVES;
 		uniform float START_TIME;
 
+		//Locals changed in script
+		float isIsland;
+
+		//Properties
 		half _Glossiness;
 		half _Metallic;
+		fixed4 _BaseColor;
 		fixed4 _ColorA;
 		fixed4 _ColorB;
 		float _LerpSpeed;
@@ -67,18 +73,29 @@
     		return y;
 		}
 
+		float islandWaterColor(float x){
+			float y = (sin(x * 1.0) 
+				+ sin(x * 2.3 * 1.5) 
+				+ sin(x * 3.3 ) )
+				* 1	;
+    		return y;
+		}
+
 		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
 			float t = sin(_Time[1]) * _LerpSpeed;
 			return lerp(colorA, colorB, t);
 		}
 
-		void vert (inout appdata_full v) {
+		void vert (inout appdata_full v, out Input o) {
+			UNITY_INITIALIZE_OUTPUT(Input,o);
+			o.localPos = v.vertex.xyz;
+			//float4 objectOrigin = mul(unity_ObjectToWorld, float4(0.0,0.0,0.0,1.0) );
+			o.centerPos = v.texcoord;//objectOrigin.xyz;
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
-			//fixed4 noise = tex2D(_NoiseTex, float2(wpos.y / 50, _Time[1]/20) ).r;
-			//float y = (sin(wpos.z * 1.0 + _Time[1] * 1.0) + sin(wpos.x * 2.3 + _Time[1] * 1.5) + sin(wpos.x * 3.3 + _Time[1] * 0.4)) / 3.0;
-    		float phase = _Time[1] * 10;
-   			float offset1 = (wpos.x + (wpos.z * 0.2)) * 0.5; 
-			wpos.y += calculateSurface(wpos.x);//sin(wpos.z + phase) * _WaveDampener + sin(offset1 + phase) * _WaveDampener;
+			o.worldPos = wpos;
+			//float4 lpos = v.texcoord;
+			
+			wpos.y += calculateSurface(wpos.x);
 			wpos.y += calculateSurface(wpos.z);
 			//wpos.y -= calculateSurface(0.0);
 			
@@ -88,8 +105,14 @@
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			
-			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _ColorA;
-			o.Albedo = c.rgb;
+			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _BaseColor;
+
+			if(isIsland == 1){
+				o.Albedo = (lerp(_ColorB, _ColorA, distance(IN.centerPos.xyz, IN.localPos.xyz)* 1));
+			}else{
+				o.Albedo = c.rgb;
+			}
+			
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 
 			// Metallic and smoothness come from slider variables

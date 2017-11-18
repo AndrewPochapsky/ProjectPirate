@@ -71,7 +71,7 @@ public class WorldController : MonoBehaviour {
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
                 
-                tileGenerator.GenerateOceanTiles(nodes, addIslands: false, removeNodes: true, tileSize: newSize, parent: chunk.transform);
+                tileGenerator.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
                 tileGenerator.ResetTileLocation();
             }
         }

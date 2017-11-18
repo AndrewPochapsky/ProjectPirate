@@ -97,16 +97,16 @@ public class IslandTile : Tile {
         switch (islandTile.Size)
         {
             case IslandSize.Regular:
-                return new Vector3(tileSize, tileSize, 1);
+                return new Vector3(tileSize, 1, tileSize);
 
             case IslandSize.Long:
-                return new Vector3(tileSize * 2, tileSize, 1);
+                return new Vector3(tileSize * 2, 1, tileSize);
 
             case IslandSize.Tall:
-                return new Vector3(tileSize, tileSize * 2, 1);
+                return new Vector3(tileSize, 1, tileSize * 2);
 
             case IslandSize.Large:
-                return new Vector3(tileSize * 2, tileSize * 2, 1);
+                return new Vector3(tileSize * 2, 1, tileSize * 2);
         }
         return Vector3.zero;
     }
