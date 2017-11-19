@@ -65,7 +65,7 @@ Shader "Custom/WaterShader" {
 		UNITY_INSTANCING_CBUFFER_END
 
 		
-		float calculateSurface(float x) {
+		float calculateOceanSurface(float x) {
    		 	float y = (sin(x * 1.0 + (_Time[1] - START_TIME) * 1.0) 
 				+ sin(x * 2.3 + (_Time[1] - START_TIME) * 1.5) 
 				+ sin(x * 3.3 + (_Time[1] - START_TIME) )) 
@@ -79,18 +79,27 @@ Shader "Custom/WaterShader" {
 			return lerp(colorA, colorB, t);
 		}
 
+		//TODO if islandTile then only alter vertices on the edge
+		//maybe like if v.vertex.x == 0 or 1 do sin
 		void vert (inout appdata_full v, out Input o) {
 			UNITY_INITIALIZE_OUTPUT(Input,o);
 			o.localPos = v.vertex.xyz;
 			//float4 objectOrigin = mul(unity_ObjectToWorld, float4(0.0,0.0,0.0,1.0) );
-			o.centerPos = v.texcoord;//objectOrigin.xyz;
+			o.centerPos = v.texcoord;
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
 			o.worldPos = wpos;
-			//float4 lpos = v.texcoord;
+			if(isIsland == 1 && v.texcoord.x == 0 || v.texcoord.x == 1 || v.texcoord.y == 0 || v.texcoord.y == 1){
+				wpos.y += calculateOceanSurface(wpos.x);
+				wpos.y += calculateOceanSurface(wpos.z);
+			}else if(isIsland == 1){
+				//Stuff done in the centre of the mesh if island
+
+			}else{
+				wpos.y += calculateOceanSurface(wpos.x);
+				wpos.y += calculateOceanSurface(wpos.z);
+			}
 			
-			wpos.y += calculateSurface(wpos.x);
-			wpos.y += calculateSurface(wpos.z);
-			//wpos.y -= calculateSurface(0.0);
+			//wpos.y -= calculateOceanSurface(0.0);
 			
 		    v.vertex = mul(unity_WorldToObject, wpos);
 		}
