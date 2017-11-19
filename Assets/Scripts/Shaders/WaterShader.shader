@@ -41,7 +41,7 @@ Shader "Custom/WaterShader" {
 			float3 centerPos;
 		};
 		//Globals
-		uniform float BEGIN_WAVES;
+		//uniform float BEGIN_WAVES;
 		uniform float START_TIME;
 
 		//Locals changed in script

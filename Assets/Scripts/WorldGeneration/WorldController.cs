@@ -35,7 +35,7 @@ public class WorldController : MonoBehaviour {
     List<Node> nodes;
 
     static bool hasGenerated = false;
-
+    public static int oceanTileOffset = 35;
     private void Awake()
     {
         world = FindObjectOfType<World>().transform;

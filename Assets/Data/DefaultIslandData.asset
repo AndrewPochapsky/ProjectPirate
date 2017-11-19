@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: DefaultIslandData
   m_EditorClassIdentifier: 
   lacunarity: 2
-  meshHeightMultiplier: 5.5
+  meshHeightMultiplier: 7.5
   meshHeightCurve:
     serializedVersion: 2
     m_Curve:
@@ -23,8 +23,14 @@ MonoBehaviour:
       outSlope: 0
       tangentMode: 0
     - serializedVersion: 2
+      time: 0.19898422
+      value: 0.19327891
+      inSlope: 0.6676838
+      outSlope: 0.6676838
+      tangentMode: 0
+    - serializedVersion: 2
       time: 0.3959111
-      value: 0.033061147
+      value: 0.2643081
       inSlope: 0.10474606
       outSlope: 0.10474606
       tangentMode: 0
@@ -40,8 +46,8 @@ MonoBehaviour:
   autoUpdate: 1
   terrainMaterial: {fileID: 2100000, guid: 280647b2f43dd0e42b48a48765ef505a, type: 2}
   baseColours:
-  - {r: 0, g: 0.47947633, b: 0.63235295, a: 0}
-  - {r: 0.13559686, g: 0.83823526, b: 0.7510112, a: 0}
+  - {r: 0.854902, g: 0.86666673, b: 0, a: 0}
+  - {r: 0.854902, g: 0.86666673, b: 0, a: 0}
   - {r: 0.8556795, g: 0.86764705, b: 0, a: 0}
   - {r: 0.07661114, g: 0.8014706, b: 0.08161013, a: 0}
   - {r: 0, g: 0.6397059, b: 0.13676466, a: 0}
@@ -52,7 +58,7 @@ MonoBehaviour:
   - 0.07
   - 0.238
   - 0.423
-  - 0.87
+  - 0.763
   baseBlends:
   - 0
   - 0

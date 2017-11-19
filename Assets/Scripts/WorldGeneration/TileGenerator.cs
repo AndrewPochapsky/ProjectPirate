@@ -159,7 +159,7 @@ public class TileGenerator : MonoBehaviour {
     /// <returns>The created tile</returns>
     private Tile AddAnyTile(string tileName, Node node, int tileSize, Transform parent, bool forIsland = false)
     {
-        Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y, node.transform.position.z);
+        Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y + WorldController.oceanTileOffset, node.transform.position.z);
 
         Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
