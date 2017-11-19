@@ -73,14 +73,7 @@ Shader "Custom/WaterShader" {
     		return y;
 		}
 
-		float islandWaterColor(float x){
-			float y = (sin(x * 1.0) 
-				+ sin(x * 2.3 * 1.5) 
-				+ sin(x * 3.3 ) )
-				* 1	;
-    		return y;
-		}
-
+		
 		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
 			float t = sin(_Time[1]) * _LerpSpeed;
 			return lerp(colorA, colorB, t);
@@ -106,9 +99,10 @@ Shader "Custom/WaterShader" {
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _BaseColor;
-
+			float factor = distance(IN.centerPos.xyz, IN.localPos.xyz) * 0.2;
+			factor = clamp(factor, 0, 1);
 			if(isIsland == 1){
-				o.Albedo = (lerp(_ColorB, _ColorA, distance(IN.centerPos.xyz, IN.localPos.xyz)* 1));
+				o.Albedo = ((lerp(_ColorB, _ColorA, factor)));
 			}else{
 				o.Albedo = c.rgb;
 			}

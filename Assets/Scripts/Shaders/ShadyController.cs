@@ -20,6 +20,8 @@ public class ShadyController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		originalPlane = Instantiate(plane, new Vector3(9, 0, 0), Quaternion.identity) as GameObject;
+		originalPlane.GetComponent<Renderer>().materials[0].SetFloat("isIsland", 1);
+		
 		Invoke("CreatePlane", 2);
 	}
 	
