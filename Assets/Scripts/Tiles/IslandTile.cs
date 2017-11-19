@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class IslandTile : Tile {
 
@@ -12,6 +13,8 @@ public class IslandTile : Tile {
         Large       // 2x2
     }
 
+    public List<GameObject> meshObjects;
+
     public IslandSize Size { get; set; }
 
     public UniqueIslandData UniqueIslandData { get; private set; }
@@ -20,6 +23,7 @@ public class IslandTile : Tile {
 
     private void Awake()
     {
+        meshObjects = new List<GameObject>();
         generator = GetComponent<IslandGenerator>();
         UniqueIslandData = new UniqueIslandData();
 
@@ -92,28 +96,36 @@ public class IslandTile : Tile {
     /// <param name="islandTile">The island tile</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>The size</returns>
-    public static Vector3 GetChildOceanTileOffset(IslandTile islandTile, Transform oceanTile, int tileSize)
+    public void CombineOceanMeshes(Transform parent)
     {
-        Vector3 newSize = Vector3.zero;
+        MeshFilter[] meshFilters = meshObjects.Select(o => o.GetComponent<MeshFilter>()).ToArray();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
-        switch (islandTile.Size)
+        GameObject newMeshObject = Instantiate(Resources.Load("Tiles/"+nameof(OceanTile) + "EXP"), Vector3.zero, Quaternion.identity) as GameObject;
+        int i = 0;
+        while(i < meshFilters.Length)
         {
-            case IslandSize.Regular:
-                newSize =  new Vector3(tileSize, 1, tileSize);
-                break;
-            case IslandSize.Long:
-                
-                newSize = new Vector3(tileSize * 2, 1, tileSize);
-                break;
-            case IslandSize.Tall:
-                newSize =  new Vector3(tileSize, 1, tileSize * 2);
-                break;
-            case IslandSize.Large:
-                newSize =  new Vector3(tileSize * 2, 1, tileSize * 2);
-                break;
+            print("happening");
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            //meshFilters[i].gameObject.SetActive(false);
+            Destroy(meshFilters[i].gameObject);
+            
+            combine[i].transform = transform.worldToLocalMatrix * meshFilters[i].transform.localToWorldMatrix;
+            i++;
         }
        
-        return newSize;
+        MeshFilter newMeshFilter = newMeshObject.GetComponent<MeshFilter>();
+
+        newMeshFilter.mesh = new Mesh(); 
+        newMeshFilter.mesh.CombineMeshes(combine);
+        newMeshObject.GetComponent<Renderer>().materials[0].SetFloat("isIsland", 1);
+        
+        newMeshObject.gameObject.SetActive(true);
+        newMeshObject.transform.SetParent(transform);
+        newMeshObject.transform.localPosition = Vector3.zero;
+        newMeshObject.transform.localScale = Vector3.one;
+
     }
 
 }
