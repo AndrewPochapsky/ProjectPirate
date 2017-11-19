@@ -210,12 +210,12 @@ public class TileGenerator : MonoBehaviour {
         oceanTileChild.GetComponent<Renderer>().materials[0].SetFloat("isIsland", 1);
 
         //oceanTileChild.transform.localEulerAngles = new Vector3(90, 0, 0);
-
+        oceanTileChild.transform.localPosition = Vector3.zero;
         DisableRedundantNodes(islandTile, node);
 
         islandTile.transform.position += IslandTile.GetIslandOffset(islandTile, tileSize);
 
-        //oceanTileChild.localScale = IslandTile.GetChildOceanTileOffset(islandTile, tileSize);
+        IslandTile.GetChildOceanTileOffset(islandTile, oceanTileChild, 76);
         //oceanTileChild.localScale += tileScaleAddition;
     }
 

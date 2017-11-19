@@ -11,8 +11,8 @@ Shader "Custom/WaterShader" {
 
 		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
-		_WaveMultiplier ("Wave Multiplier", Float) = 80
-
+		_OceanWaveModifier ("Ocean Wave Modifier", Float) = 80
+		_IslandWaveModifier ("Island Wave Modifier", Float) = 5
 		//_BeginWaves ("Begin Waves", Float) = 0
 
 		//[HideInInspector]
@@ -54,8 +54,8 @@ Shader "Custom/WaterShader" {
 		fixed4 _ColorA;
 		fixed4 _ColorB;
 		float _LerpSpeed;
-		float _WaveMultiplier;
-		
+		float _OceanWaveModifier;
+		float _IslandWaveModifier;
 		
 		// Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
 		// See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
@@ -64,16 +64,14 @@ Shader "Custom/WaterShader" {
 			// put more per-instance properties here
 		UNITY_INSTANCING_CBUFFER_END
 
-		
-		float calculateOceanSurface(float x) {
+		float calculateSurface(float x, float modifier) {
    		 	float y = (sin(x * 1.0 + (_Time[1] - START_TIME) * 1.0) 
 				+ sin(x * 2.3 + (_Time[1] - START_TIME) * 1.5) 
 				+ sin(x * 3.3 + (_Time[1] - START_TIME) )) 
-				* _WaveMultiplier	;
+				* modifier	;
     		return y;
 		}
 
-		
 		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
 			float t = sin(_Time[1]) * _LerpSpeed;
 			return lerp(colorA, colorB, t);
@@ -89,17 +87,18 @@ Shader "Custom/WaterShader" {
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
 			o.worldPos = wpos;
 			if(isIsland == 1 && v.texcoord.x == 0 || v.texcoord.x == 1 || v.texcoord.y == 0 || v.texcoord.y == 1){
-				wpos.y += calculateOceanSurface(wpos.x);
-				wpos.y += calculateOceanSurface(wpos.z);
+				wpos.y += calculateSurface(wpos.x, _OceanWaveModifier);
+				wpos.y += calculateSurface(wpos.z, _OceanWaveModifier);
 			}else if(isIsland == 1){
 				//Stuff done in the centre of the mesh if island
-
-			}else{
-				wpos.y += calculateOceanSurface(wpos.x);
-				wpos.y += calculateOceanSurface(wpos.z);
+				wpos.y += calculateSurface(wpos.x, _IslandWaveModifier);
+				wpos.y += calculateSurface(wpos.z, _IslandWaveModifier);
+			}else if(isIsland == 0){
+				wpos.y += calculateSurface(wpos.x, _OceanWaveModifier);
+				wpos.y += calculateSurface(wpos.z, _OceanWaveModifier);
 			}
 			
-			//wpos.y -= calculateOceanSurface(0.0);
+			//wpos.y -= calculateSurface(0.0);
 			
 		    v.vertex = mul(unity_WorldToObject, wpos);
 		}

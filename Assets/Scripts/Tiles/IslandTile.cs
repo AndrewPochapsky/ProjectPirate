@@ -92,23 +92,28 @@ public class IslandTile : Tile {
     /// <param name="islandTile">The island tile</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>The size</returns>
-    public static Vector3 GetChildOceanTileOffset(IslandTile islandTile, int tileSize)
+    public static Vector3 GetChildOceanTileOffset(IslandTile islandTile, Transform oceanTile, int tileSize)
     {
+        Vector3 newSize = Vector3.zero;
+
         switch (islandTile.Size)
         {
             case IslandSize.Regular:
-                return new Vector3(tileSize, 1, tileSize);
-
+                newSize =  new Vector3(tileSize, 1, tileSize);
+                break;
             case IslandSize.Long:
-                return new Vector3(tileSize * 2, 1, tileSize);
-
+                
+                newSize = new Vector3(tileSize * 2, 1, tileSize);
+                break;
             case IslandSize.Tall:
-                return new Vector3(tileSize, 1, tileSize * 2);
-
+                newSize =  new Vector3(tileSize, 1, tileSize * 2);
+                break;
             case IslandSize.Large:
-                return new Vector3(tileSize * 2, 1, tileSize * 2);
+                newSize =  new Vector3(tileSize * 2, 1, tileSize * 2);
+                break;
         }
-        return Vector3.zero;
+       
+        return newSize;
     }
 
 }
