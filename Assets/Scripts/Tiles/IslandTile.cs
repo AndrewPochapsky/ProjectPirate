@@ -90,12 +90,7 @@ public class IslandTile : Tile {
         return Vector3.zero;
     }
 
-    /// <summary>
-    /// Gets the correct oceanTileSize for the given island's oceanTile child
-    /// </summary>
-    /// <param name="islandTile">The island tile</param>
-    /// <param name="tileSize">The tileSize</param>
-    /// <returns>The size</returns>
+    
     public void CombineOceanMeshes(Transform parent)
     {
         MeshFilter[] meshFilters = meshObjects.Select(o => o.GetComponent<MeshFilter>()).ToArray();
@@ -105,7 +100,6 @@ public class IslandTile : Tile {
         int i = 0;
         while(i < meshFilters.Length)
         {
-            print("happening");
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
             //meshFilters[i].gameObject.SetActive(false);
@@ -115,12 +109,16 @@ public class IslandTile : Tile {
             i++;
         }
        
+        Material mat = Resources.Load("Materials/WaterShaderMaterial", typeof(Material)) as Material;
+
         MeshFilter newMeshFilter = newMeshObject.GetComponent<MeshFilter>();
+        Renderer newRenderer = newMeshObject.GetComponent<Renderer>();
 
         newMeshFilter.mesh = new Mesh(); 
         newMeshFilter.mesh.CombineMeshes(combine);
-        newMeshObject.GetComponent<Renderer>().materials[0].SetFloat("isIsland", 1);
-        
+        newRenderer.material = mat;
+        newRenderer.material.SetFloat("isIsland", 1);
+
         newMeshObject.gameObject.SetActive(true);
         newMeshObject.transform.SetParent(transform);
         newMeshObject.transform.localPosition = Vector3.zero;

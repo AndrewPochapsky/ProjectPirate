@@ -25,6 +25,8 @@ public class WorldController : MonoBehaviour {
 
     public const int mapTileSize = 32;
 
+    public static int oceanTileOffset = 35;
+
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
     /// </summary>
@@ -35,7 +37,7 @@ public class WorldController : MonoBehaviour {
     List<Node> nodes;
 
     static bool hasGenerated = false;
-    public static int oceanTileOffset = 35;
+    
     private void Awake()
     {
         world = FindObjectOfType<World>().transform;
