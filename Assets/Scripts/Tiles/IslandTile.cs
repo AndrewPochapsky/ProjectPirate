@@ -123,7 +123,9 @@ public class IslandTile : Tile {
         newMeshObject.transform.SetParent(transform);
         newMeshObject.transform.localPosition = Vector3.zero;
         newMeshObject.transform.localScale = Vector3.one;
-
+        newMeshFilter.mesh.RecalculateBounds();
+        newMeshFilter.mesh.RecalculateTangents();
+        newMeshFilter.mesh.RecalculateNormals();
     }
 
 }

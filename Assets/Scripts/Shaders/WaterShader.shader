@@ -1,28 +1,14 @@
-﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
-Shader "Custom/WaterShader" {
+﻿Shader "Custom/WaterShader" {
 	Properties {
 		_MainTex ("Texture", 2D) = "white" {}
 		_OceanWaterTex ("Ocean Water", 2D) = "white" {}
 		_IslandWaterTex ("Island Water", 2D) = "white" {}
 		
-		//_BaseColor ("Base Color", Color) = (1,1,1,1)
-		//_ColorA ("ColorA", Color) = (1,1,1,1)
-		//_ColorB ("ColorB", Color) = (1,1,1,1)
-		
-		_Glossiness ("Smoothness", Range(0,1)) = 0.5
-		_Metallic ("Metallic", Range(0,1)) = 0.0
-
-		_LerpSpeed ("Lerp Speed", Float) = 1
 		_BumpMap ("Normal Map", 2D) = "bump" {}
+		_LerpSpeed ("Color Lerp Speed", Float) = 1
 		_OceanWaveModifier ("Ocean Wave Modifier", Float) = 80
 		_IslandWaveModifier ("Island Wave Modifier", Float) = 5
-		//_BeginWaves ("Begin Waves", Float) = 0
 
-		//[HideInInspector]
-		//_StartTime ("Start Time", Float) = 0
 	}
 	SubShader {
 		Tags { "RenderType"="Opaque" }
@@ -52,7 +38,6 @@ Shader "Custom/WaterShader" {
 		sampler2D _BumpMap;
 
 		//Globals
-		//uniform float BEGIN_WAVES;
 		uniform float START_TIME;
 
 		//Locals changed in script
@@ -60,11 +45,6 @@ Shader "Custom/WaterShader" {
 		float4 center;
 
 		//Properties
-		half _Glossiness;
-		half _Metallic;
-		fixed4 _BaseColor;
-		fixed4 _ColorA;
-		fixed4 _ColorB;
 		float _LerpSpeed;
 		float _OceanWaveModifier;
 		float _IslandWaveModifier;
@@ -92,10 +72,12 @@ Shader "Custom/WaterShader" {
 
 		void vert (inout appdata_full v, out Input o) {
 			UNITY_INITIALIZE_OUTPUT(Input,o);
+			//From when I tried to do stuff using gradients
+			
 			//o.localPos = v.vertex.xyz;
-			o.localPos = v.texcoord.xyz;
-			float4 objectOrigin = mul(unity_WorldToObject, float4(0.0,0.0,0.0,1.0) );
-			o.centerPos = objectOrigin;
+			//o.localPos = v.texcoord.xyz;
+			//float4 objectOrigin = mul(unity_WorldToObject, float4(0.0,0.0,0.0,1.0) );
+			//o.centerPos = objectOrigin;
 
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
 			o.worldPos = wpos;
@@ -120,19 +102,15 @@ Shader "Custom/WaterShader" {
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			
-			
+			fixed4 c;
 			if(isIsland == 1){
-				o.Albedo = tex2D (_IslandWaterTex, IN.uv_MainTex).rgb;
+			 	c = tex2D (_IslandWaterTex, IN.uv_MainTex);
 			}else{
-				o.Albedo = tex2D (_OceanWaterTex, IN.uv_MainTex).rgb;
+				c = tex2D (_OceanWaterTex, IN.uv_MainTex);
 			}
-			
+			o.Albedo = c.rgb;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
-		
-			// Metallic and smoothness come from slider variables
-			//o.Metallic = _Metallic;
-			//o.Smoothness = _Glossiness;
-			//o.Alpha = c.a;
+			o.Alpha = c.a;
 		}
 		ENDCG
 	}
