@@ -116,6 +116,30 @@ public class IslandTile : Tile {
 
         newMeshFilter.mesh = new Mesh(); 
         newMeshFilter.mesh.CombineMeshes(combine);
+
+        //The local min and maxes
+        Vector2 min = new Vector2(newMeshFilter.mesh.bounds.min.x, newMeshFilter.mesh.bounds.min.z);
+        Vector2 max = new Vector2(newMeshFilter.mesh.bounds.max.x, newMeshFilter.mesh.bounds.max.z);
+        float spanX = Mathf.Abs(min.x - max.x);
+        float spanZ = Mathf.Abs(min.y - max.y);
+        
+        Vector3[] verticies = newMeshFilter.mesh.vertices;
+        Vector2[] uvs = newMeshFilter.mesh.uv;
+
+        for(int v = 0; v < verticies.Length; v++)
+        {
+            Vector2 position = new Vector2(verticies[v].x, verticies[v].z);
+
+            //~~~~Important Part:~~~~
+            float newX = (position.x - min.x)/spanX;
+            float newZ = (position.y - min.y)/spanZ;
+            uvs[v] = new Vector2(newX, newZ);
+            //print("newX: "+newX + ", newZ: "+newZ);
+            //verticies[v] = new Vector3(newX, verticies[v].y, newZ);
+        }
+        newMeshFilter.mesh.uv = uvs;
+        //newMeshFilter.mesh.vertices = verticies;
+        //newMeshFilter.mesh.RecalculateBounds();
         newRenderer.material = mat;
         newRenderer.material.SetFloat("isIsland", 1);
 
@@ -123,9 +147,11 @@ public class IslandTile : Tile {
         newMeshObject.transform.SetParent(transform);
         newMeshObject.transform.localPosition = Vector3.zero;
         newMeshObject.transform.localScale = Vector3.one;
-        newMeshFilter.mesh.RecalculateBounds();
-        newMeshFilter.mesh.RecalculateTangents();
-        newMeshFilter.mesh.RecalculateNormals();
+
+        //print("Min: "+newMeshFilter.mesh.bounds.min + ", Max: " + newMeshFilter.mesh.bounds.max);
+
+       
+       
     }
 
 }

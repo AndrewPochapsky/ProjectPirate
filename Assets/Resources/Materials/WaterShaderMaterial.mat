@@ -39,7 +39,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _IslandWaterTex:
-        m_Texture: {fileID: 2800000, guid: 5599c0eebe5d5074eb5197f1e4d6deb5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5817356e1a209bf44a7b51b82bde971b, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
@@ -75,12 +75,12 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _IslandWaveModifier: 0.5
+    - _IslandWaveModifier: 2.5
     - _LerpSpeed: 1
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OceanWaveModifier: 15
+    - _OceanWaveModifier: 10
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
