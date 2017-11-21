@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public abstract class Tile : MonoBehaviour {
 
@@ -13,7 +14,9 @@ public abstract class Tile : MonoBehaviour {
     protected virtual void Awake()
     {
         _renderer = GetComponent<Renderer>();
-        //regularColour = _renderer.sharedMaterial.color;
+        //TODO change this
+        if(SceneManager.GetActiveScene().name == "Battle")
+            regularColour = _renderer.sharedMaterial.color;
     }
 
     /// <summary>

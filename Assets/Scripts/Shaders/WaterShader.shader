@@ -15,14 +15,11 @@
 		//LOD 300
 		
 		CGPROGRAM
-		// Physically based Standard lighting model, and enable shadows on all light types
+
 		#pragma surface surf Lambert vertex:vert
-		//#pragma surface surf Lambert alpha vertex:vert
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
-
-		
 
 		struct Input {
 			float2 uv_MainTex;
@@ -56,6 +53,7 @@
 			// put more per-instance properties here
 		UNITY_INSTANCING_CBUFFER_END
 
+		//Uses compound sin waves inorder to create realistic looking waves
 		float calculateSurface(float x, float modifier) {
    		 	float y = (sin(x * 1.0 + (_Time[1] - START_TIME) * 1.0) 
 				+ sin(x * 2.3 + (_Time[1] - START_TIME) * 1.5) 
@@ -64,21 +62,15 @@
     		return y;
 		}
 
+		//Lerps from one color to another overtime
 		fixed4 colorLerp(fixed4 colorA, fixed4 colorB){
 			float t = sin(_Time[1]) * _LerpSpeed;
 			return lerp(colorA, colorB, t);
 		}
 
-
 		void vert (inout appdata_full v, out Input o) {
 			UNITY_INITIALIZE_OUTPUT(Input,o);
-			//From when I tried to do stuff using gradients
-			
-			//o.localPos = v.vertex.xyz;
-			//o.localPos = v.texcoord.xyz;
-			//float4 objectOrigin = mul(unity_WorldToObject, float4(0.0,0.0,0.0,1.0) );
-			//o.centerPos = objectOrigin;
-
+		
 			float4 wpos = mul(unity_ObjectToWorld, v.vertex);
 			o.worldPos = wpos;
 
@@ -93,9 +85,7 @@
 				wpos.y += calculateSurface(wpos.x, _OceanWaveModifier);
 				wpos.y += calculateSurface(wpos.z, _OceanWaveModifier);
 			}
-			
 			//wpos.y -= calculateSurface(0.0);
-			
 		    v.vertex = mul(unity_WorldToObject, wpos);
 		}
  

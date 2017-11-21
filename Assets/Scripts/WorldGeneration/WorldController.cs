@@ -21,11 +21,11 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// In a specific direction, actual number is numberOfChunks^2
     /// </summary>
-    public const int numberOfChunks = 2;
+    public const int numberOfChunks = 3;
 
     public const int mapTileSize = 32;
 
-    public static int oceanTileOffset = 35;
+    public static int oceanTileOffset = 30;
 
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
@@ -71,7 +71,7 @@ public class WorldController : MonoBehaviour {
 
                 Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, world);
                 chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
-                nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, chunk.transform);
+                nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, offset: 8, parent: chunk.transform);
                 
                 tileGenerator.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
                 tileGenerator.ResetTileLocation();

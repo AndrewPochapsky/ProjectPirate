@@ -29,9 +29,9 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="worldHeight">The height</param>
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
-    public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, Transform parent = null)
+    public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, int offset = 0, Transform parent = null)
     {
-        int offset = 8;
+        //int offset = 8;
         List<Node> nodes = new List<Node>();
         for (int y = 0; y < worldHeight; y++)
         {
@@ -104,12 +104,12 @@ public class TileGenerator : MonoBehaviour {
                     }
                     else
                     {
-                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent);
+                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset);
                     }
                 }
                 else
                 {
-                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent);
+                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset);
                 }
             }
 
@@ -156,16 +156,27 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="node">The node</param>
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
+    /// <param name="forIsland">True if forIsland</param>
     /// <returns>The created tile</returns>
-    private Tile AddAnyTile(string tileName, Node node, int tileSize, Transform parent, bool forIsland = false)
+    private Tile AddAnyTile(string tileName, Node node, int tileSize, Transform parent, int offset, bool forIsland = false, bool forBattle = false)
     {
-        Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y + WorldController.oceanTileOffset, node.transform.position.z);
+        Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y + offset, node.transform.position.z);
 
         Quaternion rotation = Quaternion.Euler(new Vector3(0, 0, 0));
 
         GameObject obj = Instantiate(Resources.Load("Tiles/"+ tileName), position, rotation) as GameObject;
 
-        obj.transform.localScale = new Vector3(tileSize, 1, tileSize);
+        //TODO change the quads to planes in the battle scene to avoid having to do this
+        if(!forBattle)
+        {
+            obj.transform.localScale = new Vector3(tileSize, 1, tileSize);
+        }
+        else
+        {
+            obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
+            obj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+        }
+
 
         obj.transform.SetParent(parent);
 
@@ -178,7 +189,7 @@ public class TileGenerator : MonoBehaviour {
     }
 
     /// <summary>
-    /// Generates a map of only a specific tile
+    /// Generates a map of only a specific tile, used for battles
     /// </summary>
     /// <param name="tileName">Tile name to create</param>
     /// <param name="removeNodes">If true nodes will be removed</param>
@@ -187,7 +198,7 @@ public class TileGenerator : MonoBehaviour {
     {
         foreach(Node node in nodes)
         {
-            Tile createdTile = AddAnyTile(tileName, node, tileSize, parent);
+            Tile createdTile = AddAnyTile(tileName, node, tileSize, parent, offset: 0, forBattle: true);
 
             if (removeNodes)
             {
@@ -249,17 +260,17 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="node">The node</param>
     private void DisableRedundantNodes(IslandTile islandTile, Node node, int tileSize, Transform parent)
     {
-        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, forIsland: true).gameObject);
+        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
         node.isAvailable = false;
         switch (islandTile.Size)
         {
             case IslandTile.IslandSize.Long:
-                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, forIsland: true).gameObject);
+                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
                 node.RightEmpty.isAvailable = false;
                 break;
 
             case IslandTile.IslandSize.Tall:
-                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, forIsland: true).gameObject);
+                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
                 node.TopEmpty.isAvailable = false;
                 break;
 
@@ -267,17 +278,17 @@ public class TileGenerator : MonoBehaviour {
 
                 if (node.RightEmpty != null)
                 {
-                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, forIsland: true).gameObject);
+                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
                     node.RightEmpty.isAvailable = false;
                 }
                 if (node.TopEmpty != null)
                 {
                     if (node.TopEmpty.RightEmpty != null)
                     {
-                        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty.RightEmpty, tileSize/10, parent, forIsland: true).gameObject);
+                        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
                         node.TopEmpty.RightEmpty.isAvailable = false;
                     }
-                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, forIsland: true).gameObject);
+                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
                     node.TopEmpty.isAvailable = false;
                 }
                 break;

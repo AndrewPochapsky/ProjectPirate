@@ -90,26 +90,26 @@ public class IslandTile : Tile {
         return Vector3.zero;
     }
 
-    
+    /// <summary>
+    /// Combines all of the oceanTiles underneath this island into one single mesh
+    /// </summary>
+    /// <param name="parent">The parent of the new mesh</param>    
     public void CombineOceanMeshes(Transform parent)
     {
         MeshFilter[] meshFilters = meshObjects.Select(o => o.GetComponent<MeshFilter>()).ToArray();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
-        GameObject newMeshObject = Instantiate(Resources.Load("Tiles/"+nameof(OceanTile) + "EXP"), new Vector3(0, WorldController.oceanTileOffset, 0), Quaternion.identity) as GameObject;
+        GameObject newMeshObject = Instantiate(Resources.Load("Tiles/IslandOceanTile"), new Vector3(0, WorldController.oceanTileOffset, 0), Quaternion.identity) as GameObject;
         int i = 0;
         while(i < meshFilters.Length)
         {
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-            //meshFilters[i].gameObject.SetActive(false);
             Destroy(meshFilters[i].gameObject);
             
             combine[i].transform = transform.worldToLocalMatrix * meshFilters[i].transform.localToWorldMatrix;
             i++;
         }
-       
-        Material mat = Resources.Load("Materials/WaterShaderMaterial", typeof(Material)) as Material;
 
         MeshFilter newMeshFilter = newMeshObject.GetComponent<MeshFilter>();
         Renderer newRenderer = newMeshObject.GetComponent<Renderer>();
@@ -130,28 +130,17 @@ public class IslandTile : Tile {
         {
             Vector2 position = new Vector2(verticies[v].x, verticies[v].z);
 
-            //~~~~Important Part:~~~~
+            //Thank you to /u/DarKRoastJames
             float newX = (position.x - min.x)/spanX;
             float newZ = (position.y - min.y)/spanZ;
             uvs[v] = new Vector2(newX, newZ);
-            //print("newX: "+newX + ", newZ: "+newZ);
-            //verticies[v] = new Vector3(newX, verticies[v].y, newZ);
         }
         newMeshFilter.mesh.uv = uvs;
-        //newMeshFilter.mesh.vertices = verticies;
-        //newMeshFilter.mesh.RecalculateBounds();
-        newRenderer.material = mat;
         newRenderer.material.SetFloat("isIsland", 1);
 
         newMeshObject.gameObject.SetActive(true);
         newMeshObject.transform.SetParent(transform);
-        newMeshObject.transform.localPosition = Vector3.zero;
+        newMeshObject.transform.localPosition = new Vector3(0, 0, 0);
         newMeshObject.transform.localScale = Vector3.one;
-
-        //print("Min: "+newMeshFilter.mesh.bounds.min + ", Max: " + newMeshFilter.mesh.bounds.max);
-
-       
-       
     }
-
 }
