@@ -14,7 +14,7 @@ public class ShadyController : MonoBehaviour {
 	/// </summary>
 	private void Awake()
 	{
-		Shader.SetGlobalFloat("BEGIN_WAVES", 1);
+		//Shader.SetGlobalFloat("BEGIN_WAVES", 1);
 	}
 	
 	// Use this for initialization
