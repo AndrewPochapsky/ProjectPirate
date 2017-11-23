@@ -85,7 +85,6 @@
 				wpos.y += calculateSurface(wpos.x, _OceanWaveModifier);
 				wpos.y += calculateSurface(wpos.z, _OceanWaveModifier);
 			}
-			//wpos.y -= calculateSurface(0.0, _OceanWaveModifier);
 		    v.vertex = mul(unity_WorldToObject, wpos);
 		}
  

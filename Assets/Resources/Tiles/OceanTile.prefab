@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 114781194693336120}
   - component: {fileID: 23477253272990324}
   - component: {fileID: 33988624498746706}
-  - component: {fileID: 65021738557498806}
+  - component: {fileID: 64284211676783670}
   m_Layer: 8
   m_Name: OceanTile
   m_TagString: Untagged
@@ -82,8 +82,8 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1100611280435862}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65021738557498806
-BoxCollider:
+--- !u!64 &64284211676783670
+MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -92,8 +92,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 9.999999, y: 2.220446e-16, z: 9.999999}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Convex: 1
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &114781194693336120
 MonoBehaviour:
   m_ObjectHideFlags: 1

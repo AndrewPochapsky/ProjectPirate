@@ -4,19 +4,38 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	float  surfaceModifier;
+	float movementSpeed = 500;
+	float rotationSpeed = 100;
+	float surfaceModifier;
+
+	Rigidbody rb;
 	
 	// Use this for initialization
 	void Start () {
+		rb = GetComponent<Rigidbody>();
 		surfaceModifier = 5;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		transform.position = new Vector3(transform.position.x, 
-			CalculateSurface(transform.position.x, surfaceModifier) +
-			CalculateSurface(transform.position.z, surfaceModifier) + WorldController.oceanTileOffset,
-			transform.position.z);
+		//If not moving do bobbing
+
+		Movement();
+		ShipBobbing();
+		
+
+	}
+
+	bool Movement()
+	{
+		float translation = Input.GetAxisRaw("Vertical") * movementSpeed;
+		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;
+		translation *= Time.deltaTime;
+		rotation *= Time.deltaTime;
+		transform.Translate(0, 0, translation);
+		transform.Rotate(0, rotation, 0);
+
+		return translation != 0;
 	}
 
 	float CalculateSurface(float x, float modifier)
@@ -29,11 +48,24 @@ public class PlayerController : MonoBehaviour {
 		return y;
 	}
 
-	/*float calculateSurface(float x, float modifier) {
-   		 	float y = (sin(x * 1.0 + (_Time[1] - START_TIME) * 1.0) 
-				+ sin(x * 2.3 + (_Time[1] - START_TIME) * 1.5) 
-				+ sin(x * 3.3 + (_Time[1] - START_TIME) )) 
-				* modifier	;
-    		return y;
-		} */
+	float CalculateSurfaceLite(float x, float modifier)
+	{
+		float y = Mathf.Sin(x + (Time.time));
+		return y;
+	}
+
+	/// <summary>
+	/// Sets the y portion of the boat equal to the bob of the waves
+	/// </summary>
+	void ShipBobbing()
+	{
+		Vector3 bobbing = new Vector3(transform.position.x, 
+			CalculateSurface(transform.position.x, surfaceModifier) +
+			CalculateSurface(transform.position.z, surfaceModifier) + WorldController.oceanTileOffset,
+			transform.position.z);
+
+		transform.position = bobbing;//Vector3.Lerp(transform.position, bobbing, 0.5f);
+	}
+
+	
 }
