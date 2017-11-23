@@ -4,26 +4,33 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	float movementSpeed = 500;
+	float movementSpeed = 250;
 	float rotationSpeed = 100;
 	float surfaceModifier;
+
+	bool isMoving = false;
 
 	Rigidbody rb;
 	
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody>();
-		surfaceModifier = 5;
+		//TODO get a better solution to this
+		surfaceModifier = FindObjectOfType<OceanTile>().GetComponent<Renderer>().material.GetFloat("_OceanWaveModifier");
 	}
-	
+
+	void Update()
+	{
+		isMoving = Movement();		
+	}
+
 	// Update is called once per frame
-	void Update () {
-		//If not moving do bobbing
+	void LateUpdate () 
+	{
+		ShipBobbing(isMoving);
 
-		Movement();
-		ShipBobbing();
-		
-
+		//Tilting:
+		//transform.localRotation = Quaternion.Euler((Mathf.Lerp(transform.eulerAngles.x, transform.position.y, Time.time)) - WorldController.oceanTileOffset, transform.eulerAngles.y, 0f);
 	}
 
 	bool Movement()
@@ -40,31 +47,36 @@ public class PlayerController : MonoBehaviour {
 
 	float CalculateSurface(float x, float modifier)
 	{
-		float y = (Mathf.Sin(x * 1.0f + (Time.time) * 1.0f)
-			+ Mathf.Sin(x * 2.3f + (Time.time) * 1.5f)
-			+ Mathf.Sin(x * 3.3f + (Time.time)))
+		float y = (Mathf.Sin(x * 1.0f + (Time.timeSinceLevelLoad) * 1.0f)
+			+ Mathf.Sin(x * 2.3f + (Time.timeSinceLevelLoad) * 1.5f)
+			+ Mathf.Sin(x * 3.3f + (Time.timeSinceLevelLoad)))
 			* modifier;
 
-		return y;
-	}
-
-	float CalculateSurfaceLite(float x, float modifier)
-	{
-		float y = Mathf.Sin(x + (Time.time));
 		return y;
 	}
 
 	/// <summary>
 	/// Sets the y portion of the boat equal to the bob of the waves
 	/// </summary>
-	void ShipBobbing()
+	void ShipBobbing(bool moving)
 	{
-		Vector3 bobbing = new Vector3(transform.position.x, 
-			CalculateSurface(transform.position.x, surfaceModifier) +
-			CalculateSurface(transform.position.z, surfaceModifier) + WorldController.oceanTileOffset,
+		Vector3 velocity = Vector3.zero;
+		//print("x: "+transform.position.x);
+		Vector3 bobbingMotion = new Vector3(transform.position.x, 
+			CalculateSurface((transform.position.x), surfaceModifier) +
+			CalculateSurface((transform.position.z), surfaceModifier) + WorldController.oceanTileOffset,
 			transform.position.z);
-
-		transform.position = bobbing;//Vector3.Lerp(transform.position, bobbing, 0.5f);
+		
+		if(moving)
+		{
+			transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
+		}else
+		{
+			//TODO maybe don't have this as there is a noticable jump when you stop
+			print("is not moving");
+			transform.position = bobbingMotion;
+		}
+		
 	}
 
 	
