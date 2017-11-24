@@ -5,22 +5,26 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
 	float movementSpeed = 250;
-	float rotationSpeed = 100;
-	float surfaceModifier;
+	float rotationSpeed = 80;
+	float zRotationAmount = 6;
 
+	float surfaceModifier;
+	
 	bool isMoving = false;
 
 	Rigidbody rb;
-	
+	Transform model;
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody>();
+		model = transform.GetChild(0);
 		//TODO get a better solution to this
 		surfaceModifier = FindObjectOfType<OceanTile>().GetComponent<Renderer>().material.GetFloat("_OceanWaveModifier");
 	}
 
 	void Update()
 	{
+		
 		isMoving = Movement();		
 	}
 
@@ -40,7 +44,14 @@ public class PlayerController : MonoBehaviour {
 		translation *= Time.deltaTime;
 		rotation *= Time.deltaTime;
 		transform.Translate(0, 0, translation);
-		transform.Rotate(0, rotation, 0);
+		//transform.Rotate(0, rotation, 0);
+		
+		float x = transform.eulerAngles.x;
+		float y = transform.eulerAngles.y;
+		float z = transform.eulerAngles.z;
+		Vector3 desiredRotation = new Vector3(x, y + rotation, z);
+		transform.rotation = Quaternion.Euler(desiredRotation);
+
 
 		return translation != 0;
 	}
@@ -60,23 +71,20 @@ public class PlayerController : MonoBehaviour {
 	/// </summary>
 	void ShipBobbing(bool moving)
 	{
+		
 		Vector3 velocity = Vector3.zero;
-		//print("x: "+transform.position.x);
 		Vector3 bobbingMotion = new Vector3(transform.position.x, 
 			CalculateSurface((transform.position.x), surfaceModifier) +
 			CalculateSurface((transform.position.z), surfaceModifier) + WorldController.oceanTileOffset,
 			transform.position.z);
 		
-		if(moving)
-		{
-			transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
-		}else
-		{
-			//TODO maybe don't have this as there is a noticable jump when you stop
-			print("is not moving");
-			transform.position = bobbingMotion;
-		}
-		
+		transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
+
+		Quaternion from = Quaternion.Euler(zRotationAmount, 90, 0);
+		Quaternion to =Quaternion.Euler(-zRotationAmount, 90, 0);
+		float t = Mathf.PingPong(Mathf.Sin(Time.time * 0.5f) + Mathf.Sin(Time.time * 0.35f), 1);
+
+		model.localRotation = Quaternion.Slerp(from, to, t);
 	}
 
 	
