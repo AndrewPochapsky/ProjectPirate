@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	float movementSpeed = 250;
+	float acceleration = 150;
+	float maxSpeed = 300;
 	float rotationSpeed = 80;
 	float zRotationAmount = 6;
 
@@ -22,38 +23,50 @@ public class PlayerController : MonoBehaviour {
 		surfaceModifier = FindObjectOfType<OceanTile>().GetComponent<Renderer>().material.GetFloat("_OceanWaveModifier");
 	}
 
-	void Update()
+	void FixedUpdate()
 	{
 		
-		isMoving = Movement();		
-	}
+		Movement();	
+		PassiveMovment();	
+	}	
 
-	// Update is called once per frame
-	void LateUpdate () 
+	void Movement()
 	{
-		ShipBobbing(isMoving);
-
-		//Tilting:
-		//transform.localRotation = Quaternion.Euler((Mathf.Lerp(transform.eulerAngles.x, transform.position.y, Time.time)) - WorldController.oceanTileOffset, transform.eulerAngles.y, 0f);
-	}
-
-	bool Movement()
-	{
-		float translation = Input.GetAxisRaw("Vertical") * movementSpeed;
+		float translation = Input.GetAxisRaw("Vertical");
 		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;
-		translation *= Time.deltaTime;
 		rotation *= Time.deltaTime;
-		transform.Translate(0, 0, translation);
-		//transform.Rotate(0, rotation, 0);
+
+		//Rotation
+		Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
+		rb.MoveRotation(rb.rotation * deltaRotation);
+
+		//Acceleration
+		if(translation != 0 )
+		{
+			rb.AddForce(transform.forward * acceleration * translation);
+		}
 		
-		float x = transform.eulerAngles.x;
+		//The max velocity
+		Vector3 max = maxSpeed * transform.forward;
+		
+		//Limiting the max velocity
+		if(rb.velocity.magnitude > max.magnitude)
+		{
+			rb.velocity = max;
+		}
+		//Decelleration
+		if(translation == 0 && rb.velocity.magnitude > 0)
+		{
+			//rb.AddForce(-transform.forward * acceleration);
+			rb.velocity *= 0.9f;
+		}
+
+		//Rotation code that also works
+		/*float x = transform.eulerAngles.x;
 		float y = transform.eulerAngles.y;
 		float z = transform.eulerAngles.z;
 		Vector3 desiredRotation = new Vector3(x, y + rotation, z);
-		transform.rotation = Quaternion.Euler(desiredRotation);
-
-
-		return translation != 0;
+		transform.rotation = Quaternion.Euler(desiredRotation);*/
 	}
 
 	float CalculateSurface(float x, float modifier)
@@ -67,11 +80,12 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Sets the y portion of the boat equal to the bob of the waves
+	/// The movement of the boat which happens all of the time.
+	/// 
+	/// Bobbing up and down, tilting side to side
 	/// </summary>
-	void ShipBobbing(bool moving)
+	void PassiveMovment()
 	{
-		
 		Vector3 velocity = Vector3.zero;
 		Vector3 bobbingMotion = new Vector3(transform.position.x, 
 			CalculateSurface((transform.position.x), surfaceModifier) +
