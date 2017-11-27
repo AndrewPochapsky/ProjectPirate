@@ -4,14 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-	float acceleration = 150;
+	float acceleration = 200;
 	float maxSpeed = 300;
 	float rotationSpeed = 80;
-	float zRotationAmount = 6;
-
+	float frontTiltAmount = 8;
+	float sideTiltAmount = 10;
 	float surfaceModifier;
 	
-	bool isMoving = false;
 
 	Rigidbody rb;
 	Transform model;
@@ -54,19 +53,12 @@ public class PlayerController : MonoBehaviour {
 		{
 			rb.velocity = max;
 		}
+
 		//Decelleration
 		if(translation == 0 && rb.velocity.magnitude > 0)
 		{
-			//rb.AddForce(-transform.forward * acceleration);
 			rb.velocity *= 0.9f;
 		}
-
-		//Rotation code that also works
-		/*float x = transform.eulerAngles.x;
-		float y = transform.eulerAngles.y;
-		float z = transform.eulerAngles.z;
-		Vector3 desiredRotation = new Vector3(x, y + rotation, z);
-		transform.rotation = Quaternion.Euler(desiredRotation);*/
 	}
 
 	float CalculateSurface(float x, float modifier)
@@ -89,13 +81,14 @@ public class PlayerController : MonoBehaviour {
 		Vector3 velocity = Vector3.zero;
 		Vector3 bobbingMotion = new Vector3(transform.position.x, 
 			CalculateSurface((transform.position.x), surfaceModifier) +
-			CalculateSurface((transform.position.z), surfaceModifier) + WorldController.oceanTileOffset,
+			CalculateSurface((transform.position.z), surfaceModifier) + 
+			WorldController.oceanTileOffset,
 			transform.position.z);
 		
 		transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
 
-		Quaternion from = Quaternion.Euler(zRotationAmount, 90, 0);
-		Quaternion to =Quaternion.Euler(-zRotationAmount, 90, 0);
+		Quaternion from = Quaternion.Euler(sideTiltAmount, 90, frontTiltAmount);
+		Quaternion to = Quaternion.Euler(-sideTiltAmount, 90, -frontTiltAmount);
 		float t = Mathf.PingPong(Mathf.Sin(Time.time * 0.5f) + Mathf.Sin(Time.time * 0.35f), 1);
 
 		model.localRotation = Quaternion.Slerp(from, to, t);
