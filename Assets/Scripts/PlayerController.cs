@@ -23,27 +23,25 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void FixedUpdate()
-	{
-		
+	{	
 		Movement();	
 		PassiveMovment();	
 	}	
 
+	//TODO fix bug with rotation and movement (A weird drifting effect) - Seems to be improved with using torque
 	void Movement()
 	{
 		float translation = Input.GetAxisRaw("Vertical");
 		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;
-		rotation *= Time.deltaTime;
+		rotation *= Time.fixedDeltaTime;
 
 		//Rotation
-		Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
-		rb.MoveRotation(rb.rotation * deltaRotation);
+		//Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
+		//rb.MoveRotation(rb.rotation * deltaRotation);
+		rb.AddTorque(transform.up * rotation, ForceMode.Acceleration);
 
 		//Acceleration
-		if(translation != 0 )
-		{
-			rb.AddForce(transform.forward * acceleration * translation);
-		}
+		rb.AddForce(transform.forward * acceleration * translation, ForceMode.Acceleration);
 		
 		//The max velocity
 		Vector3 max = maxSpeed * transform.forward;
