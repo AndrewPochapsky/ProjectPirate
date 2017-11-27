@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour {
 
 	float acceleration = 200;
 	float maxSpeed = 300;
-	float rotationSpeed = 80;
+	float rotationSpeed = 200;
 	float frontTiltAmount = 8;
 	float sideTiltAmount = 10;
 	float surfaceModifier;
