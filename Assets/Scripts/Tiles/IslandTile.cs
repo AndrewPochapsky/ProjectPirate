@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Newtonsoft.Json;
 
 public class IslandTile : Tile {
+
+    public string Name { get; protected set; }
 
     BoxCollider col;
 
@@ -32,6 +35,27 @@ public class IslandTile : Tile {
         UniqueIslandData = new UniqueIslandData();
 
         UniqueIslandData.Initialize();
+        
+       
+        
+    }
+
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    void Start()
+    {
+         Name = DataGenerator.Instance.GenerateIslandName(Random.Range(2, 4)); 
+    }
+
+    /// <summary>
+    /// OnTriggerEnter is called when the Collider other enters the trigger.
+    /// </summary>
+    /// <param name="other">The other Collider involved in this collision.</param>
+    void OnTriggerEnter(Collider other)
+    {
+        print("Welcome to " + Name + "!");
     }
 
     public override void Enable(bool value)
