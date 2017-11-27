@@ -13,7 +13,9 @@ public class Entity : MonoBehaviour {
     public int Speed { get; protected set; }
     public int MaxHealth { get; protected set; }
     public int CurrentHealth { get; protected set; }
-
+    public int Infamy { get; protected set; }
+    public int Gold { get; protected set; }
+    
     [HideInInspector]
     public bool canMove = true;
 
