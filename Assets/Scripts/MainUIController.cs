@@ -18,10 +18,6 @@ public class MainUIController : MonoBehaviour {
 		player.OnInfoUpdatedEvent += SetUI;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 	private void SetUI(int infamy, int gold)
 	{
 		infamyText.text = "Infamy: " + infamy;

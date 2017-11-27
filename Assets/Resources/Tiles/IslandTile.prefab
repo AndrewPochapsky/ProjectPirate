@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 114122371078352362}
   - component: {fileID: 114851209126601692}
   - component: {fileID: 114369394889149896}
+  - component: {fileID: 65018566972342324}
   m_Layer: 0
   m_Name: IslandTile
   m_TagString: Untagged
@@ -112,6 +113,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1427435256699824}
   m_Mesh: {fileID: 0}
+--- !u!65 &65018566972342324
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1789851191812744}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1300, y: 500, z: 1300}
+  m_Center: {x: 0, y: 250, z: 0}
 --- !u!114 &114122371078352362
 MonoBehaviour:
   m_ObjectHideFlags: 1

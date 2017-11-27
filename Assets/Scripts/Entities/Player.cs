@@ -18,9 +18,17 @@ public class Player : Entity {
         CurrentHealth = MaxHealth;
         Infamy = 0;
         Gold = 0;
-        OnInfoUpdatedEvent(Infamy, Gold);
     }
-
+    /// <summary>
+    /// Start is called on the frame when a script is enabled just before
+    /// any of the Update methods is called the first time.
+    /// </summary>
+    protected override void Start()
+    {   
+        base.Start();
+        if(OnInfoUpdatedEvent != null)
+            OnInfoUpdatedEvent(Infamy, Gold);
+    }
     
 	
 	

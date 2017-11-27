@@ -5,6 +5,8 @@ using System.Linq;
 
 public class IslandTile : Tile {
 
+    BoxCollider col;
+
     public enum IslandSize
     {               //Sizes:
         Regular,    // 1x1
@@ -13,6 +15,7 @@ public class IslandTile : Tile {
         Large       // 2x2
     }
 
+    [HideInInspector]
     public List<GameObject> meshObjects;
 
     public IslandSize Size { get; set; }
@@ -23,6 +26,7 @@ public class IslandTile : Tile {
 
     private void Awake()
     {
+        col = GetComponent<BoxCollider>();
         meshObjects = new List<GameObject>();
         generator = GetComponent<IslandGenerator>();
         UniqueIslandData = new UniqueIslandData();
@@ -74,18 +78,25 @@ public class IslandTile : Tile {
     /// <param name="islandTile">The island tile</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>The offset</returns>
-    public static Vector3 GetIslandOffset(IslandTile islandTile, int tileSize)
+    public Vector3 GetIslandOffset(int tileSize)
     {
-        switch (islandTile.Size)
+        switch (Size)
         {
             case IslandSize.Long:
+                col.size = new Vector3(1300, 500, 600);
                 return new Vector3(tileSize / 2, 0, 0);
 
             case IslandSize.Tall:
+                col.size = new Vector3(600, 500, 1300);
                 return new Vector3(0, 0, tileSize / 2);
 
             case IslandSize.Large:
+                 col.size = new Vector3(1300, 500, 1300);
                 return new Vector3(tileSize / 2, 0, tileSize / 2);
+            
+            default:
+                col.size = new Vector3(600, 500, 600);
+                break;
         }
         return Vector3.zero;
     }

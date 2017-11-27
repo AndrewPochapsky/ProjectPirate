@@ -224,7 +224,7 @@ public class TileGenerator : MonoBehaviour {
 
         DisableRedundantNodes(islandTile, node, tileSize, parent);
 
-        islandTile.transform.position += IslandTile.GetIslandOffset(islandTile, tileSize);
+        islandTile.transform.position += islandTile.GetIslandOffset(tileSize);
 
         islandTile.CombineOceanMeshes(parent);
     }
