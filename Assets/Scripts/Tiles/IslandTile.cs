@@ -9,6 +9,7 @@ public class IslandTile : Tile {
     public string Name { get; protected set; }
 
     BoxCollider col;
+    IslandUI islandUI;
 
     public enum IslandSize
     {               //Sizes:
@@ -29,15 +30,13 @@ public class IslandTile : Tile {
 
     private void Awake()
     {
+        islandUI = GetComponent<IslandUI>();
         col = GetComponent<BoxCollider>();
         meshObjects = new List<GameObject>();
         generator = GetComponent<IslandGenerator>();
         UniqueIslandData = new UniqueIslandData();
 
         UniqueIslandData.Initialize();
-        
-       
-        
     }
 
     /// <summary>
@@ -47,6 +46,7 @@ public class IslandTile : Tile {
     void Start()
     {
          Name = DataGenerator.Instance.GenerateIslandName(Random.Range(2, 4)); 
+         islandUI.SetUI(Name);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class IslandTile : Tile {
                 return new Vector3(0, 0, tileSize / 2);
 
             case IslandSize.Large:
-                 col.size = new Vector3(1300, 500, 1300);
+                col.size = new Vector3(1300, 500, 1300);
                 return new Vector3(tileSize / 2, 0, tileSize / 2);
             
             default:
