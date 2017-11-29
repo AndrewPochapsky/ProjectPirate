@@ -6,6 +6,7 @@ using TMPro;
 public class IslandUI : MonoBehaviour {
 
 	TextMeshProUGUI nameText;
+	TextMeshProUGUI visitedText;
 	Transform player;
 
 	int viewingRange = 1300;
@@ -15,6 +16,7 @@ public class IslandUI : MonoBehaviour {
 	void Awake () {
 		canvas = transform.GetChild(1).GetComponent<RectTransform>();
 		nameText = canvas.GetChild(0).GetComponent<TextMeshProUGUI>();
+		visitedText = canvas.GetChild(1).GetComponent<TextMeshProUGUI>();
 		player = GameObject.FindObjectOfType<Player>().transform;
 	}
 
@@ -27,14 +29,21 @@ public class IslandUI : MonoBehaviour {
 		InvokeRepeating("CheckIfPlayerInRange", 0, 0.5f);
 	}
 
-	public void SetUI(string name)
+	public void SetUI(string name, bool visited)
 	{
 		nameText.text = name;
+		if(visited)
+		{
+			visitedText.text = "Visited";
+		}
+		else
+		{
+			visitedText.text = "Not Visited";
+		}
 	}
 
 	private void CheckIfPlayerInRange()
 	{
-		print("checking");
 		canvas.gameObject.SetActive(Vector3.Distance(player.position, transform.position) <= viewingRange);
 	}
 }

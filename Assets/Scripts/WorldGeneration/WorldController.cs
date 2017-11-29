@@ -31,6 +31,11 @@ public class WorldController : MonoBehaviour {
     /// </summary>
     int newSize = mapTileSize * 24;
 
+    /// <summary>
+    /// The current island which the player is near/interacting with
+    /// </summary>
+    public IslandInfo currentIsland;
+
     Transform world;
 
     List<Node> nodes;

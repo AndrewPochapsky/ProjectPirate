@@ -8,8 +8,11 @@ public class DataGenerator : MonoBehaviour{
 	public static DataGenerator Instance { get; set; }
 	private List<string> islandNames;
 
-	// Use this for initialization
-	void Start () {
+	/// <summary>
+	/// Awake is called when the script instance is being loaded.
+	/// </summary>
+	void Awake()
+	{
 		if(Instance != null && Instance != this){
 			Destroy(gameObject);
 		}else{

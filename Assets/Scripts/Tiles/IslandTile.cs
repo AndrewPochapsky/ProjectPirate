@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 public class IslandTile : Tile {
 
-    public string Name { get; protected set; }
+    public IslandInfo info { get; protected set; }
 
     BoxCollider col;
     IslandUI islandUI;
@@ -35,7 +35,7 @@ public class IslandTile : Tile {
         meshObjects = new List<GameObject>();
         generator = GetComponent<IslandGenerator>();
         UniqueIslandData = new UniqueIslandData();
-
+        info = new IslandInfo();
         UniqueIslandData.Initialize();
     }
 
@@ -45,17 +45,30 @@ public class IslandTile : Tile {
     /// </summary>
     void Start()
     {
-         Name = DataGenerator.Instance.GenerateIslandName(Random.Range(2, 4)); 
-         islandUI.SetUI(Name);
+         islandUI.SetUI(info.Name, info.Visited);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if( WorldController.Instance.currentIsland == null)
+            WorldController.Instance.currentIsland = info;
+
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            //Interact with island
+            print("interacting with " + info.Name);
+            info.Visited = true;
+            islandUI.SetUI(info.Name, info.Visited);
+        }
     }
 
     /// <summary>
-    /// OnTriggerEnter is called when the Collider other enters the trigger.
+    /// OnTriggerExit is called when the Collider other has stopped touching the trigger.
     /// </summary>
     /// <param name="other">The other Collider involved in this collision.</param>
-    void OnTriggerEnter(Collider other)
+    void OnTriggerExit(Collider other)
     {
-        print("Welcome to " + Name + "!");
+         WorldController.Instance.currentIsland = null;
     }
 
     public override void Enable(bool value)
