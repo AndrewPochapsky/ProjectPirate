@@ -5,8 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class WorldController : MonoBehaviour {
 
-    TileGenerator tileGenerator;
-    ChunkGenerator chunkGenerator;
+    public static WorldController Instance;
 
     /// <summary>
     /// Location at which to generate the chunk
@@ -25,7 +24,7 @@ public class WorldController : MonoBehaviour {
 
     public const int mapTileSize = 32;
 
-    public static int oceanTileOffset = 30;
+    public int oceanTileOffset = 30;
 
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
@@ -40,12 +39,16 @@ public class WorldController : MonoBehaviour {
     
     private void Awake()
     {
+        if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}else{
+			Instance = this;
+		}
+
         world = FindObjectOfType<World>().transform;
         if (!hasGenerated)
         {
             nodes = new List<Node>();
-            tileGenerator = FindObjectOfType<TileGenerator>();
-            chunkGenerator = FindObjectOfType<ChunkGenerator>();
 
             GenerateWorld();
             hasGenerated = true;
@@ -55,7 +58,8 @@ public class WorldController : MonoBehaviour {
 
     private void Start()
     {
-        World.worldInstance.gameObject.SetActive(true);
+        
+        World.Instance.gameObject.SetActive(true);
     }
 
     /// <summary>
@@ -69,12 +73,12 @@ public class WorldController : MonoBehaviour {
             {
                 Vector2 location = new Vector2(x, y);
 
-                Chunk chunk = chunkGenerator.GenerateChunk(location, chunkLocation, world);
-                chunkLocation = chunkGenerator.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
-                nodes = tileGenerator.AddNodes(chunkSize, chunkSize, newSize, offset: 8, parent: chunk.transform);
+                Chunk chunk = ChunkGenerator.Instance.GenerateChunk(location, chunkLocation, world);
+                chunkLocation = ChunkGenerator.Instance.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
+                nodes = TileGenerator.Instance.AddNodes(chunkSize, chunkSize, newSize, offset: 8, parent: chunk.transform);
                 
-                tileGenerator.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
-                tileGenerator.ResetTileLocation();
+                TileGenerator.Instance.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
+                TileGenerator.Instance.ResetTileLocation();
             }
         }
     }
@@ -84,7 +88,7 @@ public class WorldController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.B))
         {
             SceneManager.LoadScene(1);
-            World.worldInstance.gameObject.SetActive(false);
+            World.Instance.gameObject.SetActive(false);
         }
     }
 }

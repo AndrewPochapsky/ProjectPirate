@@ -80,7 +80,7 @@ public class PlayerController : MonoBehaviour {
 		Vector3 bobbingMotion = new Vector3(transform.position.x, 
 			CalculateSurface((transform.position.x), surfaceModifier) +
 			CalculateSurface((transform.position.z), surfaceModifier) + 
-			WorldController.oceanTileOffset,
+			WorldController.Instance.oceanTileOffset,
 			transform.position.z);
 		
 		transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);

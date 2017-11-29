@@ -134,7 +134,7 @@ public class IslandTile : Tile {
         MeshFilter[] meshFilters = meshObjects.Select(o => o.GetComponent<MeshFilter>()).ToArray();
         CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
-        GameObject newMeshObject = Instantiate(Resources.Load("Tiles/IslandOceanTile"), new Vector3(0, WorldController.oceanTileOffset, 0), Quaternion.identity) as GameObject;
+        GameObject newMeshObject = Instantiate(Resources.Load("Tiles/IslandOceanTile"), new Vector3(0, WorldController.Instance.oceanTileOffset, 0), Quaternion.identity) as GameObject;
         int i = 0;
         while(i < meshFilters.Length)
         {

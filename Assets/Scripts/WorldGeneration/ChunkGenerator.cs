@@ -4,6 +4,20 @@ using UnityEngine;
 
 public class ChunkGenerator : MonoBehaviour {
 
+    public static ChunkGenerator Instance;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}else{
+			Instance = this;
+		}
+    }
+
     public Chunk GenerateChunk(Vector2 gridLocation, Vector3 worldLocation, Transform parent)
     {
         GameObject obj = Instantiate(Resources.Load(nameof(Chunk)), worldLocation, Quaternion.identity) as GameObject;

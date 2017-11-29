@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class TileGenerator : MonoBehaviour {
 
+    public static TileGenerator Instance;
+
     enum TileType { OceanTile, IslandTile }
 
     private Vector3 tileLocation;
@@ -18,6 +20,11 @@ public class TileGenerator : MonoBehaviour {
 
     private void Awake()
     {
+        if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}else{
+			Instance = this;
+		}
         tileScaleAddition = new Vector3(50, 50, 0);
         tileLocation = Vector3.zero;
     }
@@ -104,12 +111,12 @@ public class TileGenerator : MonoBehaviour {
                     }
                     else
                     {
-                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset);
+                        createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.Instance.oceanTileOffset);
                     }
                 }
                 else
                 {
-                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset);
+                    createdTile = AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.Instance.oceanTileOffset);
                 }
             }
 
@@ -260,17 +267,17 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="node">The node</param>
     private void DisableRedundantNodes(IslandTile islandTile, Node node, int tileSize, Transform parent)
     {
-        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
         node.isAvailable = false;
         switch (islandTile.Size)
         {
             case IslandTile.IslandSize.Long:
-                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
                 node.RightEmpty.isAvailable = false;
                 break;
 
             case IslandTile.IslandSize.Tall:
-                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+                islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
                 node.TopEmpty.isAvailable = false;
                 break;
 
@@ -278,17 +285,17 @@ public class TileGenerator : MonoBehaviour {
 
                 if (node.RightEmpty != null)
                 {
-                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.RightEmpty, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
                     node.RightEmpty.isAvailable = false;
                 }
                 if (node.TopEmpty != null)
                 {
                     if (node.TopEmpty.RightEmpty != null)
                     {
-                        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty.RightEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+                        islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty.RightEmpty, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
                         node.TopEmpty.RightEmpty.isAvailable = false;
                     }
-                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.oceanTileOffset, forIsland: true).gameObject);
+                    islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node.TopEmpty, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
                     node.TopEmpty.isAvailable = false;
                 }
                 break;

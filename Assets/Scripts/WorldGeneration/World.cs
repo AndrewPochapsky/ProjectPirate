@@ -5,19 +5,16 @@ using UnityEngine.SceneManagement;
 
 public class World : MonoBehaviour {
 
-    public static World worldInstance;
+    public static World Instance;
 
     private void Awake()
     {
         DontDestroyOnLoad(this);
 
-        if(worldInstance == null)
-        {
-            worldInstance = this;
-        }
-        else
-        {
-            DestroyObject(gameObject);
-        }
+        if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}else{
+			Instance = this;
+		}
     }
 }
