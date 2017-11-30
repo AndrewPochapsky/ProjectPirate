@@ -5,6 +5,8 @@ using TMPro;
 
 public class MainUIController : MonoBehaviour {
 
+	public static MainUIController Instance;
+
 	Player player;
 
 	[SerializeField]
@@ -16,8 +18,16 @@ public class MainUIController : MonoBehaviour {
 	[SerializeField]
 	private TextMeshProUGUI interactText;
 
+	[SerializeField]
+	private Transform worldUIContainer;
+
 	// Use this for initialization
 	void Awake () {
+		if(Instance != null && Instance != this){
+			Destroy(gameObject);
+		}else{
+			Instance = this;
+		}
 		player = GameObject.FindObjectOfType<Player>();
 		player.OnInfoUpdatedEvent += SetUI;
 	}
@@ -27,7 +37,7 @@ public class MainUIController : MonoBehaviour {
 	/// </summary>
 	void Update()
 	{
-		if(WorldController.Instance.currentIsland != null)
+		if(WorldController.Instance.currentIsland != null && !player.anchorDropped)
 		{
 			interactText.enabled = true;
 			interactText.text = "Press E to drop anchor at "+ WorldController.Instance.currentIsland.Name + ".";
@@ -42,5 +52,10 @@ public class MainUIController : MonoBehaviour {
 	{
 		infamyText.text = "Infamy: " + infamy;
 		goldText.text = "Gold: " + gold;
+	}
+
+	public void ToggleWorldUI(bool value)
+	{
+		worldUIContainer.gameObject.SetActive(value);
 	}
 }

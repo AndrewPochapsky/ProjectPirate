@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 public class IslandTile : Tile {
 
     public IslandInfo info { get; protected set; }
-
-    BoxCollider col;
     IslandUI islandUI;
 
+    BoxCollider col;
+    
     public enum IslandSize
     {               //Sizes:
         Regular,    // 1x1
@@ -48,27 +48,12 @@ public class IslandTile : Tile {
          islandUI.SetUI(info.Name, info.Visited);
     }
 
-    void OnTriggerStay(Collider other)
-    {
-        if( WorldController.Instance.currentIsland == null)
-            WorldController.Instance.currentIsland = info;
-
-        if(Input.GetKeyDown(KeyCode.E))
-        {
-            //Interact with island
-            print("interacting with " + info.Name);
-            info.Visited = true;
-            islandUI.SetUI(info.Name, info.Visited);
-        }
-    }
-
     /// <summary>
-    /// OnTriggerExit is called when the Collider other has stopped touching the trigger.
+    /// Calls the islandUI.SetUI method so that islandUI can remain private
     /// </summary>
-    /// <param name="other">The other Collider involved in this collision.</param>
-    void OnTriggerExit(Collider other)
+    public void SetUI()
     {
-         WorldController.Instance.currentIsland = null;
+        islandUI.SetUI(info.Name, info.Visited);
     }
 
     public override void Enable(bool value)

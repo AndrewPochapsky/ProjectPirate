@@ -5,6 +5,11 @@ using UnityEngine;
 public class Player : Entity {
     public delegate void OnInfoUpdated(int infamy, int gold);
     public event OnInfoUpdated OnInfoUpdatedEvent;
+
+    public bool anchorDropped { get; private set; }
+
+    CameraFollow cam;
+
     private void Awake()
     {
         Attacks = new List<Attack>
@@ -26,10 +31,41 @@ public class Player : Entity {
     protected override void Start()
     {   
         base.Start();
+        cam = FindObjectOfType<CameraFollow>();
+        cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)
             OnInfoUpdatedEvent(Infamy, Gold);
     }
     
+    void OnTriggerStay(Collider other)
+    {
+        IslandTile island = other.gameObject.GetComponent<IslandTile>(); 
+        if(island != null)
+        {
+            if(WorldController.Instance.currentIsland == null)
+            {
+                 WorldController.Instance.currentIsland = island.info;
+            }
+
+            if(Input.GetKeyDown(KeyCode.E))
+            {
+                island.info.Visited = true;
+                island.SetUI();
+                anchorDropped = true;
+                MainUIController.Instance.ToggleWorldUI(false);
+                cam.SetTarget(island.transform);
+            }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        IslandTile island = other.gameObject.GetComponent<IslandTile>();
+        if(island != null)
+        {
+            WorldController.Instance.currentIsland = null;
+        }        
+    }
 	
 	
 }
