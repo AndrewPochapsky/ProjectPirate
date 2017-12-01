@@ -242,7 +242,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -103.30005, y: 99.45001}
+  m_AnchoredPosition: {x: -103.30005, y: 105}
   m_SizeDelta: {x: 270.7, y: 15.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &119446965
@@ -266,8 +266,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: tropical
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -292,8 +292,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 15
-  m_fontSizeBase: 15
+  m_fontSize: 25
+  m_fontSizeBase: 25
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -310,7 +310,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -551,8 +551,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: 'Description:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -577,8 +577,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -595,7 +595,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -702,7 +702,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.915}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.866}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -994,8 +994,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 241.8, y: -20.4}
-  m_SizeDelta: {x: 365.77, y: 58.99}
+  m_AnchoredPosition: {x: 236.24, y: -20.4}
+  m_SizeDelta: {x: 354.64, y: 58.99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1129621104
 MonoBehaviour:
@@ -1018,8 +1018,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: It is a bright and sunny day on the island of blank.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1044,8 +1044,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1054,7 +1054,7 @@ MonoBehaviour:
   m_textAlignment: 264
   m_isAlignmentEnumConverted: 1
   m_characterSpacing: 0
-  m_wordSpacing: 5
+  m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -1148,7 +1148,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 234.67496, y: -0.3}
+  m_AnchoredPosition: {x: 234.67496, y: -1.7}
   m_SizeDelta: {x: 365.77, y: 20.59}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1174709106
@@ -1172,8 +1172,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: ???
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1198,8 +1198,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 18
-  m_fontSizeBase: 18
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1216,7 +1216,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
@@ -1730,8 +1730,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Blank Island
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -1756,8 +1756,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 45
+  m_fontSizeBase: 45
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1980,8 +1980,8 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: 'Resources:'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 526ee725e26808c45ba924e3234a20f3, type: 2}
-  m_sharedMaterial: {fileID: 21737481274297952, guid: 526ee725e26808c45ba924e3234a20f3,
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -2006,8 +2006,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 28
+  m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -2024,7 +2024,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
