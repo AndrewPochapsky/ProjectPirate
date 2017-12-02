@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class MainUIController : MonoBehaviour {
 
@@ -33,6 +34,9 @@ public class MainUIController : MonoBehaviour {
 	[SerializeField]
 	private Transform islandUIContainer;
 
+	[SerializeField]
+	private List<Transform> buttons;
+
 	// Use this for initialization
 	void Awake () {
 		if(Instance != null && Instance != this){
@@ -42,6 +46,24 @@ public class MainUIController : MonoBehaviour {
 		}
 		player = GameObject.FindObjectOfType<Player>();
 		player.OnInfoUpdatedEvent += SetUI;
+	}
+
+	/// <summary>
+	/// Start is called on the frame when a script is enabled just before
+	/// any of the Update methods is called the first time.
+	/// </summary>
+	void Start()
+	{
+		foreach(Transform button in buttons)
+		{
+			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
+			if(interaction.Completed)
+			{
+				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+				text.text = "Completed";
+				text.color = Color.green;
+			}
+		}
 	}
 	
 	/// <summary>
@@ -83,5 +105,19 @@ public class MainUIController : MonoBehaviour {
 		islandUIContainer.gameObject.SetActive(false);
 		worldUIContainer.gameObject.SetActive(true);
 		player.RaiseAnchor();
+	}
+
+	public void OnSurvey()
+	{
+		Interaction interaction = GetInteraction();
+		
+	}
+
+	private Interaction GetInteraction()
+	{
+		GameObject pressedButton = EventSystem.current.currentSelectedGameObject;
+		return InteractionManager.Instance.GetInteraction(
+			WorldController.Instance.currentIsland.Interactions, 
+			pressedButton.name);
 	}
 }

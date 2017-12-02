@@ -6,8 +6,12 @@ public class IslandInfo  {
 	public string Name { get; protected set; }
     public bool Visited { get; set; }
 
+	public List<Interaction> Interactions;
+
 	public IslandInfo()
 	{
 		 Name = DataGenerator.Instance.GenerateIslandName(Random.Range(2, 4));
+		 Interactions = InteractionManager.Instance.GetInteractionList();
+
 	}
 }
