@@ -72,7 +72,7 @@ public class MainUIController : MonoBehaviour {
 		assignCrewPanel = assignCrewContainer.GetChild(0).GetComponent<RectTransform>();
 		foreach(CrewMember member in player.crew)
 		{
-			crewButtons.Add(GenerateButton(assignCrewPanel, member));
+			crewButtons.Add(GenerateCrewButton(assignCrewPanel, member));
 		}
 	}
 
@@ -129,20 +129,28 @@ public class MainUIController : MonoBehaviour {
 		player.RaiseAnchor();
 	}
 
+	public void OnSurvey()
+	{
+		Interaction interaction = GetInteraction("survey");
+		if(interaction.assignee != null && !interaction.Completed)
+		{
+			interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>().text = "in progress";
+		}
+	}
+
 	public void OnAssign()
 	{
 		UpdateCrewButtons();
-		currentInteraction = GetInteraction();
+		currentInteraction = GetInteraction(EventSystem.current.currentSelectedGameObject.tag);
 		assignCrewContainer.gameObject.SetActive(true);
 		//StartInteraction(currentInteraction.Name);
 	}
 
-	private Interaction GetInteraction()
+	private Interaction GetInteraction(string tag)
 	{
-		GameObject pressedButton = EventSystem.current.currentSelectedGameObject;
 		return InteractionManager.Instance.GetInteraction(
 			WorldController.Instance.currentIsland.Interactions, 
-			pressedButton.tag);
+			tag);
 	}
 
 	private void StartInteraction(string name)
@@ -158,7 +166,7 @@ public class MainUIController : MonoBehaviour {
 		}
 	}
 
-	private Button GenerateButton(RectTransform parent, CrewMember crewMember)
+	private Button GenerateCrewButton(RectTransform parent, CrewMember crewMember)
     {
         GameObject button = (GameObject)Instantiate(crewMemberButton);
         button.transform.SetParent(parent, false);
@@ -177,6 +185,9 @@ public class MainUIController : MonoBehaviour {
 		crewMember.Task = currentInteraction;
 		currentInteraction.assignee = crewMember;
 		SetInteractionButtonText();
+
+		UnAssignDuplicateTasks(crewMember);
+
 		assignCrewContainer.gameObject.SetActive(false);
 	}
 
@@ -202,11 +213,13 @@ public class MainUIController : MonoBehaviour {
 
 		if(crewMember.Task == null)
 		{
-			taskText.text = "Not Assigned";
+			taskText.text = "*not assigned*";
+			taskText.color = Color.red;
 		}
 		else
 		{
 			taskText.text = crewMember.Task.Name;
+			taskText.color = Color.black;
 		}
 	}
 
@@ -225,6 +238,17 @@ public class MainUIController : MonoBehaviour {
 			{
 				text.text = "*Not Assigned*";
 				text.color = Color.red;
+			}
+		}
+	}
+
+	private void UnAssignDuplicateTasks(CrewMember crewMember)
+	{
+		foreach(CrewMember member in player.crew)
+		{
+			if(crewMember.Name != member.Name &&  crewMember.Task == member.Task)
+			{
+				member.Task = null;
 			}
 		}
 	}
