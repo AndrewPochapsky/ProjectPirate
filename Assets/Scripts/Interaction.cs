@@ -6,16 +6,15 @@ public class Interaction  {
 
 	public string Name { get; set; }
 	public float BaseTimeRequired { get; set; }
-	//TODO: replace this with a crew member
-	public bool Assigned { get; set; }
+	public CrewMember assignee { get; set; }
 	public bool Completed { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
-	public Interaction(string name, float time, bool assigned)
+	public Interaction(string name, float time)
 	{
 		Name = name;
 		BaseTimeRequired = time;
-		Assigned = assigned;
+		assignee = null;
 		Completed = false;
 	}
 

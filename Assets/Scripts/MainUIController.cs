@@ -9,6 +9,7 @@ public class MainUIController : MonoBehaviour {
 
 	public static MainUIController Instance;
 
+
 	Player player;
 
 	[Header("WorldUI:")]
@@ -36,7 +37,17 @@ public class MainUIController : MonoBehaviour {
 	private Transform islandUIContainer;
 
 	[SerializeField]
-	private List<Transform> buttons;
+	private RectTransform assignCrewContainer;
+
+	private RectTransform assignCrewPanel;
+
+	[SerializeField]
+	private GameObject crewMemberButton;
+
+	[SerializeField]
+	private List<Transform> interactionButtons;
+
+	private List<Button> crewButtons;
 
 	private Interaction currentInteraction;
 
@@ -49,6 +60,20 @@ public class MainUIController : MonoBehaviour {
 		}
 		player = GameObject.FindObjectOfType<Player>();
 		player.OnInfoUpdatedEvent += SetUI;
+	}
+
+	/// <summary>
+	/// Start is called on the frame when a script is enabled just before
+	/// any of the Update methods is called the first time.
+	/// </summary>
+	void Start()
+	{
+		crewButtons = new List<Button>();
+		assignCrewPanel = assignCrewContainer.GetChild(0).GetComponent<RectTransform>();
+		foreach(CrewMember member in player.crew)
+		{
+			crewButtons.Add(GenerateButton(assignCrewPanel, member));
+		}
 	}
 
 	/// <summary>
@@ -84,7 +109,7 @@ public class MainUIController : MonoBehaviour {
 		islandDescText.text = description;
 		islandUIContainer.gameObject.SetActive(true);
 
-		foreach(Transform button in buttons)
+		foreach(Transform button in interactionButtons)
 		{
 			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
 			if(interaction.Completed)
@@ -106,8 +131,9 @@ public class MainUIController : MonoBehaviour {
 
 	public void OnAssign()
 	{
+		UpdateCrewButtons();
 		currentInteraction = GetInteraction();
-		currentInteraction.Assigned = true;
+		assignCrewContainer.gameObject.SetActive(true);
 		//StartInteraction(currentInteraction.Name);
 	}
 
@@ -121,13 +147,84 @@ public class MainUIController : MonoBehaviour {
 
 	private void StartInteraction(string name)
 	{
-		foreach(Transform button in buttons)
+		foreach(Transform button in interactionButtons)
 		{
 			if(button.gameObject.name == name)
 			{
 				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
 				text.text = "In Progress";
 				text.color = Color.blue;
+			}
+		}
+	}
+
+	private Button GenerateButton(RectTransform parent, CrewMember crewMember)
+    {
+        GameObject button = (GameObject)Instantiate(crewMemberButton);
+        button.transform.SetParent(parent, false);
+        button.transform.localScale = Vector3.one;
+
+		SetCrewButtonText(button, crewMember);
+
+        Button tempButton = button.GetComponent<Button>();
+ 
+        tempButton.onClick.AddListener(() => OnCrewMemberButtonPressed(crewMember));
+        return button.GetComponent<Button>();
+    }
+
+	private void OnCrewMemberButtonPressed(CrewMember crewMember)
+	{
+		crewMember.Task = currentInteraction;
+		currentInteraction.assignee = crewMember;
+		SetInteractionButtonText();
+		assignCrewContainer.gameObject.SetActive(false);
+	}
+
+	private void UpdateCrewButtons()
+	{
+		foreach(Button button in crewButtons)
+		{
+			foreach(CrewMember member in player.crew)
+			{
+				if(member.Name == button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text)
+				{
+					SetCrewButtonText(button.gameObject, member);
+				}
+			}
+		}
+	}
+
+	private void SetCrewButtonText(GameObject button, CrewMember crewMember)
+	{
+		TextMeshProUGUI nameText = button.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+		TextMeshProUGUI taskText = button.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        nameText.text = crewMember.Name;
+
+		if(crewMember.Task == null)
+		{
+			taskText.text = "Not Assigned";
+		}
+		else
+		{
+			taskText.text = crewMember.Task.Name;
+		}
+	}
+
+	private void SetInteractionButtonText()
+	{
+		foreach(Transform button in interactionButtons)
+		{
+			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
+			TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+			if(interaction.assignee != null)
+			{
+				text.text = interaction.assignee.Name;
+				text.color = Color.blue;
+			}
+			else
+			{
+				text.text = "*Not Assigned*";
+				text.color = Color.red;
 			}
 		}
 	}

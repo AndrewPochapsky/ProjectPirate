@@ -8,9 +8,10 @@ public class Player : Entity {
 
     public bool anchorDropped { get; private set; }
 
-    CameraFollow cam;
+    [HideInInspector]
+    public List<CrewMember> crew { get; private set; }
 
-    List<CrewMember> crew;
+    CameraFollow cam;
 
     private void Awake()
     {

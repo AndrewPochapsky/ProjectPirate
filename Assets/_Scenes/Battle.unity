@@ -146,7 +146,7 @@ MonoBehaviour:
     type: 2}
   buttonsContainer: {fileID: 2119589649}
   attackPanel: {fileID: 787762018}
-  buttonPrefab: {fileID: 1091761985399124, guid: dac590834faeb3f499e8736525557a4b,
+  buttonPrefab: {fileID: 1050234154614832, guid: 3dd59b49c8ab8774fa645bb65e396223,
     type: 2}
   buttons:
   - {fileID: 1421659443}
