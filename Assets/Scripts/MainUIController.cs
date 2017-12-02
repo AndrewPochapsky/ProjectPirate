@@ -9,6 +9,7 @@ public class MainUIController : MonoBehaviour {
 
 	Player player;
 
+	[Header("WorldUI:")]
 	[SerializeField]
 	private TextMeshProUGUI infamyText;
 
@@ -20,6 +21,17 @@ public class MainUIController : MonoBehaviour {
 
 	[SerializeField]
 	private Transform worldUIContainer;
+
+	[Header("IslandUI:")]
+
+	[SerializeField]
+	private TextMeshProUGUI islandNameText;
+
+	[SerializeField]
+	private TextMeshProUGUI islandDescText;
+
+	[SerializeField]
+	private Transform islandUIContainer;
 
 	// Use this for initialization
 	void Awake () {
@@ -57,5 +69,19 @@ public class MainUIController : MonoBehaviour {
 	public void ToggleWorldUI(bool value)
 	{
 		worldUIContainer.gameObject.SetActive(value);
+	}
+
+	public void SetIslandInfo(string name, string description)
+	{
+		islandNameText.text = name;
+		islandDescText.text = description;
+		islandUIContainer.gameObject.SetActive(true);
+	}
+
+	public void OnRaiseAnchor()
+	{
+		islandUIContainer.gameObject.SetActive(false);
+		worldUIContainer.gameObject.SetActive(true);
+		player.RaiseAnchor();
 	}
 }

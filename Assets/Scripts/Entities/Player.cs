@@ -53,6 +53,9 @@ public class Player : Entity {
                 island.SetUI();
                 anchorDropped = true;
                 MainUIController.Instance.ToggleWorldUI(false);
+                MainUIController.Instance.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
+                //TODO: Don't do this
+                cam.zoomOffset = cam.zoomValue;
                 cam.SetTarget(island.transform);
             }
         }
@@ -67,5 +70,11 @@ public class Player : Entity {
         }        
     }
 	
+    public void RaiseAnchor()
+    {
+        anchorDropped = false;
+        cam.zoomOffset = Vector3.zero;
+        cam.SetTarget(this.transform);
+    }
 	
 }

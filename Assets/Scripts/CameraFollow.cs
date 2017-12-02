@@ -8,12 +8,16 @@ public class CameraFollow : MonoBehaviour {
 	
 	Transform target;
 
-	Vector3 zoomOffset;
-
+	[HideInInspector]
+	public Vector3 zoomOffset;
+	
+	[HideInInspector]
+	public Vector3 zoomValue;
 	// Use this for initialization
 	void Start () {
 		player = GameObject.FindObjectOfType<Player>();
-		zoomOffset = new Vector3(0, 250, -165);
+		zoomValue = new Vector3(0, 250, -165);
+		zoomOffset = Vector3.zero;
 	}
 	
 	// Update is called once per frame
@@ -21,17 +25,22 @@ public class CameraFollow : MonoBehaviour {
 		//If not at island than set position to the target(the player in this case)
 		if(!player.anchorDropped)
 		{
-			transform.position = new Vector3(target.position.x, 0, target.position.z);
+			//transform.position = new Vector3(target.position.x, 0, target.position.z);
 		}
 		//Otherwise lerp smoothly to this other transform(Island most likely)
 		else
 		{
-			Vector3 start = transform.position;
+			/*Vector3 start = transform.position;
 			Vector3 end = target.position - zoomOffset;
 			float speed = 2;
 			Vector3 newArmPos = Vector3.Lerp(start, end, speed * Time.deltaTime);
-			transform.position = newArmPos;
+			transform.position = newArmPos;*/
 		}
+		Vector3 start = transform.position;
+		Vector3 end = target.position - zoomOffset;
+		float speed = 2;
+		Vector3 newArmPos = Vector3.Lerp(start, end, speed * Time.deltaTime);
+		transform.position = newArmPos;
 	}
 
 	public void SetTarget(Transform _target)
