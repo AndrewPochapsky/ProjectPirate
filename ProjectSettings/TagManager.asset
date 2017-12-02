@@ -9,6 +9,7 @@ TagManager:
   - AttacksButton
   - ConsumablesButton
   - Original
+  - survey
   layers:
   - Default
   - TransparentFX

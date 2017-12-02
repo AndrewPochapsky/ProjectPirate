@@ -10,6 +10,8 @@ public class Player : Entity {
 
     CameraFollow cam;
 
+    List<CrewMember> crew;
+
     private void Awake()
     {
         Attacks = new List<Attack>
@@ -17,6 +19,13 @@ public class Player : Entity {
             new Attack("Basic Attack", 2, 3),
             new Attack("Super Attack", 5, 4)
         };
+
+        crew = new List<CrewMember>
+        {
+            new CrewMember("Dave"),
+            new CrewMember("Joe")
+        };
+
         Consumables = new List<Consumable>();
         Speed = 4;
         MaxHealth = 15;

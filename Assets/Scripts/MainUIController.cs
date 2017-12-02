@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class MainUIController : MonoBehaviour {
 
@@ -37,6 +38,8 @@ public class MainUIController : MonoBehaviour {
 	[SerializeField]
 	private List<Transform> buttons;
 
+	private Interaction currentInteraction;
+
 	// Use this for initialization
 	void Awake () {
 		if(Instance != null && Instance != this){
@@ -48,24 +51,6 @@ public class MainUIController : MonoBehaviour {
 		player.OnInfoUpdatedEvent += SetUI;
 	}
 
-	/// <summary>
-	/// Start is called on the frame when a script is enabled just before
-	/// any of the Update methods is called the first time.
-	/// </summary>
-	void Start()
-	{
-		foreach(Transform button in buttons)
-		{
-			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
-			if(interaction.Completed)
-			{
-				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
-				text.text = "Completed";
-				text.color = Color.green;
-			}
-		}
-	}
-	
 	/// <summary>
 	/// Update is called every frame, if the MonoBehaviour is enabled.
 	/// </summary>
@@ -98,6 +83,18 @@ public class MainUIController : MonoBehaviour {
 		islandNameText.text = name;
 		islandDescText.text = description;
 		islandUIContainer.gameObject.SetActive(true);
+
+		foreach(Transform button in buttons)
+		{
+			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
+			if(interaction.Completed)
+			{
+				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+				text.text = "Completed";
+				text.color = Color.green;
+				button.GetComponent<Button>().interactable = false;
+			}
+		}
 	}
 
 	public void OnRaiseAnchor()
@@ -107,10 +104,11 @@ public class MainUIController : MonoBehaviour {
 		player.RaiseAnchor();
 	}
 
-	public void OnSurvey()
+	public void OnAssign()
 	{
-		Interaction interaction = GetInteraction();
-		
+		currentInteraction = GetInteraction();
+		currentInteraction.Assigned = true;
+		//StartInteraction(currentInteraction.Name);
 	}
 
 	private Interaction GetInteraction()
@@ -118,6 +116,19 @@ public class MainUIController : MonoBehaviour {
 		GameObject pressedButton = EventSystem.current.currentSelectedGameObject;
 		return InteractionManager.Instance.GetInteraction(
 			WorldController.Instance.currentIsland.Interactions, 
-			pressedButton.name);
+			pressedButton.tag);
+	}
+
+	private void StartInteraction(string name)
+	{
+		foreach(Transform button in buttons)
+		{
+			if(button.gameObject.name == name)
+			{
+				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+				text.text = "In Progress";
+				text.color = Color.blue;
+			}
+		}
 	}
 }

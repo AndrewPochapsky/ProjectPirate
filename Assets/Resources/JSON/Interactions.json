@@ -1,8 +1,7 @@
 [
     {
-        "name": "raiseAnchor",
+        "name": "survey",
         "time": 0,
-        "assigned": false,
-        "requiresAssignee": false
+        "assigned": false
     }
 ]
