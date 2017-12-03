@@ -9,7 +9,6 @@ public class MainUIController : MonoBehaviour {
 
 	public static MainUIController Instance;
 
-
 	Player player;
 
 	[Header("WorldUI:")]
@@ -45,9 +44,15 @@ public class MainUIController : MonoBehaviour {
 	private GameObject crewMemberButton;
 
 	[SerializeField]
+	private Button raiseAnchorButton;
+
+	[SerializeField]
 	private List<Transform> interactionButtons;
 
 	private List<Button> crewButtons;
+
+	[SerializeField]
+	private List<Button> assignCrewButtons;
 
 	private Interaction currentInteraction;
 
@@ -89,6 +94,22 @@ public class MainUIController : MonoBehaviour {
 		else
 		{
 			interactText.enabled = false;
+		}
+
+		//TODO: Find better solution for this
+		if(!CanRaiseAnchor())
+		{
+			raiseAnchorButton.interactable = false;
+			TextMeshProUGUI statusText = raiseAnchorButton.transform.GetChild(1).GetComponent<TextMeshProUGUI>(); 
+			statusText.text = "*Job in Progress*";
+			statusText.color = Color.red;
+		}
+		else
+		{
+			raiseAnchorButton.interactable = true;
+			TextMeshProUGUI statusText = raiseAnchorButton.transform.GetChild(1).GetComponent<TextMeshProUGUI>(); 
+			statusText.text = "*Ready*";
+			statusText.color = Color.blue;
 		}
 	}
 
@@ -134,16 +155,23 @@ public class MainUIController : MonoBehaviour {
 		Interaction interaction = GetInteraction("survey");
 		if(interaction.assignee != null && !interaction.Completed)
 		{
-			interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>().text = "in progress";
+			assignCrewContainer.gameObject.SetActive(false);
+			interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>().text = interaction.BaseTimeRequired.ToString();
+			interaction.InProgress = true;
+			interactionButtons[0].GetComponent<Button>().interactable = false;
+			assignCrewButtons[0].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "*In Progress*";
+			assignCrewButtons[0].interactable = false;
+			
 		}
 	}
 
 	public void OnAssign()
 	{
 		UpdateCrewButtons();
-		currentInteraction = GetInteraction(EventSystem.current.currentSelectedGameObject.tag);
+		Button pressedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+		currentInteraction = GetInteraction(pressedButton.tag);
 		assignCrewContainer.gameObject.SetActive(true);
-		//StartInteraction(currentInteraction.Name);
+			
 	}
 
 	private Interaction GetInteraction(string tag)
@@ -173,7 +201,7 @@ public class MainUIController : MonoBehaviour {
 		currentInteraction.assignee = crewMember;
 		SetInteractionButtonText();
 
-		UnAssignDuplicateTasks(crewMember);
+		Interaction.UnAssignDuplicateTasks(crewMember, player);
 
 		assignCrewContainer.gameObject.SetActive(false);
 	}
@@ -184,9 +212,25 @@ public class MainUIController : MonoBehaviour {
 		{
 			foreach(CrewMember member in player.crew)
 			{
+				//If crew member's name matches that on the button - pretty bad way to do this
 				if(member.Name == button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text)
 				{
 					SetCrewButtonText(button.gameObject, member);
+					TextMeshProUGUI taskText = button.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+					if(member.Task != null && member.Task.InProgress)
+					{
+						button.interactable = false;
+						taskText.text += " in progress";
+					}
+					else if(member.Task != null)
+					{
+						taskText.text += " ready";
+						button.interactable = true;
+					}
+					else
+					{
+						button.interactable = true;
+					}
 				}
 			}
 		}
@@ -229,14 +273,22 @@ public class MainUIController : MonoBehaviour {
 		}
 	}
 
-	private void UnAssignDuplicateTasks(CrewMember crewMember)
-	{
-		foreach(CrewMember member in player.crew)
+	//If any task is in progress then you cant raise anchor
+	private bool CanRaiseAnchor()
+	{	
+		if(WorldController.Instance.currentIsland != null)
 		{
-			if(crewMember.Name != member.Name &&  crewMember.Task == member.Task)
+			foreach(Interaction interaction in WorldController.Instance.currentIsland.Interactions)
 			{
-				member.Task = null;
+				if(interaction.InProgress)
+				{
+					return false;
+				}
 			}
 		}
+		
+		return true;
 	}
+
 }
+

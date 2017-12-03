@@ -6,19 +6,19 @@ public class TimeController : MonoBehaviour {
 
 	private int minutes = 1430;
 
-	[HideInInspector]
-	public string formattedTime;
+	public string formattedTime { get; private set; }
+
+	public float timeModifier { get; private set; } = 1f;
 
 	// Use this for initialization
 	void Start () {
 		formattedTime = GetFormattedTime();
-		InvokeRepeating("IncrementTime", 0f, 0.75f);
+		InvokeRepeating("IncrementTime", 0f, timeModifier);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		print(GetFormattedTime());
-
+		//print(GetFormattedTime());
 	}
 
 	private void IncrementTime()

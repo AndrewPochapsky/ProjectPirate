@@ -5,8 +5,7 @@ using UnityEngine;
 public class IslandInfo  {
 	public string Name { get; protected set; }
     public bool Visited { get; set; }
-
-	public List<Interaction> Interactions;
+	public List<Interaction> Interactions { get; private set; }
 
 	public IslandInfo()
 	{
