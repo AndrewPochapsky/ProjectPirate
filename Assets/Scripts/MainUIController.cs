@@ -153,19 +153,6 @@ public class MainUIController : MonoBehaviour {
 			tag);
 	}
 
-	private void StartInteraction(string name)
-	{
-		foreach(Transform button in interactionButtons)
-		{
-			if(button.gameObject.name == name)
-			{
-				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
-				text.text = "In Progress";
-				text.color = Color.blue;
-			}
-		}
-	}
-
 	private Button GenerateCrewButton(RectTransform parent, CrewMember crewMember)
     {
         GameObject button = (GameObject)Instantiate(crewMemberButton);
