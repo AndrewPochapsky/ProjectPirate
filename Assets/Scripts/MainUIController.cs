@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -264,7 +265,7 @@ public class MainUIController : MonoBehaviour {
 		}
 		else
 		{
-			taskText.text = crewMember.Task.Name;
+			taskText.text = crewMember.Task.InteractionType.ToString();
 			taskText.color = Color.black;
 		}
 	}
@@ -311,18 +312,13 @@ public class MainUIController : MonoBehaviour {
 		return true;
 	}
 
-	bool InteractionCompleted(int startTime, int totalDuration, TextMeshProUGUI text)
+	private void FinishInteraction(Interaction interaction)
 	{
-		int diff = TimeController.Instance.minutes - startTime;
-		if(diff >= startTime)
+		switch(interaction.InteractionType)
 		{
-			text.text = "Completed";
-			return true;
-		}
-		else
-		{
-			text.text = (totalDuration - diff).ToString();
-			return false;
+			case Interaction.Type.survey:
+				
+				break;
 		}
 	}
 

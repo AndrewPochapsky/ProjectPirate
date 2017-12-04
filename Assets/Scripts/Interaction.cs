@@ -1,19 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 public class Interaction  {
 
-	public string Name { get; set; }
+	[JsonConverter(typeof(StringEnumConverter))]
+	public enum Type { survey, gatherResources }
+
+	public Type InteractionType { get; set; }
 	public int Duration { get; set; }
 	public CrewMember assignee { get; set; }
 	public bool Completed { get; set; }
 	public bool InProgress { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
-	public Interaction(string name, int duration)
+	public Interaction(Type type, int duration)
 	{
-		Name = name;
+		InteractionType = type;
 		Duration = duration;
 		assignee = null;
 		Completed = false;
@@ -30,6 +35,8 @@ public class Interaction  {
 			}
 		}
 	}
+
+	
 
 
 }
