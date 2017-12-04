@@ -4,21 +4,33 @@ using UnityEngine;
 
 public class TimeController : MonoBehaviour {
 
-	private int minutes = 1430;
+	public static TimeController Instance;
+
+	public int minutes{ get; private set; } = 1430;
 
 	public string formattedTime { get; private set; }
 
 	public float timeModifier { get; private set; } = 1f;
 
+	/// <summary>
+	/// Awake is called when the script instance is being loaded.
+	/// </summary>
+	void Awake()
+	{
+		if(Instance != null && Instance != this)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			Instance = this;
+		}
+	}
+
 	// Use this for initialization
 	void Start () {
-		formattedTime = GetFormattedTime();
+		formattedTime = GetFormattedTime(minutes, true);
 		InvokeRepeating("IncrementTime", 0f, timeModifier);
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		//print(GetFormattedTime());
 	}
 
 	private void IncrementTime()
@@ -28,27 +40,55 @@ public class TimeController : MonoBehaviour {
 		if(minutes == 1440)
 			minutes = 0;
 
-		formattedTime = GetFormattedTime();
+		formattedTime = GetFormattedTime(minutes, true);
 	}
 
-	public string GetFormattedTime()
+	public string GetFormattedTime(int _minutes, bool standard)
 	{
 		string s = string.Empty;
-		int h = minutes / 60;
-		int m = minutes % 60;
+		int h = _minutes / 60;
+		int m = _minutes % 60;
+		//Gives the format like 00:00
+		if(standard)
+		{
+			if(h / 10 == 0)
+				s += "0" + h;
+			else
+				s += h;
 
-		if(h / 10 == 0)
-			s += "0" + h;
+			s += ":";
+
+			if(m / 10 == 0)
+				s += "0" + m;
+			else
+				s  += m;
+		}
 		else
-			s += h;
-
-		s += ":";
-
-		if(m / 10 == 0)
-			s += "0" + m;
-		else
-			s  += m;
+		{
+			if(h > 0)
+			{
+				s+=h +"h ";
+			}
+			s+=m+"min";
+		}
+		
 
 		return s;
+	}
+}
+
+public class Timer
+{
+	public int StartTime { get; private set; }
+	public int Duration { get; private set; }
+	public TMPro.TextMeshProUGUI Text { get; private set; }
+	public Interaction Interaction { get; private set; }
+
+	public Timer(int startTime, int duration, TMPro.TextMeshProUGUI text, Interaction interaction)
+	{
+		StartTime = startTime;
+		Duration = duration;
+		Text = text;
+		Interaction = interaction;
 	}
 }

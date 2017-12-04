@@ -56,6 +56,8 @@ public class MainUIController : MonoBehaviour {
 
 	private Interaction currentInteraction;
 
+	private List<Timer> timers;
+
 	// Use this for initialization
 	void Awake () {
 		if(Instance != null && Instance != this){
@@ -74,6 +76,7 @@ public class MainUIController : MonoBehaviour {
 	void Start()
 	{
 		crewButtons = new List<Button>();
+		timers = new List<Timer>();
 		assignCrewPanel = assignCrewContainer.GetChild(0).GetComponent<RectTransform>();
 		foreach(CrewMember member in player.crew)
 		{
@@ -96,20 +99,22 @@ public class MainUIController : MonoBehaviour {
 			interactText.enabled = false;
 		}
 
-		//TODO: Find better solution for this
-		if(!CanRaiseAnchor())
+		foreach(Timer timer in timers)
 		{
-			raiseAnchorButton.interactable = false;
-			TextMeshProUGUI statusText = raiseAnchorButton.transform.GetChild(1).GetComponent<TextMeshProUGUI>(); 
-			statusText.text = "*Job in Progress*";
-			statusText.color = Color.red;
-		}
-		else
-		{
-			raiseAnchorButton.interactable = true;
-			TextMeshProUGUI statusText = raiseAnchorButton.transform.GetChild(1).GetComponent<TextMeshProUGUI>(); 
-			statusText.text = "*Ready*";
-			statusText.color = Color.blue;
+			if(timer.Duration <= TimeController.Instance.minutes - timer.StartTime)
+			{
+				//TODO: remove time object from list
+				timer.Text.text = "Completed";
+				timer.Interaction.InProgress = false;
+				CheckIfCanRaiseAnchor();
+				//TODO: set task to completed
+				//TODO: set assign crew button to whatever it should be
+				//Also complete the actual interaction
+			}
+			else
+			{
+				timer.Text.text = TimeController.Instance.GetFormattedTime(Mathf.Abs(timer.Duration - Mathf.Abs(timer.StartTime - TimeController.Instance.minutes)), false);
+			}
 		}
 	}
 
@@ -156,12 +161,22 @@ public class MainUIController : MonoBehaviour {
 		if(interaction.assignee != null && !interaction.Completed)
 		{
 			assignCrewContainer.gameObject.SetActive(false);
-			interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>().text = interaction.BaseTimeRequired.ToString();
+
+			TextMeshProUGUI statusText = interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>();
+			statusText.text = interaction.Duration.ToString();
+
 			interaction.InProgress = true;
+
 			interactionButtons[0].GetComponent<Button>().interactable = false;
-			assignCrewButtons[0].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "*In Progress*";
+
+			TextMeshProUGUI assignCrewText = assignCrewButtons[0].transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+			assignCrewText.text = "*In Progress*";
+
 			assignCrewButtons[0].interactable = false;
+
+			CheckIfCanRaiseAnchor();
 			
+			timers.Add(new Timer(TimeController.Instance.minutes, interaction.Duration, statusText, interaction));
 		}
 	}
 
@@ -273,21 +288,42 @@ public class MainUIController : MonoBehaviour {
 		}
 	}
 
-	//If any task is in progress then you cant raise anchor
-	private bool CanRaiseAnchor()
+	private bool CheckIfCanRaiseAnchor()
 	{	
+		TextMeshProUGUI statusText = raiseAnchorButton.transform.GetChild(1).GetComponent<TextMeshProUGUI>(); 
 		if(WorldController.Instance.currentIsland != null)
 		{
 			foreach(Interaction interaction in WorldController.Instance.currentIsland.Interactions)
 			{
 				if(interaction.InProgress)
 				{
+					raiseAnchorButton.interactable = false;
+					statusText.text = "*Job in Progress*";
+					statusText.color = Color.red;
 					return false;
 				}
 			}
 		}
-		
+
+		raiseAnchorButton.interactable = true;
+		statusText.text = "*Ready*";
+		statusText.color = Color.blue;
 		return true;
+	}
+
+	bool InteractionCompleted(int startTime, int totalDuration, TextMeshProUGUI text)
+	{
+		int diff = TimeController.Instance.minutes - startTime;
+		if(diff >= startTime)
+		{
+			text.text = "Completed";
+			return true;
+		}
+		else
+		{
+			text.text = (totalDuration - diff).ToString();
+			return false;
+		}
 	}
 
 }

@@ -5,16 +5,16 @@ using UnityEngine;
 public class Interaction  {
 
 	public string Name { get; set; }
-	public float BaseTimeRequired { get; set; }
+	public int Duration { get; set; }
 	public CrewMember assignee { get; set; }
 	public bool Completed { get; set; }
 	public bool InProgress { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
-	public Interaction(string name, float time)
+	public Interaction(string name, int duration)
 	{
 		Name = name;
-		BaseTimeRequired = time;
+		Duration = duration;
 		assignee = null;
 		Completed = false;
 		InProgress = false;
