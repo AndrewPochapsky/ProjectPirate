@@ -1,7 +1,16 @@
 [
     {
-        "name": "survey",
+        "type": "survey",
         "duration": 10,
-        "oneTime": true
+        "oneTime": true,
+        "prerequisite": "none"
+        
+    },
+    {
+        "type": "gatherResources",
+        "duration": 20,
+        "oneTime": false,
+        "prerequisite": "survey"
+        
     }
 ]

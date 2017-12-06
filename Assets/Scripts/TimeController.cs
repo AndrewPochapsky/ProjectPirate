@@ -6,7 +6,7 @@ public class TimeController : MonoBehaviour {
 
 	public static TimeController Instance;
 
-	public int minutes{ get; private set; } = 1430;
+	public int minutes{ get; private set; } = 0;
 
 	public string formattedTime { get; private set; }
 

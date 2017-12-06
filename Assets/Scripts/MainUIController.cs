@@ -151,15 +151,26 @@ public class MainUIController : MonoBehaviour {
 		for(int i = 0 ; i < interactionButtons.Count; i++)
 		{
 			Transform button = interactionButtons[i];
+			TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+
+			WorldController.Instance.currentIsland.Interactions[i].AssignCrewButton = assignCrewButtons[i];
+			
 			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
 			if(interaction.OneTime && interaction.Completed)
-			{
-				TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+			{	
 				text.text = "Completed";
 				text.color = Color.blue;
 				button.GetComponent<Button>().interactable = false;
 			}
-			WorldController.Instance.currentIsland.Interactions[i].AssignCrewButton = assignCrewButtons[i];
+			if(interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
+			{
+				text.text = "requires: " + interaction.Prerequisite.ToString();
+				text.color = Color.red;
+				button.GetComponent<Button>().interactable = false;
+				//if(interaction.AssignCrewButton != null)
+				interaction.AssignCrewButton.interactable = false;
+			}
+			
 		
 		}
 	}
@@ -176,15 +187,35 @@ public class MainUIController : MonoBehaviour {
 	public void OnSurvey()
 	{
 		Interaction interaction = GetInteraction("survey");
+		DoInteraction(0, interaction);
+	}
+
+	public void OnGatherResources()
+	{
+		Interaction interaction = GetInteraction("gatherResources");
+		DoInteraction(1, interaction);
+	}
+
+	//Called when any assignCrew button pressed
+	public void OnAssign()
+	{
+		UpdateCrewButtons();
+		Button pressedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+		currentInteraction = GetInteraction(pressedButton.tag);
+		assignCrewContainer.gameObject.SetActive(true);
+	}
+
+	private void DoInteraction(int index, Interaction interaction)
+	{
 		if(interaction.assignee != null && !interaction.Completed)
 		{
 			assignCrewContainer.gameObject.SetActive(false);
 
-			TextMeshProUGUI statusText = interactionButtons[0].GetChild(1).GetComponent<TextMeshProUGUI>();
+			TextMeshProUGUI statusText = interactionButtons[index].GetChild(1).GetComponent<TextMeshProUGUI>();
 
 			interaction.InProgress = true;
 
-			interactionButtons[0].GetComponent<Button>().interactable = false;
+			interactionButtons[index].GetComponent<Button>().interactable = false;
 
 			TextMeshProUGUI assignCrewText = interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 			assignCrewText.text = "*In Progress*";
@@ -195,15 +226,6 @@ public class MainUIController : MonoBehaviour {
 			
 			timers.Add(new Timer(TimeController.Instance.minutes, interaction.Duration, statusText, interaction));
 		}
-	}
-
-	//Called when any assignCrew button pressed
-	public void OnAssign()
-	{
-		UpdateCrewButtons();
-		Button pressedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-		currentInteraction = GetInteraction(pressedButton.tag);
-		assignCrewContainer.gameObject.SetActive(true);
 	}
 
 	private Interaction GetInteraction(string tag)
@@ -232,7 +254,7 @@ public class MainUIController : MonoBehaviour {
 		crewMember.Task = currentInteraction;
 		currentInteraction.assignee = crewMember;
 		SetInteractionButtonText();
-
+		
 		Interaction.UnAssignDuplicateTasks(crewMember, player);
 
 		assignCrewContainer.gameObject.SetActive(false);
@@ -292,16 +314,39 @@ public class MainUIController : MonoBehaviour {
 		{
 			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
 			TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
-			if(interaction.assignee != null)
+			
+			if(interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
+			{
+				text.text = "requires: " + interaction.Prerequisite.ToString();
+				text.color = Color.red;
+				button.GetComponent<Button>().interactable = false;
+				interaction.AssignCrewButton.interactable = false;
+			}
+			else if(!interaction.OneTime && !interaction.Completed && interaction.assignee == null)
+			{
+				interaction.AssignCrewButton.interactable = true;
+				text.text = "*not assigned*";
+				text.color = Color.red;
+				interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Assign Crew";
+			}
+			else if(interaction.OneTime && interaction.Completed)
+			{
+				text.text = "Completed";
+				interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Completed";
+				text.color = Color.blue;
+			}
+			else if(interaction.assignee != null)
 			{
 				text.text = interaction.assignee.Name;
 				text.color = Color.blue;
+				button.GetComponent<Button>().interactable = true;
 			}
 			else
 			{
 				text.text = "*Not Assigned*";
 				text.color = Color.red;
 			}
+			
 		}
 	}
 
@@ -335,23 +380,16 @@ public class MainUIController : MonoBehaviour {
 			case Interaction.Type.survey:
 				resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
 				break;
+			
+			case Interaction.Type.gatherResources:
+				print("Finished gathering resources");
+				break;
 		}
-		var text = interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>(); 
 
 		interaction.assignee.Task = null;
 		interaction.assignee = null;
 
-		if(!interaction.OneTime)
-		{
-			interaction.AssignCrewButton.interactable = true;
-			text.text = "Assign Crew";
-			text.color = Color.black;
-		}
-		else
-		{
-			text.text = "Completed";
-			text.color = Color.blue;
-		}
+		SetInteractionButtonText();
 	}
 }
 

@@ -10,6 +10,7 @@ TagManager:
   - ConsumablesButton
   - Original
   - survey
+  - gatherResources
   layers:
   - Default
   - TransparentFX
