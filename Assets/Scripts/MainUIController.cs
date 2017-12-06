@@ -156,23 +156,9 @@ public class MainUIController : MonoBehaviour {
 			WorldController.Instance.currentIsland.Interactions[i].AssignCrewButton = assignCrewButtons[i];
 			
 			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
-			if(interaction.OneTime && interaction.Completed)
-			{	
-				text.text = "Completed";
-				text.color = Color.blue;
-				button.GetComponent<Button>().interactable = false;
-			}
-			if(interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
-			{
-				text.text = "requires: " + interaction.Prerequisite.ToString();
-				text.color = Color.red;
-				button.GetComponent<Button>().interactable = false;
-				//if(interaction.AssignCrewButton != null)
-				interaction.AssignCrewButton.interactable = false;
-			}
-			
-		
 		}
+		
+		SetInteractionButtonText();
 	}
 
 	//Runs when Raise Anchor button pressed
