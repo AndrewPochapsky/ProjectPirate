@@ -83,6 +83,7 @@ public class Timer
 	public int Duration { get; private set; }
 	public TMPro.TextMeshProUGUI Text { get; private set; }
 	public Interaction Interaction { get; private set; }
+	public bool Finished { get; set; }
 
 	public Timer(int startTime, int duration, TMPro.TextMeshProUGUI text, Interaction interaction)
 	{
@@ -90,5 +91,6 @@ public class Timer
 		Duration = duration;
 		Text = text;
 		Interaction = interaction;
+		Finished = false;
 	}
 }

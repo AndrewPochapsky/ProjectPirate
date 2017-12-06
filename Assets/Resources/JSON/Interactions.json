@@ -1,6 +1,7 @@
 [
     {
         "name": "survey",
-        "duration": 30
+        "duration": 10,
+        "oneTime": true
     }
 ]

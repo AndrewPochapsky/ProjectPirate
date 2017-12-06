@@ -23,8 +23,17 @@ public class ResourceManager : MonoBehaviour {
 		allResources = JsonConvert.DeserializeObject<List<Resource>>(Resources.Load("JSON/Resources").ToString());
 	}
 
-	public List<Resource> GetResourcesList()
+	public List<Resource> GetResourcesList(int amount)
 	{
-		return null;
+		List<Resource> list = new List<Resource>();
+		for(int i = 0; i < amount; i++)
+		{
+			int randIndex = Random.Range(0, allResources.Count);
+			Resource chosenResource = allResources[randIndex];
+			//TODO: consider not allowing duplicate resources
+			//Alternative to this could be just having a function which combines duplicates into one
+			list.Add(chosenResource);
+		}
+		return list;
 	}
 }

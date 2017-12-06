@@ -6,6 +6,7 @@ public class Resource : ISellable{
 	public string Name { get; protected set; }
 	public int MinQuantity { get; protected set; }
 	public int MaxQuantity { get; protected set; }
+	public int Amount { get; set; }
 	public int SellPrice { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
@@ -15,5 +16,7 @@ public class Resource : ISellable{
 		MinQuantity = minQuantity;
 		MaxQuantity = maxQuantity;
 		SellPrice = sellPrice;
+
+		Amount = Random.Range(minQuantity, MaxQuantity + 1);
 	}
 }

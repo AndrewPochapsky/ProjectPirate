@@ -13,13 +13,16 @@ public class Interaction  {
 	public int Duration { get; set; }
 	public CrewMember assignee { get; set; }
 	public bool Completed { get; set; }
+	public bool OneTime { get; private set; }
 	public bool InProgress { get; set; }
+	public UnityEngine.UI.Button AssignCrewButton { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
-	public Interaction(Type type, int duration)
+	public Interaction(Type type, int duration, bool oneTime)
 	{
 		InteractionType = type;
 		Duration = duration;
+		OneTime = oneTime;
 		assignee = null;
 		Completed = false;
 		InProgress = false;
