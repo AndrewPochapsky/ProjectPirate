@@ -1,9 +1,21 @@
 [
     {
-       "name": "Fruit",
+       "name": "Bannana",
        "minQuantity": 2,
-       "maxQuantity": 5, 
-       "sellPrice": 20
+       "maxQuantity": 10, 
+       "sellPrice": 15
+    },
+    {
+        "name": "Orange",
+        "minQuantity": 2,
+        "maxQuantity": 7, 
+        "sellPrice": 25
+    },
+    {
+        "name": "Apple",
+        "minQuantity": 2,
+        "maxQuantity": 8, 
+        "sellPrice": 10
     },
     {
         "name": "Wood",

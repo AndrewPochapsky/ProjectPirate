@@ -70,11 +70,12 @@ public class Player : Entity {
                 island.SetUI();
                 anchorDropped = true;
                 MainUIController.Instance.ToggleWorldUI(false);
-                MainUIController.Instance.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
+                MainUIController.Instance.islandInteractionUI.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
                 //TODO: Don't do this
                 cam.zoomOffset = cam.zoomValue;
                 cam.SetTarget(island.transform);
             }
+          
         }
     }
 
@@ -100,11 +101,6 @@ public class Player : Entity {
         for(int i = 0; i < 3; i++)
         {
             int resourceIndex = Random.Range(0, island.Resources.Count);
-            /*if(island.Resources.Count == 1)
-            {
-                print("setting to 0");
-                resourceIndex = 0;
-            }*/
             if(island.Resources.Count > 0)
             {
                  Resource resource = island.Resources[resourceIndex];

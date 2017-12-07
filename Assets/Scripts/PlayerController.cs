@@ -11,12 +11,14 @@ public class PlayerController : MonoBehaviour {
 	float sideTiltAmount = 10;
 	float surfaceModifier;
 	
-
+	Player player;
 	Rigidbody rb;
 	Transform model;
+
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody>();
+		player = GetComponent<Player>();
 		model = transform.GetChild(0);
 		//TODO get a better solution to this
 		surfaceModifier = FindObjectOfType<OceanTile>().GetComponent<Renderer>().material.GetFloat("_OceanWaveModifier");
@@ -35,13 +37,17 @@ public class PlayerController : MonoBehaviour {
 		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;
 		rotation *= Time.fixedDeltaTime;
 
-		//Rotation
-		//Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
-		//rb.MoveRotation(rb.rotation * deltaRotation);
-		rb.AddTorque(transform.up * rotation, ForceMode.Acceleration);
+		if(!player.anchorDropped)
+		{
+			//Rotation
+			//Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
+			//rb.MoveRotation(rb.rotation * deltaRotation);
+			rb.AddTorque(transform.up * rotation, ForceMode.Acceleration);
 
-		//Acceleration
-		rb.AddForce(transform.forward * acceleration * translation, ForceMode.Acceleration);
+			//Acceleration
+			rb.AddForce(transform.forward * acceleration * translation, ForceMode.Acceleration);
+		}
+		
 		
 		//The max velocity
 		Vector3 max = maxSpeed * transform.forward;
