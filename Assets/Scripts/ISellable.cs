@@ -3,5 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface ISellable {
-	int SellPrice { get; set; }
+	string Name { get; }
+	int Amount { get; set; }
+	int SellPrice { get; }
 }

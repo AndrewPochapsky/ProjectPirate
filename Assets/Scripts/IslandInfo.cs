@@ -19,6 +19,11 @@ public class IslandInfo  {
 	{
 		string s = string.Empty;
 
+		if(Resources.Count == 0)
+		{
+			return "All resources gathered!";
+		}
+
 		for(int i = 0; i < Resources.Count; i++)
 		{
 			Resource r = Resources[i];

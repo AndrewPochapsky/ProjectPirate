@@ -157,7 +157,7 @@ public class MainUIController : MonoBehaviour {
 			
 			Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
 		}
-		
+
 		SetInteractionButtonText();
 	}
 
@@ -276,6 +276,7 @@ public class MainUIController : MonoBehaviour {
 		}
 	}
 
+	//TODO: consider merging this with UpdateCrewButtons()
 	private void SetCrewButtonText(GameObject button, CrewMember crewMember)
 	{
 		TextMeshProUGUI nameText = button.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -289,7 +290,7 @@ public class MainUIController : MonoBehaviour {
 		}
 		else
 		{
-			taskText.text = crewMember.Task.InteractionType.ToString();
+			taskText.text = crewMember.Task.DisplayName;
 			taskText.color = Color.black;
 		}
 	}
@@ -315,7 +316,7 @@ public class MainUIController : MonoBehaviour {
 				text.color = Color.red;
 				interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Assign Crew";
 			}
-			else if(interaction.OneTime && interaction.Completed)
+			else if(interaction.OneTime && interaction.Completed || interaction.Completed)
 			{
 				text.text = "Completed";
 				interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Completed";
@@ -368,7 +369,15 @@ public class MainUIController : MonoBehaviour {
 				break;
 			
 			case Interaction.Type.gatherResources:
-				print("Finished gathering resources");
+				player.GatherResources(interaction.assignee, WorldController.Instance.currentIsland);
+				resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
+				if(WorldController.Instance.currentIsland.Resources.Count == 0)
+				{
+					interaction.Completed = true;
+				}
+
+				print(player.FormattedInventory());
+
 				break;
 		}
 

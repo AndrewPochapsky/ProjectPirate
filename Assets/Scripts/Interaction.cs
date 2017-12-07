@@ -9,8 +9,9 @@ public class Interaction  {
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum Type { survey, gatherResources, none }
 
-	public Type InteractionType { get; set; } //TODO: add a display name property
-	public int Duration { get; set; }
+	public Type InteractionType { get; private set; } 
+	public string DisplayName { get; private set; }
+	public int Duration { get; private set; }
 	public CrewMember assignee { get; set; }
 	public bool Completed { get; set; }
 	public bool OneTime { get; private set; }
@@ -19,9 +20,10 @@ public class Interaction  {
 	public UnityEngine.UI.Button AssignCrewButton { get; set; }
 
 	[Newtonsoft.Json.JsonConstructor]
-	public Interaction(Type type, int duration, bool oneTime, Type prerequisite)
+	public Interaction(Type type, string displayName, int duration, bool oneTime, Type prerequisite)
 	{
 		InteractionType = type;
+		DisplayName = displayName;
 		Duration = duration;
 		OneTime = oneTime;
 		Prerequisite = prerequisite;

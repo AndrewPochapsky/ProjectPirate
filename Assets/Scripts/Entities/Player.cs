@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Player : Entity {
@@ -10,6 +11,8 @@ public class Player : Entity {
 
     [HideInInspector]
     public List<CrewMember> crew { get; private set; }
+
+    public List<ISellable> Inventory { get; private set; }
 
     CameraFollow cam;
 
@@ -27,13 +30,17 @@ public class Player : Entity {
             new CrewMember("Joe")
         };
 
+        //TODO: merge this list into inventory
         Consumables = new List<Consumable>();
         Speed = 4;
         MaxHealth = 15;
         CurrentHealth = MaxHealth;
         Infamy = 0;
         Gold = 0;
+
+        Inventory = new List<ISellable>();
     }
+
     /// <summary>
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
@@ -85,6 +92,66 @@ public class Player : Entity {
         anchorDropped = false;
         cam.zoomOffset = Vector3.zero;
         cam.SetTarget(this.transform);
+    }
+
+    public void GatherResources(CrewMember crewMember, IslandInfo island)
+    {
+        //TODO replace hardcoded number with one dependent on crew member's skill
+        for(int i = 0; i < 3; i++)
+        {
+            int resourceIndex = Random.Range(0, island.Resources.Count);
+            /*if(island.Resources.Count == 1)
+            {
+                print("setting to 0");
+                resourceIndex = 0;
+            }*/
+            if(island.Resources.Count > 0)
+            {
+                 Resource resource = island.Resources[resourceIndex];
+                int amount = Random.Range(1, resource.Amount + 1);
+                AddResource(resource, amount, island);
+            }
+        }
+    }
+
+    private void AddResource(Resource resource, int amount, IslandInfo island)
+    {
+        ISellable existingResource = null;
+        resource.Amount-=amount;
+
+        if(resource.Amount == 0)
+        {
+            island.Resources.Remove(resource);
+        }
+        int containsIndex = Inventory.FindIndex(r => r.Name == resource.Name);
+
+        if(containsIndex != -1)
+            existingResource = Inventory.Where(r => r.Name == resource.Name).First();
+            
+        //Resource already in list
+        if(existingResource != null)
+        {
+            existingResource.Amount += amount;
+        }
+        //Resource is not in list
+        else 
+        {
+            Resource newResource = new Resource(resource);
+            newResource.Amount = amount;
+            Inventory.Add(newResource);
+        }
+    }
+
+    //Temporary function to return a formatted string of the player's inventory
+    public string FormattedInventory()
+    {
+        string s = "";
+        foreach(var item in Inventory)
+        {
+            s += item.Name + "(" + item.Amount + ") ";
+        }
+
+        return s;
     }
 	
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using Newtonsoft.Json;
 
 public class ResourceManager : MonoBehaviour {
@@ -30,10 +31,23 @@ public class ResourceManager : MonoBehaviour {
 		{
 			int randIndex = Random.Range(0, allResources.Count);
 			Resource chosenResource = allResources[randIndex];
-			//TODO: consider not allowing duplicate resources
-			//Alternative to this could be just having a function which combines duplicates into one
-			list.Add(chosenResource);
+
+			chosenResource.Amount = Random.Range(chosenResource.MinQuantity, chosenResource.MaxQuantity + 1);
+			
+			int containsIndex = list.FindIndex(r => r.Name == chosenResource.Name);
+
+        	if(containsIndex != -1)
+			{
+				list[containsIndex].Amount += chosenResource.Amount;
+			}
+			else
+			{
+				list.Add(chosenResource);
+			}
 		}
 		return list;
 	}
+
+
+	
 }

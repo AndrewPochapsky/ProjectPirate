@@ -1,16 +1,17 @@
 [
     {
         "type": "survey",
-        "duration": 10,
+        "displayName": "Survey",
+        "duration": 5,
         "oneTime": true,
         "prerequisite": "none"
         
     },
     {
         "type": "gatherResources",
-        "duration": 20,
+        "displayName": "Gather resources",
+        "duration": 5,
         "oneTime": false,
         "prerequisite": "survey"
-        
     }
 ]
