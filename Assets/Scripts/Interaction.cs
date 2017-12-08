@@ -7,7 +7,14 @@ using Newtonsoft.Json.Converters;
 public class Interaction  {
 
 	[JsonConverter(typeof(StringEnumConverter))]
-	public enum Type { survey, gatherResources, none }
+	public enum Type { 
+		survey, 
+		gather_apple, 
+		gather_orange, 
+		gather_bannana, 
+		gather_metal, 
+		gather_wood,
+		none }
 
 	public Type InteractionType { get; private set; } 
 	public string DisplayName { get; private set; }

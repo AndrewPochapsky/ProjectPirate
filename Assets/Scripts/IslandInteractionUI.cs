@@ -12,10 +12,6 @@ public class IslandInteractionUI : MonoBehaviour
 
     Player player;
 
-    
-
-    [Header("IslandUI:")]
-
     [SerializeField]
     private TextMeshProUGUI islandNameText;
 
@@ -28,6 +24,12 @@ public class IslandInteractionUI : MonoBehaviour
     [SerializeField]
     private Transform islandUIContainer;
 
+	[SerializeField]
+	private Transform mainButtons;
+
+	[SerializeField]
+	private Transform resourcesButtons;
+
     [SerializeField]
     private RectTransform assignCrewContainer;
 
@@ -35,6 +37,9 @@ public class IslandInteractionUI : MonoBehaviour
 
     [SerializeField]
     private GameObject crewMemberButton;
+
+	[SerializeField]
+    private GameObject resourceButton;
 
     [SerializeField]
     private Button raiseAnchorButton;
@@ -79,7 +84,11 @@ public class IslandInteractionUI : MonoBehaviour
     /// </summary>
     void Update()
     {
+        CheckForTimers();
+    }
 
+    private void CheckForTimers()
+    {
         foreach (Timer timer in timers)
         {
             if (!timer.Finished)
@@ -106,7 +115,6 @@ public class IslandInteractionUI : MonoBehaviour
 
         }
     }
-
 
     public void SetIslandInfo(string name, string description)
     {
@@ -145,9 +153,28 @@ public class IslandInteractionUI : MonoBehaviour
 
     public void OnGatherResources()
     {
-        Interaction interaction = GetInteraction("gatherResources");
-        DoInteraction(1, interaction);
+        //Interaction interaction = GetInteraction("gatherResources");
+        //DoInteraction(1, interaction);
+		mainButtons.gameObject.SetActive(false);
+		resourcesButtons.gameObject.SetActive(true);
     }
+
+	public void OnBack_GatherResources()
+	{
+		mainButtons.gameObject.SetActive(true);
+        resourcesButtons.gameObject.SetActive(false);
+	}
+
+	/// <summary>
+	/// The listener method for each resource button
+	/// </summary>
+	/// <param name="resource">The resource</param>
+	private void OnResourceGathered(Resource resource)
+	{
+		//Call DoInteraction
+		//Call player.AddResource()
+		//Update the UI
+	}
 
     //Called when any assignCrew button pressed
     public void OnAssign()
@@ -201,6 +228,46 @@ public class IslandInteractionUI : MonoBehaviour
         tempButton.onClick.AddListener(() => OnCrewMemberButtonPressed(crewMember));
         return button.GetComponent<Button>();
     }
+
+	private Button GenerateResourceButton(RectTransform parent, Resource resource)
+	{
+		GameObject button = (GameObject)Instantiate(resourceButton);
+        button.transform.SetParent(parent, false);
+        button.transform.localScale = Vector3.one;
+		SetResourceButtonText(button, resource);
+
+
+
+		return button.GetComponent<Button>();
+
+	}
+
+	private void SetResourceButtonText(GameObject button, Resource resource)
+	{
+		TextMeshProUGUI nameText = button.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+		TextMeshProUGUI statusText = button.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+		
+		Interaction interaction = GetInteraction(resource.Name);
+		Interaction prerequisite = GetInteraction(interaction.Prerequisite.ToString());
+
+		if(prerequisite.Completed && interaction.assignee == null)
+		{
+			nameText.text = resource.Name;
+			statusText.text = "*not assigned*";
+		}
+		else if(interaction.assignee != null)
+		{
+			nameText.text = resource.Name;
+			statusText.text = interaction.assignee.Name;
+			statusText.color = Color.blue;
+		}
+		else
+		{
+			nameText.text = "???";
+            statusText.text = "";
+		}
+		
+	}
 
     private void OnCrewMemberButtonPressed(CrewMember crewMember)
     {
@@ -333,9 +400,10 @@ public class IslandInteractionUI : MonoBehaviour
         {
             case Interaction.Type.survey:
                 resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
-                break;
+                //update the resource buttons
+				break;
 
-            case Interaction.Type.gatherResources:
+            /*case Interaction.Type.gatherResources:
                 player.GatherResources(interaction.assignee, WorldController.Instance.currentIsland);
                 resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
                 if (WorldController.Instance.currentIsland.Resources.Count == 0)
@@ -345,7 +413,7 @@ public class IslandInteractionUI : MonoBehaviour
 
                 print(player.FormattedInventory());
 
-                break;
+                break;*/
         }
 
         interaction.assignee.Task = null;

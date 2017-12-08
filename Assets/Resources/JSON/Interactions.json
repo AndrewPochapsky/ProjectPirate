@@ -8,10 +8,39 @@
         
     },
     {
-        "type": "gatherResources",
-        "displayName": "Gather resources",
-        "duration": 5,
+        "type": "gather_apple",
+        "displayName": "Apple",
+        "duration": 0,
         "oneTime": false,
         "prerequisite": "survey"
-    }
+    },
+    {
+        "type": "gather_orange",
+        "displayName": "Orange",
+        "duration": 0,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gather_bannana",
+        "displayName": "Bannana",
+        "duration": 0,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gather_metal",
+        "displayName": "Metal",
+        "duration": 0,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gather_wood",
+        "displayName": "Wood",
+        "duration": 0,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+
 ]

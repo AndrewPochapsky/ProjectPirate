@@ -28,10 +28,10 @@ public class InteractionManager : MonoBehaviour {
 
 	public Interaction GetInteraction(List<Interaction> interactions, string name)
 	{
-		Interaction.Type type = (Interaction.Type)Enum.Parse(typeof(Interaction.Type), name);
+		//Interaction.Type type = (Interaction.Type)Enum.Parse(typeof(Interaction.Type), name);
 		foreach(Interaction i in interactions)
 		{
-			if(i.InteractionType == type)
+			if(i.InteractionType.ToString() == name)
 				return i;
 		}
 		return null;
