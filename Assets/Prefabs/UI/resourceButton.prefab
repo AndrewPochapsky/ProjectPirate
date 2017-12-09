@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114753833825960074}
   m_Layer: 5
   m_Name: assign
-  m_TagString: survey
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -611,7 +611,7 @@ RectTransform:
   m_GameObject: {fileID: 1250609588664424}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224872810102383290}
   - {fileID: 224907927373263872}
@@ -619,10 +619,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -181.70007, y: -49.60002}
-  m_SizeDelta: {x: 125.47, y: 76.34}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 125.47, y: 44.83}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224072363432649038
 RectTransform:

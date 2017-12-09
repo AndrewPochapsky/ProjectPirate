@@ -31,7 +31,7 @@ public class InteractionManager : MonoBehaviour {
 		//Interaction.Type type = (Interaction.Type)Enum.Parse(typeof(Interaction.Type), name);
 		foreach(Interaction i in interactions)
 		{
-			if(i.InteractionType.ToString() == name)
+			if(i.InteractionType.ToString() == name || i.DisplayName == name)
 				return i;
 		}
 		return null;

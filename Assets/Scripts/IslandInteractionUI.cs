@@ -11,6 +11,8 @@ public class IslandInteractionUI : MonoBehaviour
 {
 
     Player player;
+    Dictionary<string, int> resourceDictionary; 
+
 
     [SerializeField]
     private TextMeshProUGUI islandNameText;
@@ -28,7 +30,7 @@ public class IslandInteractionUI : MonoBehaviour
 	private Transform mainButtons;
 
 	[SerializeField]
-	private Transform resourcesButtons;
+	private Transform resourcesButtonsContainer;
 
     [SerializeField]
     private RectTransform assignCrewContainer;
@@ -52,9 +54,14 @@ public class IslandInteractionUI : MonoBehaviour
     [SerializeField]
     private List<Button> assignCrewButtons;
 
+    private List<Button> actualAssignCrewButtons;
+
     private Interaction currentInteraction;
 
     private List<Timer> timers;
+    private List<Transform> resourceButtons;
+
+    private int count = 0;
 
     // Use this for initialization
     void Awake()
@@ -70,7 +77,10 @@ public class IslandInteractionUI : MonoBehaviour
     void Start()
     {
         crewButtons = new List<Button>();
+        resourceButtons = new List<Transform>();
         timers = new List<Timer>();
+        resourceDictionary = new Dictionary<string, int>();
+
         assignCrewPanel = assignCrewContainer.GetChild(0).GetComponent<RectTransform>();
         //Generates the crew member buttons used for assigning tasks
         foreach (CrewMember member in player.crew)
@@ -110,6 +120,7 @@ public class IslandInteractionUI : MonoBehaviour
                 else
                 {
                     timer.Text.text = TimeController.Instance.GetFormattedTime(Mathf.Abs(timer.Duration - Mathf.Abs(timer.StartTime - TimeController.Instance.minutes)), false);
+                    print("setting text");
                 }
             }
 
@@ -122,25 +133,46 @@ public class IslandInteractionUI : MonoBehaviour
         islandDescText.text = description;
         islandUIContainer.gameObject.SetActive(true);
 
+        resourceButtons = new List<Transform>();
+        actualAssignCrewButtons = new List<Button>();
+        resourceDictionary = new Dictionary<string, int>();
+
+        foreach(var button in assignCrewButtons)
+        {
+            actualAssignCrewButtons.Add(button);
+        }
+
+        foreach (Resource r in WorldController.Instance.currentIsland.Resources)
+        {
+            GenerateResourceButton(resourcesButtonsContainer.GetComponent<RectTransform>(), r);
+        }
+
         for (int i = 0; i < interactionButtons.Count; i++)
         {
             Transform button = interactionButtons[i];
             TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
 
-            WorldController.Instance.currentIsland.Interactions[i].AssignCrewButton = assignCrewButtons[i];
+            WorldController.Instance.currentIsland.Interactions[i].AssignCrewButton = actualAssignCrewButtons[i];
 
             Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
+            SetInteractionButtonText(button);
         }
 
-        SetInteractionButtonText();
+       
     }
 
     //Runs when Raise Anchor button pressed
     public void OnRaiseAnchor()
     {
+        foreach(Transform button in resourceButtons)
+        {
+            Destroy(button.gameObject);
+        }
+
         islandUIContainer.gameObject.SetActive(false);
         //worldUIContainer.gameObject.SetActive(true);
 		MainUIController.Instance.ToggleWorldUI(true);
+        
         player.RaiseAnchor();
     }
 
@@ -148,7 +180,7 @@ public class IslandInteractionUI : MonoBehaviour
     public void OnSurvey()
     {
         Interaction interaction = GetInteraction("survey");
-        DoInteraction(0, interaction);
+        DoInteraction(0, interaction, false);
     }
 
     public void OnGatherResources()
@@ -156,13 +188,13 @@ public class IslandInteractionUI : MonoBehaviour
         //Interaction interaction = GetInteraction("gatherResources");
         //DoInteraction(1, interaction);
 		mainButtons.gameObject.SetActive(false);
-		resourcesButtons.gameObject.SetActive(true);
+		resourcesButtonsContainer.gameObject.SetActive(true);
     }
 
 	public void OnBack_GatherResources()
 	{
 		mainButtons.gameObject.SetActive(true);
-        resourcesButtons.gameObject.SetActive(false);
+        resourcesButtonsContainer.gameObject.SetActive(false);
 	}
 
 	/// <summary>
@@ -171,31 +203,59 @@ public class IslandInteractionUI : MonoBehaviour
 	/// <param name="resource">The resource</param>
 	private void OnResourceGathered(Resource resource)
 	{
+        int index = resourceDictionary[resource.Name];
+        Interaction interaction = GetInteraction(resource.Name);
+        if(interaction.AssignCrewButton == null)
+        {
+            interaction.AssignCrewButton = actualAssignCrewButtons[index];
+        }
 		//Call DoInteraction
-		//Call player.AddResource()
-		//Update the UI
+        DoInteraction(index, interaction, true);
 	}
 
     //Called when any assignCrew button pressed
-    public void OnAssign()
+    public void OnAssign(string tag)
     {
         UpdateCrewButtons();
         Button pressedButton = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-        currentInteraction = GetInteraction(pressedButton.tag);
+        
+        if(tag == string.Empty)
+            currentInteraction = GetInteraction(pressedButton.tag);
+        else
+            currentInteraction = GetInteraction(tag);
         assignCrewContainer.gameObject.SetActive(true);
     }
 
-    private void DoInteraction(int index, Interaction interaction)
+    private void DoInteraction(int index, Interaction interaction, bool isResource)
     {
+        print(interaction.InteractionType);
         if (interaction.assignee != null && !interaction.Completed)
         {
             assignCrewContainer.gameObject.SetActive(false);
-
-            TextMeshProUGUI statusText = interactionButtons[index].GetChild(1).GetComponent<TextMeshProUGUI>();
-
+            TextMeshProUGUI statusText = null;
+            if(!isResource)
+            {
+                statusText = interactionButtons[index].GetChild(1).GetComponent<TextMeshProUGUI>();
+            }
+            else
+            {
+                print("Index: " + index);
+                print("Resource button count: "+resourceButtons.Count);
+                statusText = resourceButtons[index].GetChild(1).GetComponent<TextMeshProUGUI>();
+            }
+            
             interaction.InProgress = true;
 
-            interactionButtons[index].GetComponent<Button>().interactable = false;
+            if(!isResource)
+            {
+                interactionButtons[index].GetComponent<Button>().interactable = false;
+            }
+               
+            else
+            {
+                resourceButtons[index].GetComponent<Button>().interactable = false;
+            }
+                
 
             TextMeshProUGUI assignCrewText = interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
             assignCrewText.text = "*In Progress*";
@@ -205,6 +265,7 @@ public class IslandInteractionUI : MonoBehaviour
             CheckIfCanRaiseAnchor();
 
             timers.Add(new Timer(TimeController.Instance.minutes, interaction.Duration, statusText, interaction));
+
         }
     }
 
@@ -228,7 +289,7 @@ public class IslandInteractionUI : MonoBehaviour
         tempButton.onClick.AddListener(() => OnCrewMemberButtonPressed(crewMember));
         return button.GetComponent<Button>();
     }
-
+    
 	private Button GenerateResourceButton(RectTransform parent, Resource resource)
 	{
 		GameObject button = (GameObject)Instantiate(resourceButton);
@@ -236,12 +297,20 @@ public class IslandInteractionUI : MonoBehaviour
         button.transform.localScale = Vector3.one;
 		SetResourceButtonText(button, resource);
 
+        Button assignCrewButton = button.transform.GetChild(2).GetComponent<Button>();
+        resourceDictionary.Add(resource.Name, resourceButtons.Count);
 
+        button.GetComponent<Button>().onClick.AddListener(() => OnResourceGathered(resource));
+        assignCrewButton.onClick.AddListener(() => OnAssign(resource.Name));
+        resourceButtons.Add(button.transform);
+        actualAssignCrewButtons.Add(assignCrewButton);
+
+        count++;
 
 		return button.GetComponent<Button>();
-
 	}
 
+    //TODO: remove this method and instead use the method for interaction buttons
 	private void SetResourceButtonText(GameObject button, Resource resource)
 	{
 		TextMeshProUGUI nameText = button.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
@@ -254,6 +323,7 @@ public class IslandInteractionUI : MonoBehaviour
 		{
 			nameText.text = resource.Name;
 			statusText.text = "*not assigned*";
+            statusText.color = Color.red;
 		}
 		else if(interaction.assignee != null)
 		{
@@ -273,7 +343,13 @@ public class IslandInteractionUI : MonoBehaviour
     {
         crewMember.Task = currentInteraction;
         currentInteraction.assignee = crewMember;
-        SetInteractionButtonText();
+        foreach(Transform button in interactionButtons)
+            SetInteractionButtonText(button);
+        
+        for(int i = 0; i <resourceButtons.Count; i++)
+        {
+            SetResourceButtonText(resourceButtons[i].gameObject, WorldController.Instance.currentIsland.Resources[i]);
+        }
 
         Interaction.UnAssignDuplicateTasks(crewMember, player);
 
@@ -329,45 +405,42 @@ public class IslandInteractionUI : MonoBehaviour
         }
     }
 
-    private void SetInteractionButtonText()
+    private void SetInteractionButtonText(Transform button)
     {
-        foreach (Transform button in interactionButtons)
+
+        Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
+        TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
+
+        if (interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
         {
-            Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
-            TextMeshProUGUI text = button.GetChild(1).GetComponent<TextMeshProUGUI>();
-
-            if (interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
-            {
-                text.text = "requires: " + interaction.Prerequisite.ToString();
-                text.color = Color.red;
-                button.GetComponent<Button>().interactable = false;
-                interaction.AssignCrewButton.interactable = false;
-            }
-            else if (!interaction.OneTime && !interaction.Completed && interaction.assignee == null)
-            {
-                interaction.AssignCrewButton.interactable = true;
-                text.text = "*not assigned*";
-                text.color = Color.red;
-                interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Assign Crew";
-            }
-            else if (interaction.OneTime && interaction.Completed || interaction.Completed)
-            {
-                text.text = "Completed";
-                interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Completed";
-                text.color = Color.blue;
-            }
-            else if (interaction.assignee != null)
-            {
-                text.text = interaction.assignee.Name;
-                text.color = Color.blue;
-                button.GetComponent<Button>().interactable = true;
-            }
-            else
-            {
-                text.text = "*Not Assigned*";
-                text.color = Color.red;
-            }
-
+            text.text = "requires: " + interaction.Prerequisite.ToString();
+            text.color = Color.red;
+            button.GetComponent<Button>().interactable = false;
+            interaction.AssignCrewButton.interactable = false;
+        }
+        else if (!interaction.OneTime && !interaction.Completed && interaction.assignee == null)
+        {
+            interaction.AssignCrewButton.interactable = true;
+            text.text = "*not assigned*";
+            text.color = Color.red;
+            interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Assign Crew";
+        }
+        else if (interaction.OneTime && interaction.Completed || interaction.Completed)
+        {
+            text.text = "Completed";
+            interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Completed";
+            text.color = Color.blue;
+        }
+        else if (interaction.assignee != null)
+        {
+            text.text = interaction.assignee.Name;
+            text.color = Color.blue;
+            button.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            text.text = "*Not Assigned*";
+            text.color = Color.red;
         }
     }
 
@@ -401,6 +474,10 @@ public class IslandInteractionUI : MonoBehaviour
             case Interaction.Type.survey:
                 resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
                 //update the resource buttons
+                for(int i = 0; i < resourceButtons.Count; i++)
+                {
+                    SetResourceButtonText(resourceButtons[i].gameObject, WorldController.Instance.currentIsland.Resources[i]);
+                }
 				break;
 
             /*case Interaction.Type.gatherResources:
@@ -419,7 +496,13 @@ public class IslandInteractionUI : MonoBehaviour
         interaction.assignee.Task = null;
         interaction.assignee = null;
 
-        SetInteractionButtonText();
+        foreach(Transform button in interactionButtons)
+            SetInteractionButtonText(button);
+
+        for (int i = 0; i < resourceButtons.Count; i++)
+        {
+            SetResourceButtonText(resourceButtons[i].gameObject, WorldController.Instance.currentIsland.Resources[i]);
+        }
     }
 }
 

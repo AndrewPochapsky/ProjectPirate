@@ -48,6 +48,8 @@ public class ResourceManager : MonoBehaviour {
 		return list;
 	}
 
+	
+
 
 	
 }
