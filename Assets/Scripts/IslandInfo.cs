@@ -19,20 +19,21 @@ public class IslandInfo  {
 	{
 		string s = string.Empty;
 
-		if(Resources.Count == 0)
-		{
-			return "All resources gathered!";
-		}
-
 		for(int i = 0; i < Resources.Count; i++)
 		{
 			Resource r = Resources[i];
-			s += r.Name + "(" + r.Amount + ")";
-			if(i + 1 != Resources.Count)
+				 
+			if (r.Amount > 0)
+				s += r.Name + "(" + r.Amount + ")";
+
+			else if(i + 1 != Resources.Count)
 			{
 				s += ", ";
 			}
 		}
+
+		if(s == ", ")
+			return "All resources depleted";
 
 		return s;
 	}

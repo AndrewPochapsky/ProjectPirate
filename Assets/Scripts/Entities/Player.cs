@@ -110,15 +110,11 @@ public class Player : Entity {
         }
     }
 
-    private void AddResource(Resource resource, int amount, IslandInfo island)
+    public void AddResource(Resource resource, int amount, IslandInfo island)
     {
         ISellable existingResource = null;
         resource.Amount-=amount;
 
-        if(resource.Amount == 0)
-        {
-            island.Resources.Remove(resource);
-        }
         int containsIndex = Inventory.FindIndex(r => r.Name == resource.Name);
 
         if(containsIndex != -1)

@@ -9,6 +9,7 @@ public class Interaction  {
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum Type { 
 		survey, 
+		gatherResources,
 		gather_apple, 
 		gather_orange, 
 		gather_bannana, 
@@ -43,7 +44,7 @@ public class Interaction  {
 	{
 		foreach(CrewMember member in player.crew)
 		{
-			if(crewMember.Name != member.Name &&  crewMember.Task == member.Task)
+			if(crewMember.Name != member.Name && crewMember.Task == member.Task)
 			{
 				member.Task = null;
 			}

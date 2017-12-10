@@ -8,35 +8,35 @@
         
     },
     {
-        "type": "gather_apple",
+        "type": "gatherResources",
         "displayName": "Apple",
         "duration": 5,
         "oneTime": false,
         "prerequisite": "survey"
     },
     {
-        "type": "gather_orange",
+        "type": "gatherResources",
         "displayName": "Orange",
         "duration": 5,
         "oneTime": false,
         "prerequisite": "survey"
     },
     {
-        "type": "gather_bannana",
+        "type": "gatherResources",
         "displayName": "Bannana",
         "duration": 5,
         "oneTime": false,
         "prerequisite": "survey"
     },
     {
-        "type": "gather_metal",
+        "type": "gatherResources",
         "displayName": "Metal",
         "duration": 5,
         "oneTime": false,
         "prerequisite": "survey"
     },
     {
-        "type": "gather_wood",
+        "type": "gatherResources",
         "displayName": "Wood",
         "duration": 5,
         "oneTime": false,
