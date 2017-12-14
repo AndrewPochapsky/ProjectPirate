@@ -26,7 +26,7 @@ public class IslandInfo  {
 			if (r.Amount > 0)
 				s += r.Name + "(" + r.Amount + ")";
 
-			else if(i + 1 != Resources.Count)
+			if(i + 1 != Resources.Count && r.Amount > 0)
 			{
 				s += ", ";
 			}
