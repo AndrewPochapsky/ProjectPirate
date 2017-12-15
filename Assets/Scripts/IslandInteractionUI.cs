@@ -36,6 +36,9 @@ public class IslandInteractionUI : MonoBehaviour
     [SerializeField]
     private RectTransform assignCrewContainer;
 
+    [SerializeField]
+    private TextMeshProUGUI assignCrewHeader;
+
     private RectTransform assignCrewPanel;
 
     [SerializeField]
@@ -82,7 +85,7 @@ public class IslandInteractionUI : MonoBehaviour
         timers = new List<Timer>();
         resourceDictionary = new Dictionary<string, int>();
 
-        assignCrewPanel = assignCrewContainer.GetChild(0).GetComponent<RectTransform>();
+        assignCrewPanel = assignCrewContainer.GetChild(2).GetComponent<RectTransform>();
         //Generates the crew member buttons used for assigning tasks
         foreach (CrewMember member in player.crew)
         {
@@ -238,6 +241,8 @@ public class IslandInteractionUI : MonoBehaviour
             currentInteraction = GetInteraction(pressedButton.tag);
         else
             currentInteraction = GetInteraction(tag);
+
+        assignCrewHeader.text = currentInteraction.DisplayName;
 
         assignCrewContainer.gameObject.SetActive(true);
     }
