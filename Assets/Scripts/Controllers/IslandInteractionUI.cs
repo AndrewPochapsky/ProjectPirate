@@ -125,7 +125,6 @@ public class IslandInteractionUI : MonoBehaviour
                 else
                 {
                     timer.Text.text = TimeController.Instance.GetFormattedTime(Mathf.Abs(timer.Duration - Mathf.Abs(timer.StartTime - TimeController.Instance.minutes)), false);
-                    print("setting text");
                 }
             }
 
@@ -161,6 +160,15 @@ public class IslandInteractionUI : MonoBehaviour
 
             Interaction interaction = InteractionManager.Instance.GetInteraction(WorldController.Instance.currentIsland.Interactions, button.gameObject.name);
             SetInteractionButtonText(button);
+        }
+        Interaction survey = GetInteraction("survey");
+        if(survey.Completed)
+        {
+            resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
+        }
+        else
+        {
+            resourceText.text = "???";
         }
 
        
@@ -249,7 +257,6 @@ public class IslandInteractionUI : MonoBehaviour
 
     private void DoInteraction(int index, Interaction interaction, bool isResource)
     {
-        print(interaction.InteractionType);
         if (interaction.assignee != null && !interaction.Completed)
         {
             assignCrewContainer.gameObject.SetActive(false);
@@ -416,31 +423,29 @@ public class IslandInteractionUI : MonoBehaviour
         TextMeshProUGUI statusText = button.GetChild(1).GetComponent<TextMeshProUGUI>();
 
         Button assignCrewButton = button.GetChild(2).GetComponent<Button>();
+        TextMeshProUGUI assignCrewText = assignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
 
         if(resource != null && interaction.Completed)
         {
             statusText.text = "Depleted";
         
             interaction.AssignCrewButton.interactable = false;
-            if (interaction.AssignCrewButton != null)
-                interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Depleted";
-            print("1");
+            if (assignCrewButton != null)
+                assignCrewText.text = "Depleted";
         }
         else if(resource != null && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
         {
             nameText.text = "???";
             statusText.text = "";
-            if (interaction.AssignCrewButton != null)
-                interaction.AssignCrewButton.interactable = false;
-            print("2");
+            if (assignCrewButton != null)
+                assignCrewButton.interactable = false;
         }
         else if (interaction.Prerequisite != Interaction.Type.none && !GetInteraction(interaction.Prerequisite.ToString()).Completed)
         {
             statusText.text = "requires: " + interaction.Prerequisite.ToString();
             statusText.color = Color.red;
             button.GetComponent<Button>().interactable = false;
-            interaction.AssignCrewButton.interactable = false;
-            print("3");
+            assignCrewButton.interactable = false;
         }
         else if (!interaction.OneTime && !interaction.Completed && interaction.assignee == null)
         {
@@ -449,30 +454,28 @@ public class IslandInteractionUI : MonoBehaviour
             assignCrewButton.interactable = true;
             statusText.text = "*not assigned*";
             statusText.color = Color.red;
-            if (interaction.AssignCrewButton != null)
-                interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Assign Crew";
-            print("4");
+            if (assignCrewButton != null)
+                assignCrewText.text = "Assign Crew";
         }
         else if (interaction.OneTime && interaction.Completed || interaction.Completed)
         {
             statusText.text = "Completed";
-            if (interaction.AssignCrewButton != null)
-                interaction.AssignCrewButton.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "Completed";
+            if (assignCrewButton != null)
+                assignCrewText.text = "Completed";
             statusText.color = Color.blue;
-            print("5");
         }
         else if (interaction.assignee != null)
         {
             statusText.text = interaction.assignee.Name;
             statusText.color = Color.blue;
             button.GetComponent<Button>().interactable = true;
-            print("6");
         }
         else
         {
             statusText.text = "*Not Assigned*";
+            assignCrewButton.interactable = true;
+            assignCrewText.text = "Assign Crew";
             statusText.color = Color.red;
-            print("7");
         }
     }
 
