@@ -29,6 +29,14 @@ public class MainUIController : MonoBehaviour {
 	[SerializeField]
     private Transform worldUIContainer;
 
+	[SerializeField]
+	private CanvasGroup islandUICanvasGroup;
+
+	[HideInInspector]
+	public bool fadingIn = false;
+
+	private float fadeInModifier = 1.5f;
+	private float fadeOutModifier = 2f;
 
 	// Use this for initialization
 	void Awake () {
@@ -48,6 +56,8 @@ public class MainUIController : MonoBehaviour {
 	/// </summary>
 	void Update()
 	{
+		CheckIfIslandUIInteractable();
+
 		if(WorldController.Instance.currentIsland != null && !player.anchorDropped)
 		{
 			interactText.enabled = true;
@@ -57,6 +67,15 @@ public class MainUIController : MonoBehaviour {
 		{
 			interactText.enabled = false;
 		}	
+
+		if(fadingIn)
+		{
+			FadeIslandUI(fadeIn: true);
+		}
+		else
+		{
+			FadeIslandUI(fadeIn: false);
+		}
 	}
 
 	private void SetUI(int infamy, int gold)
@@ -65,9 +84,28 @@ public class MainUIController : MonoBehaviour {
 		goldText.text = "Gold: " + gold;
 	}
 
+	//TODO: if no longer being used, remove
     public void ToggleWorldUI(bool value)
     {
         worldUIContainer.gameObject.SetActive(value);
     }
+
+	public void FadeIslandUI(bool fadeIn)
+	{
+		if(fadeIn)
+		{
+			islandUICanvasGroup.alpha += Time.fixedDeltaTime * fadeInModifier;
+		}
+		else	
+		{
+			islandUICanvasGroup.alpha -= Time.fixedDeltaTime * fadeOutModifier;
+		}
+	}
+
+	private void CheckIfIslandUIInteractable()
+	{
+		islandUICanvasGroup.interactable = islandUICanvasGroup.alpha == 1;
+		islandUICanvasGroup.blocksRaycasts = islandUICanvasGroup.alpha == 1;
+	}
 }
 

@@ -183,12 +183,16 @@ public class IslandInteractionUI : MonoBehaviour
         }
         resourceButtons = new List<Transform>();
 
+        assignCrewContainer.gameObject.SetActive(false);
+
         resourcesButtonsContainer.gameObject.SetActive(false);
         mainButtons.gameObject.SetActive(true);
 
-        islandUIContainer.gameObject.SetActive(false);
-		MainUIController.Instance.ToggleWorldUI(true);
+        //islandUIContainer.gameObject.SetActive(false);
+		//MainUIController.Instance.ToggleWorldUI(true);
         
+        MainUIController.Instance.fadingIn = false;
+
         player.RaiseAnchor();
 
 

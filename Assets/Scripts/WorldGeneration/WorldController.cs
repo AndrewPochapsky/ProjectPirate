@@ -15,7 +15,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// Both the width and height of a chunk, number of tiles is chunkSize^2
     /// </summary>
-    public const int chunkSize = 4;
+    public const int chunkSize = 5;
 
     /// <summary>
     /// In a specific direction, actual number is numberOfChunks^2

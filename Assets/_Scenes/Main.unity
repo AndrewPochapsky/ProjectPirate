@@ -185,13 +185,14 @@ GameObject:
   m_Component:
   - component: {fileID: 69541007}
   - component: {fileID: 69541008}
+  - component: {fileID: 69541009}
   m_Layer: 5
   m_Name: IslandUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &69541007
 RectTransform:
   m_ObjectHideFlags: 0
@@ -220,10 +221,16 @@ CanvasGroup:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 69541006}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!222 &69541009
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 69541006}
 --- !u!1 &119446963
 GameObject:
   m_ObjectHideFlags: 0
@@ -1963,11 +1970,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -3222,8 +3229,9 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: Press E to drop anchor at Blank Island
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3247,8 +3255,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 25
-  m_fontSizeBase: 25
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3529,8 +3537,9 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: "Infamy: \n"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4646,8 +4655,9 @@ MonoBehaviour:
 
 '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 715b80e429c437e40867928a4e1fc975, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6ca30f64bce2c7942aebf2ae7355266f, type: 2}
+  m_sharedMaterial: {fileID: 21178252843328210, guid: 6ca30f64bce2c7942aebf2ae7355266f,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4776,6 +4786,8 @@ MonoBehaviour:
   goldText: {fileID: 2029946184}
   interactText: {fileID: 1379136583}
   worldUIContainer: {fileID: 2099673745}
+  islandUICanvasGroup: {fileID: 69541008}
+  fadingIn: 0
 --- !u!4 &2061089302
 Transform:
   m_ObjectHideFlags: 0

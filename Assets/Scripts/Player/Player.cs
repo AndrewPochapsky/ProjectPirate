@@ -69,8 +69,10 @@ public class Player : Entity {
                 island.info.Visited = true;
                 island.SetUI();
                 anchorDropped = true;
-                MainUIController.Instance.ToggleWorldUI(false);
+                //MainUIController.Instance.ToggleWorldUI(false);
                 MainUIController.Instance.islandInteractionUI.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
+                MainUIController.Instance.fadingIn = true;
+                
                 //TODO: Don't do this
                 cam.zoomOffset = cam.zoomValue;
                 cam.SetTarget(island.transform);
