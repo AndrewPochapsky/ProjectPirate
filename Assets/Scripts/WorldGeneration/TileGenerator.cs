@@ -36,20 +36,20 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="worldHeight">The height</param>
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
-    public List<Node> AddNodes(int worldWidth, int worldHeight, int tileSize, int offset = 0, Transform parent = null)
+    public List<BaseNode> AddNodes(int worldWidth, int worldHeight, int tileSize, int offset = 0, Transform parent = null, string nodeType = nameof(BaseNode))
     {
         //int offset = 8;
-        List<Node> nodes = new List<Node>();
+        List<BaseNode> nodes = new List<BaseNode>();
         for (int y = 0; y < worldHeight; y++)
         {
             for (int x = 0; x < worldWidth; x++)
             {
                 Vector2 location = new Vector2(x, y);
-                nodes.Add(AddNode(location, worldWidth, tileSize-offset, parent));
+                nodes.Add(AddNode(location, worldWidth, tileSize-offset, parent, nodeType));
             }
         }
 
-        foreach(Node node in nodes)
+        foreach(BaseNode node in nodes)
         {
             node.SetAdjacents(nodes, worldWidth);
         }
@@ -65,10 +65,10 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
     /// <returns>The created tile</returns>
-    private Node AddNode(Vector2 location, int worldWidth, int tileSize, Transform parent)
+    private BaseNode AddNode(Vector2 location, int worldWidth, int tileSize, Transform parent, string nodeType = nameof(BaseNode))
     {
-        GameObject obj = Instantiate(Resources.Load("Tiles/" + nameof(Node)), Vector3.zero, Quaternion.identity) as GameObject;
-        Node tile = obj.GetComponent<Node>();
+        GameObject obj = Instantiate(Resources.Load("Tiles/" + nodeType), Vector3.zero, Quaternion.identity) as GameObject;
+        BaseNode tile = obj.GetComponent<BaseNode>();
 
         if (parent != null)
             tile.transform.SetParent(parent);
@@ -90,11 +90,11 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="removeNodes">True if nodes should be removed</param>
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
-    public void GenerateOceanTiles(List<Node> nodes, bool addIslands, bool removeNodes, int tileSize, Transform parent)
+    public void GenerateOceanTiles(List<BaseNode> nodes, bool addIslands, bool removeNodes, int tileSize, Transform parent)
     {
         Tile createdTile = null;
 
-        foreach (Node node in nodes)
+        foreach (BaseNode node in nodes)
         {
             if (node.isAvailable)
             {
@@ -139,7 +139,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileSize">The tileSize</param>
     /// <param name="parent">The parent</param>
     /// <returns>The created tile</returns>
-    private Tile AddIslandTile(Node node, IslandTile.IslandSize islandSize, int tileSize, Transform parent)
+    private Tile AddIslandTile(BaseNode node, IslandTile.IslandSize islandSize, int tileSize, Transform parent)
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y, node.transform.position.z);
         GameObject obj = Instantiate(Resources.Load("Tiles/IslandTile"), position, Quaternion.identity) as GameObject;
@@ -165,7 +165,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="parent">The parent</param>
     /// <param name="forIsland">True if forIsland</param>
     /// <returns>The created tile</returns>
-    private Tile AddAnyTile(string tileName, Node node, int tileSize, Transform parent, int offset, bool forIsland = false, bool forBattle = false)
+    private Tile AddAnyTile(string tileName, BaseNode node, int tileSize, Transform parent, int offset, bool forIsland = false, bool forBattle = false)
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y + offset, node.transform.position.z);
 
@@ -203,6 +203,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileSize">The tileSize</param>
     public void GenerateTileMap(string tileName, List<Node> nodes, bool removeNodes, int tileSize, Transform parent)
     {
+        print(nodes.Count);
         foreach(Node node in nodes)
         {
             Tile createdTile = AddAnyTile(tileName, node, tileSize, parent, offset: 0, forBattle: true);
@@ -225,7 +226,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="node">Node used as a location reference</param>
     /// <param name="obj">The instantiated island</param>
     /// <param name="tileSize">The tileSize</param>
-    private void SetUpIsland(Node node, GameObject obj, int tileSize, Transform parent)//TODO maybe move this to IslandTile class?
+    private void SetUpIsland(BaseNode node, GameObject obj, int tileSize, Transform parent)//TODO maybe move this to IslandTile class?
     {
         IslandTile islandTile = obj.GetComponent<IslandTile>();
 
@@ -243,7 +244,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="worldWidth">The world width</param>
     /// <param name="tileSize">The tileSize</param>
     /// <returns>A Vector3 of the next location</returns>
-    private Vector3 GetNextNodeLocation(Node node, int worldWidth, int tileSize)
+    private Vector3 GetNextNodeLocation(BaseNode node, int worldWidth, int tileSize)
     {
         Vector3 nextLocation = Vector3.zero;
 
@@ -265,7 +266,7 @@ public class TileGenerator : MonoBehaviour {
     /// </summary>
     /// <param name="islandTile">The islandTile</param>
     /// <param name="node">The node</param>
-    private void DisableRedundantNodes(IslandTile islandTile, Node node, int tileSize, Transform parent)
+    private void DisableRedundantNodes(IslandTile islandTile, BaseNode node, int tileSize, Transform parent)
     {
         islandTile.meshObjects.Add(AddAnyTile(nameof(OceanTile), node, tileSize/10, parent, WorldController.Instance.oceanTileOffset, forIsland: true).gameObject);
         node.isAvailable = false;
@@ -308,7 +309,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="node">The node</param>
     /// <param name="size">The specified size</param>
     /// <returns>Whether or not the specified size can be generated at node's location</returns>
-    private bool CanGenerate(Node node, IslandTile.IslandSize size)
+    private bool CanGenerate(BaseNode node, IslandTile.IslandSize size)
     {
         switch (size)
         {

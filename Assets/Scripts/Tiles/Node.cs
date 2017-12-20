@@ -7,28 +7,26 @@ public class Node : BaseNode {
 
     public Tile Child { get; private set; }
 
-
-    /// <summary>
-    /// Used for generation
-    /// </summary>
-    public bool isAvailable = true;
-
     //TODO make this protected and set depending on the node type
+    [HideInInspector]
     public bool isTraversable = true;
 
     /// <summary>
     /// Movement cost of moving to node
     /// </summary>
+    [HideInInspector]
     public int gCost;
 
     /// <summary>
     /// Movement distance from this node to targetNode
     /// </summary>
+    [HideInInspector]
     public int hCost;
 
     /// <summary>
     /// Used for pathfinding
     /// </summary>
+    [HideInInspector]
     public Node parent;
 
     public int FCost

@@ -48,6 +48,7 @@ public class Player : Entity {
     protected override void Start()
     {   
         base.Start();
+        
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)

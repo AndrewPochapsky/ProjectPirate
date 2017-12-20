@@ -5,25 +5,31 @@ using System.Linq;
 
 public class BaseNode : MonoBehaviour {
 
-    public List<Node> Adjacents { get; private set; }
+    public List<BaseNode> Adjacents { get; private set; }
 
     //TODO remove these and just use the above list
-    public Node TopEmpty { get; private set; }
-    public Node BottomEmpty { get; private set; }
-    public Node LeftEmpty { get; private set; }
-    public Node RightEmpty { get; private set; }
+    public BaseNode TopEmpty { get; private set; }
+    public BaseNode BottomEmpty { get; private set; }
+    public BaseNode LeftEmpty { get; private set; }
+    public BaseNode RightEmpty { get; private set; }
+
+    /// <summary>
+    /// Used for generation
+    /// </summary>
+    [HideInInspector]
+    public bool isAvailable = true;
 
     public Vector2 location;
 
     private void Awake()
     {
-        Adjacents = new List<Node>();
+        Adjacents = new List<BaseNode>();
     }
 
     /// <summary>
     /// Sets the EmptyTile's adjacent tiles
     /// </summary>
-    public void SetAdjacents(List<Node> nodes, int worldLimit)
+    public void SetAdjacents(List<BaseNode> nodes, int worldLimit)
     {
         //if tile is not on left edge
         if (location.x != 0)

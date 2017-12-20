@@ -36,9 +36,17 @@ public class WorldController : MonoBehaviour {
     /// </summary>
     public IslandInfo currentIsland;
 
+    /// <summary>
+    /// The current node the player is in
+    /// </summary>
+    /// <returns></returns>
+    public Node currentNode { get; set; }
+
     Transform world;
 
-    List<Node> nodes;
+    List<BaseNode> nodes;
+
+    public List<Chunk> Chunks;
 
     static bool hasGenerated = false;
     
@@ -53,9 +61,9 @@ public class WorldController : MonoBehaviour {
         world = FindObjectOfType<World>().transform;
         if (!hasGenerated)
         {
-            nodes = new List<Node>();
+            nodes = new List<BaseNode>();
 
-            GenerateWorld();
+            Chunks = GenerateWorld();
             hasGenerated = true;
         }
        
@@ -63,15 +71,15 @@ public class WorldController : MonoBehaviour {
 
     private void Start()
     {
-        
         World.Instance.gameObject.SetActive(true);
     }
 
     /// <summary>
     /// Generates the world
     /// </summary>
-    private void GenerateWorld()//TODO make this return a list of chunks
+    private List<Chunk> GenerateWorld()//TODO make this return a list of chunks
     {
+        List<Chunk> chunks = new List<Chunk>();
         for (int y = 0; y < numberOfChunks; y++)
         {
             for (int x = 0; x < numberOfChunks; x++)
@@ -82,18 +90,29 @@ public class WorldController : MonoBehaviour {
                 chunkLocation = ChunkGenerator.Instance.GetNextChunkLocation(chunk, newSize, chunkSize, chunkLocation);
                 nodes = TileGenerator.Instance.AddNodes(chunkSize, chunkSize, newSize, offset: 8, parent: chunk.transform);
                 
-                TileGenerator.Instance.GenerateOceanTiles(nodes, addIslands: true, removeNodes: true, tileSize: newSize, parent: chunk.transform);
+                TileGenerator.Instance.GenerateOceanTiles(nodes, addIslands: true, removeNodes: false, tileSize: newSize, parent: chunk.transform);
                 TileGenerator.Instance.ResetTileLocation();
+
+                chunks.Add(chunk);
             }
         }
+        return chunks;
     }
 
     private void Update()
     {
+        //TODO: remove this
         if (Input.GetKeyDown(KeyCode.B))
         {
             SceneManager.LoadScene(1);
             World.Instance.gameObject.SetActive(false);
         }
+    }
+
+    public List<Tile> GetTilesNearPlayer(Transform player)
+    {
+        List<Tile> tiles = new List<Tile>();
+
+        return tiles;
     }
 }

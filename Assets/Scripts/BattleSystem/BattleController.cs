@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 using UnityEngine.EventSystems;
 
 public class BattleController : MonoBehaviour {
@@ -69,8 +70,13 @@ public class BattleController : MonoBehaviour {
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         tileGenerator = FindObjectOfType<TileGenerator>();
-        Nodes = tileGenerator.AddNodes(width, height, battleTileSize);
+
+        //Nodes = Nodes.Select(n => n as Node).ToList();
+
+        Nodes = tileGenerator.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
         tileGenerator.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
+
+        print("here");
 
         //TODO remove this, IN
         System.Random rnd = new System.Random();
