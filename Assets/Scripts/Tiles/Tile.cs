@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(BoxCollider))]
 public abstract class Tile : MonoBehaviour {
 
     protected Vector2 gridLocation;

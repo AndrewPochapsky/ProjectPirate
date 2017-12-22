@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class WorldController : MonoBehaviour {
 
@@ -24,6 +25,7 @@ public class WorldController : MonoBehaviour {
 
     public const int mapTileSize = 32;
 
+    [HideInInspector]
     public int oceanTileOffset = 30;
 
     /// <summary>
@@ -39,13 +41,14 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// The current node the player is in
     /// </summary>
-    /// <returns></returns>
+    /// <returns>current node</returns>
     public Node currentNode { get; set; }
 
     Transform world;
 
     List<BaseNode> nodes;
 
+    [HideInInspector]
     public List<Chunk> Chunks;
 
     static bool hasGenerated = false;
@@ -109,10 +112,33 @@ public class WorldController : MonoBehaviour {
         }
     }
 
-    public List<Tile> GetTilesNearPlayer(Transform player)
+    public List<BaseNode> GetNodesNearPlayer(Transform player, BaseNode node)
     {
-        List<Tile> tiles = new List<Tile>();
+        List<BaseNode> nodes = new List<BaseNode>();
+        
+        //Add nodes adjacent to the current node
+        //Add those nodes to the list
+        //Then loop through the adjacent nodes of the ones currently in list
+        // and add them to the list if they are not duplicates
+        foreach(Node n in node.Adjacents)
+        {
+            IslandTile island = node.transform.GetChild(0).GetComponent<IslandTile>();
+            if(island == null)
+                nodes.Add(node);
+        }
 
-        return tiles;
+        foreach(var n in nodes)
+        {
+            foreach(var adjNode in n.Adjacents)
+            {
+                IslandTile island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
+                if(!nodes.Contains(adjNode) && island == null)
+                {
+                    nodes.Add(adjNode);
+                }
+            }
+        }
+
+        return nodes;
     }
 }

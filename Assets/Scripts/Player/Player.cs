@@ -7,6 +7,9 @@ public class Player : Entity {
     public delegate void OnInfoUpdated(int infamy, int gold);
     public event OnInfoUpdated OnInfoUpdatedEvent;
 
+    public delegate void OnNewTileEntered(List<BaseNode> nodes);
+    public event OnNewTileEntered OnNewTileEnteredEvent;
+
     public bool anchorDropped { get; private set; }
 
     [HideInInspector]
@@ -55,6 +58,20 @@ public class Player : Entity {
             OnInfoUpdatedEvent(Infamy, Gold);
     }
     
+    /// <summary>
+    /// OnTriggerEnter is called when the Collider other enters the trigger.
+    /// </summary>
+    /// <param name="other">The other Collider involved in this collision.</param>
+    void OnTriggerEnter(Collider other)
+    {
+        Node node = other.transform.GetComponentInParent<Node>();
+        if (node != null)
+        {
+            //Set current node to the one the player is in
+           OnNewTileEnteredEvent(WorldController.Instance.GetNodesNearPlayer(this.transform, node));
+        }
+    }
+
     void OnTriggerStay(Collider other)
     {
         IslandTile island = other.gameObject.GetComponent<IslandTile>(); 
