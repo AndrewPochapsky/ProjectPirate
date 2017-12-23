@@ -7,24 +7,35 @@ public class EnemyManager : MonoBehaviour {
 
 	float enemySpawnChance = 0.2f;
 	int enemyAmount = 0;
-	int maxEnemyAmount = 3;
+	int maxEnemyAmount = 100;
 
+	/// <summary>
+	/// Awake is called when the script instance is being loaded.
+	/// </summary>
+	void Awake()
+	{
+		
+	}
 
 	// Use this for initialization
 	void Start () {
 		player = GameObject.FindObjectOfType<Player>();
-		player.OnNewTileEnteredEvent += SpawnEnemies;
+        player.OnNewTileEnteredEvent += SpawnEnemies;
 	}
 
 	private void SpawnEnemies(List<BaseNode> nodes)
 	{
+		//TODO: add check to prevent multiple enemies on a single tile
 		foreach(BaseNode node in nodes)
 		{
-			float f = Random.Range(0, 1);
+			float f = Random.Range(0f, 1f);
 			if(f <= enemySpawnChance && enemyAmount < maxEnemyAmount)
 			{
 				//spawn enemy at node
 				enemyAmount++;
+				GameObject obj = Instantiate(Resources.Load("Enemy"), new Vector3(node.transform.position.x, 60, node.transform.position.z), Quaternion.identity) as GameObject;
+				obj.transform.SetParent(node.transform);
+
 			}
 		}
 	}

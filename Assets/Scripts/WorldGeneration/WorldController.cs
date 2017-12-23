@@ -115,28 +115,40 @@ public class WorldController : MonoBehaviour {
     public List<BaseNode> GetNodesNearPlayer(Transform player, BaseNode node)
     {
         List<BaseNode> nodes = new List<BaseNode>();
+
+        List<BaseNode> tempNodes = new List<BaseNode>();
         
         //Add nodes adjacent to the current node
         //Add those nodes to the list
         //Then loop through the adjacent nodes of the ones currently in list
         // and add them to the list if they are not duplicates
-        foreach(Node n in node.Adjacents)
+        foreach(BaseNode n in node.Adjacents)
         {
             IslandTile island = node.transform.GetChild(0).GetComponent<IslandTile>();
             if(island == null)
                 nodes.Add(node);
         }
 
-        foreach(var n in nodes)
+        foreach(BaseNode n in nodes)
         {
-            foreach(var adjNode in n.Adjacents)
-            {
-                IslandTile island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
-                if(!nodes.Contains(adjNode) && island == null && adjNode != node)
+            foreach(BaseNode adjNode in n.Adjacents)
+            {   
+                IslandTile island = null;
+                if(adjNode.transform.childCount > 0)
                 {
-                    nodes.Add(adjNode);
+                    island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
+                }
+                if(!nodes.Contains(adjNode) && island == null && adjNode != node && !tempNodes.Contains(adjNode))
+                {
+                    //nodes.Add(adjNode);
+                    tempNodes.Add(adjNode);
                 }
             }
+        }
+
+        foreach(var n in tempNodes)
+        {
+            nodes.Add(n);
         }
 
         return nodes;

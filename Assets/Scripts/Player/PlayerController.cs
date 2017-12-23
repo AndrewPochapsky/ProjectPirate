@@ -31,9 +31,8 @@ public class PlayerController : MovementController {
 		PassiveMovment(model);
 	}
 
-
 	//TODO fix bug with rotation and movement (A weird drifting effect) - Seems to be improved with using torque
-	protected override void Movement()
+	protected override void Movement(Transform target = null)
 	{
 		float translation = Input.GetAxisRaw("Vertical");
 		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;

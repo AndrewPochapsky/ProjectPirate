@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+//TODO: create a new subset of classes devoted to battle scene only
+//call them something link BattlePlayer, BattleEnemy, base class can be called BattleEntity
+//Also, refactor normal Entity class to be just for sea based entities
+
 public class Player : Entity {
     public delegate void OnInfoUpdated(int infamy, int gold);
     public event OnInfoUpdated OnInfoUpdatedEvent;
@@ -64,11 +68,14 @@ public class Player : Entity {
     /// <param name="other">The other Collider involved in this collision.</param>
     void OnTriggerEnter(Collider other)
     {
-        Node node = other.transform.GetComponentInParent<Node>();
+        BaseNode node = other.transform.GetComponentInParent<BaseNode>();
         if (node != null)
         {
-            //Set current node to the one the player is in
-           OnNewTileEnteredEvent(WorldController.Instance.GetNodesNearPlayer(this.transform, node));
+            print("calling event");
+
+            List<BaseNode> nodes = WorldController.Instance.GetNodesNearPlayer(this.transform, node);
+
+            OnNewTileEnteredEvent(nodes);
         }
     }
 

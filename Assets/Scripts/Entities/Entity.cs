@@ -45,6 +45,9 @@ public class Entity : MonoBehaviour {
         HandleMoving();
     }
 
+    /// <summary>
+    /// Movement for grid
+    /// </summary>
     private void HandleMoving()
     {
         if (nextLocation != null && ReachedNode(nextLocation))
@@ -98,7 +101,7 @@ public class Entity : MonoBehaviour {
     }
 
     /// <summary>
-    /// Moves this to specified location
+    /// Moves this to specified location on a grid
     /// </summary>
     /// <param name="location">Location to move to</param>
     private void MoveToLocation(Node location)
