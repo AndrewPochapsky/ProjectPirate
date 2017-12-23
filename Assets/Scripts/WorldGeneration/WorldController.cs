@@ -132,7 +132,7 @@ public class WorldController : MonoBehaviour {
             foreach(var adjNode in n.Adjacents)
             {
                 IslandTile island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
-                if(!nodes.Contains(adjNode) && island == null)
+                if(!nodes.Contains(adjNode) && island == null && adjNode != node)
                 {
                     nodes.Add(adjNode);
                 }

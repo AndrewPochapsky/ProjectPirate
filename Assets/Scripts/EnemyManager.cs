@@ -6,6 +6,9 @@ public class EnemyManager : MonoBehaviour {
 	Player player;
 
 	float enemySpawnChance = 0.2f;
+	int enemyAmount = 0;
+	int maxEnemyAmount = 3;
+
 
 	// Use this for initialization
 	void Start () {
@@ -18,9 +21,10 @@ public class EnemyManager : MonoBehaviour {
 		foreach(BaseNode node in nodes)
 		{
 			float f = Random.Range(0, 1);
-			if(f <= enemySpawnChance)
+			if(f <= enemySpawnChance && enemyAmount < maxEnemyAmount)
 			{
 				//spawn enemy at node
+				enemyAmount++;
 			}
 		}
 	}
