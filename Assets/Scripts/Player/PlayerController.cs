@@ -17,7 +17,8 @@ public class PlayerController : MovementController {
 	}*/
 
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
+		base.Start();
 		SideTiltAmount = 10;
 		FrontTiltAmount = 8;
 		model = transform.GetChild(0);

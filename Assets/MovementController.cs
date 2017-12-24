@@ -22,7 +22,7 @@ public class MovementController : MonoBehaviour {
 	}
 
 	// Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		surfaceModifier = FindObjectOfType<OceanTile>().GetComponent<Renderer>().material.GetFloat("_OceanWaveModifier");
 	}
 	
@@ -53,7 +53,7 @@ public class MovementController : MonoBehaviour {
     /// 
     /// Bobbing up and down, tilting side to side
     /// </summary>
-    protected void PassiveMovment(Transform _model = null)
+    protected virtual void PassiveMovment(Transform _model = null)
     {
         Vector3 velocity = Vector3.zero;
         Vector3 bobbingMotion = new Vector3(transform.position.x,
