@@ -79,7 +79,7 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
-    public void GenerateAttackButtons(Entity player)
+    public void GenerateAttackButtons(BattleEntity player)
     {
         attackButtons = new Button[player.Attacks.Count];
         for(int i = 0; i < player.Attacks.Count; i++)
@@ -181,7 +181,7 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
-    private Button GenerateButton(RectTransform parent, Attack attack, Entity player)
+    private Button GenerateButton(RectTransform parent, Attack attack, BattleEntity player)
     {
         GameObject button = (GameObject)Instantiate(buttonPrefab);
         button.transform.SetParent(parent, false);
@@ -195,7 +195,7 @@ public class BattleSystemUI : MonoBehaviour {
         return button.GetComponent<Button>();
     }
 
-    private void OnAttackButtonClicked(Attack attack, Button button, Entity player)
+    private void OnAttackButtonClicked(Attack attack, Button button, BattleEntity player)
     {
         if(currentPressedAttackButton == null)
         {

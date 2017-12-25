@@ -12,7 +12,7 @@ public class HealingConsumable : Consumable
         HealingValue = healingValue;
     }
 
-    public override void Consume(Entity target)
+    public override void Consume(BattleEntity target)
     {
         target.ModifyHealth(HealingValue);
     }

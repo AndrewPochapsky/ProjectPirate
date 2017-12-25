@@ -89,10 +89,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4772302624612942}
   - component: {fileID: 114122371078352362}
-  - component: {fileID: 114851209126601692}
   - component: {fileID: 114369394889149896}
   - component: {fileID: 65018566972342324}
   - component: {fileID: 114597610268129066}
+  - component: {fileID: 114131809619616500}
   m_Layer: 0
   m_Name: IslandTile
   m_TagString: Untagged
@@ -207,6 +207,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshObjects: []
+--- !u!114 &114131809619616500
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1789851191812744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d9997bdf6cb78146a13e4f6714ee8b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  islandData: {fileID: 11400000, guid: 961ffff102cf42e42a7451bceab9abd8, type: 2}
 --- !u!114 &114369348374582872
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -477,18 +489,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9403ab0a66c512c4f957004e68a5336e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114851209126601692
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1789851191812744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d9997bdf6cb78146a13e4f6714ee8b3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  islandData: {fileID: 11400000, guid: 961ffff102cf42e42a7451bceab9abd8, type: 2}
 --- !u!222 &222153308282980768
 CanvasRenderer:
   m_ObjectHideFlags: 1

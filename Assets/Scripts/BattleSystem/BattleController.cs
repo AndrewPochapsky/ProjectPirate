@@ -13,7 +13,7 @@ public class BattleController : MonoBehaviour {
     public delegate void OnPlayerInfoChanged(int? maxHealth = null, int? currentHealth = null, string canMove = null);
     public event OnPlayerInfoChanged OnPlayerInfoChangedEvent;
 
-    public delegate void OnEnemyTurn(List<Entity> targets);
+    public delegate void OnEnemyTurn(List<BattleEntity> targets);
     public event OnEnemyTurn OnEnemyTurnEvent;
 
     public enum Turn { Player, Enemy }
@@ -30,7 +30,7 @@ public class BattleController : MonoBehaviour {
     const int width = 10;
     const int height = 10;
 
-    List<Entity> friendlies;
+    List<BattleEntity> friendlies;
 
     List<Enemy> enemies;
 
@@ -58,7 +58,7 @@ public class BattleController : MonoBehaviour {
 
     private void Awake()
     {
-        friendlies = new List<Entity>();
+        friendlies = new List<BattleEntity>();
         enemies = new List<Enemy>();
 
         //Colours:
@@ -85,8 +85,8 @@ public class BattleController : MonoBehaviour {
         index = rnd.Next(Nodes.Count);
         Node enemyStartingLocation = Nodes[index];
 
-        friendlies.Add(SetupEntity(nameof(Player), playerStartingLocation.transform));
-        enemies.Add(SetupEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
+        friendlies.Add(SetupBattleEntity(nameof(Player), playerStartingLocation.transform));
+        enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
@@ -133,7 +133,7 @@ public class BattleController : MonoBehaviour {
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
-                        Entity entity = raycastObject.GetComponent<Entity>();
+                        BattleEntity entity = raycastObject.GetComponent<BattleEntity>();
                         //print("Attacking: " + entity.name);
                         Attack.AttackTarget(lastSelectedAttack, entity);
                         //End turn once attacked
@@ -165,7 +165,7 @@ public class BattleController : MonoBehaviour {
     /// <param name="nodes"></param>
     private void OnPathUpdated(List<Node> nodes)
     {
-        Entity entity = friendlies[0].GetComponent<Entity>();
+        BattleEntity entity = friendlies[0];
         if (!entity.IsMoving && canMove && Input.GetMouseButtonDown(0))
         {
             entity.SetPathNodes(nodes);
@@ -220,14 +220,14 @@ public class BattleController : MonoBehaviour {
     /// </summary>
     /// <param name="parent">The node parent</param>
     /// <returns>The created player</returns>
-    private Entity SetupEntity(string type, Transform parent)
+    private BattleEntity SetupBattleEntity(string type, Transform parent)
     {
         GameObject obj = Instantiate(Resources.Load(type), Vector3.zero, Quaternion.identity) as GameObject;
         obj.transform.localScale = new Vector3(battleTileSize, battleTileSize, battleTileSize);
         obj.transform.SetParent(parent);
         obj.transform.localPosition = new Vector3(0, battleTileSize / 2, 0);
 
-        Entity entity = obj.GetComponent<Entity>();
+        BattleEntity entity = obj.GetComponent<BattleEntity>();
         entity.RefreshParent();
 
         return entity;

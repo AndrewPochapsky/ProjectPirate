@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Enemy : Entity {
+public class Enemy : BattleEntity {
 
     /// <summary>
     /// AI states
@@ -26,7 +26,7 @@ public class Enemy : Entity {
 
     Node node = null;
     Attack currentAttack = null;
-    Entity target = null;
+    BattleEntity target = null;
 
     protected override void Start()
     {
@@ -62,7 +62,7 @@ public class Enemy : Entity {
                     ResetScores();
                     //Do another action
                     print("Recursion");
-                    OnEnemyTurn(new List<Entity>() { target });
+                    OnEnemyTurn(new List<BattleEntity>() { target });
                 }
                
             }
@@ -73,7 +73,7 @@ public class Enemy : Entity {
     /// Logic to be executed on enemy turn
     /// </summary>
     /// <param name="targets">List of possible targets</param>
-    private void OnEnemyTurn(List<Entity> targets)
+    private void OnEnemyTurn(List<BattleEntity> targets)
     {
         target = GetTarget(targets);
 
@@ -179,7 +179,7 @@ public class Enemy : Entity {
     /// </summary>
     /// <param name="targets">List of entities</param>
     /// <returns>The chosen target</returns>
-    public Entity GetTarget(List<Entity> targets)
+    public BattleEntity GetTarget(List<BattleEntity> targets)
     {
         if(targets.Count == 1)//TODO choose targets when there are more than one
         {
@@ -194,7 +194,7 @@ public class Enemy : Entity {
     /// </summary>
     /// <param name="target">The target</param>
     /// <returns>The chosen attack</returns>
-    private Attack DetermineAttackScore(Entity target)
+    private Attack DetermineAttackScore(BattleEntity target)
     {
         this.RefreshParent();
         int distanceToTarget = Pathfinding.GetDistance(nodeParent, target.nodeParent);
@@ -313,7 +313,7 @@ public class Enemy : Entity {
         return selectedAbsoluteConsumable;
     }
 
-    private Node DetermineMoveScore(Entity target, bool canAttack, bool canConsume)
+    private Node DetermineMoveScore(BattleEntity target, bool canAttack, bool canConsume)
     {
         List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, Speed);
 

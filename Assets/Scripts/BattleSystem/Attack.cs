@@ -20,7 +20,7 @@ public class Attack {
     /// </summary>
     /// <param name="attack">The specified attack</param>
     /// <param name="target">The target</param>
-    public static void AttackTarget(Attack attack, Entity target)
+    public static void AttackTarget(Attack attack, BattleEntity target)
     {
         target.ModifyHealth((-1) * attack.Damage);
     }

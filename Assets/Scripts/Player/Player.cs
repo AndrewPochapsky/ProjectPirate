@@ -52,10 +52,8 @@ public class Player : Entity {
     /// Start is called on the frame when a script is enabled just before
     /// any of the Update methods is called the first time.
     /// </summary>
-    protected override void Start()
+    private void Start()
     {   
-        base.Start();
-        
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)

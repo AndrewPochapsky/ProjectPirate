@@ -8,6 +8,6 @@ public abstract class Consumable : ISellable{
     public int Amount { get; set; }
     public int SellPrice { get; protected set; }
 
-    public abstract void Consume(Entity target);
+    public abstract void Consume(BattleEntity target);
 
 }
