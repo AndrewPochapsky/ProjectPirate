@@ -87,7 +87,7 @@ public class IslandInteractionUI : MonoBehaviour
 
         assignCrewPanel = assignCrewContainer.GetChild(2).GetComponent<RectTransform>();
         //Generates the crew member buttons used for assigning tasks
-        foreach (CrewMember member in player.crew)
+        foreach (CrewMember member in player.data.Crew)
         {
             crewButtons.Add(GenerateCrewButton(assignCrewPanel, member));
         }
@@ -197,7 +197,7 @@ public class IslandInteractionUI : MonoBehaviour
 
 
         timers = new List<Timer>();
-        foreach(CrewMember member in player.crew)
+        foreach(CrewMember member in player.data.Crew)
         {   
             if(member.Task != null)
             {
@@ -371,7 +371,7 @@ public class IslandInteractionUI : MonoBehaviour
     {
         foreach (Button button in crewButtons)
         {
-            foreach (CrewMember member in player.crew)
+            foreach (CrewMember member in player.data.Crew)
             {
                 //If crew member's name matches that on the button - pretty bad way to do this
                 if (member.Name == button.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text)

@@ -42,7 +42,7 @@ public class Interaction  {
 
 	public static void UnAssignDuplicateTasks(CrewMember crewMember, Player player)
 	{
-		foreach(CrewMember member in player.crew)
+		foreach(CrewMember member in player.data.Crew)
 		{
 			if(crewMember.Name != member.Name && crewMember.Task == member.Task)
 			{

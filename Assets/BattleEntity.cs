@@ -7,11 +7,7 @@ public class BattleEntity : MonoBehaviour {
 	public delegate void OnEndTurn();
     public event OnEndTurn OnEndTurnEvent;
 
-    public int Speed { get; set; }
-    public int MaxHealth { get; set; }
-    public int CurrentHealth { get; set; }
-    public List<Attack> Attacks { get; set; }
-    public List<Consumable> Consumables { get; set; }
+    public EntityData data { get; set; }
 
     [HideInInspector]
     public bool canMove = true;
@@ -124,9 +120,9 @@ public class BattleEntity : MonoBehaviour {
 
     public void ModifyHealth(int value)
     {
-        CurrentHealth += value;
-        if (CurrentHealth > MaxHealth)
-            CurrentHealth = MaxHealth;
+        data.CurrentHealth += value;
+        if (data.CurrentHealth > data.MaxHealth)
+            data.CurrentHealth = data.MaxHealth;
     }
 
     protected void RaiseEndTurnEvent()

@@ -16,36 +16,28 @@ public class Player : Entity {
 
     public bool anchorDropped { get; private set; }
 
-    [HideInInspector]
-    public List<CrewMember> crew { get; private set; }
-
-    public List<ISellable> Inventory { get; private set; }
-
     CameraFollow cam;
 
     private void Awake()
     {
-        Attacks = new List<Attack>
-        {
-            new Attack("Basic Attack", 2, 3),
-            new Attack("Super Attack", 5, 4)
-        };
-
-        crew = new List<CrewMember>
-        {
-            new CrewMember("Dave"),
-            new CrewMember("Joe")
-        };
+        data = new EntityData();
+        
+        data.Attacks.Add(new Attack("Basic Attack", 2, 3));
+        data.Attacks.Add(new Attack("Super Attack", 5, 4));
+        
+        data.Crew.Add(new CrewMember("Joe"));
+        data.Crew.Add(new CrewMember("Dave"));
 
         //TODO: merge this list into inventory
-        Consumables = new List<Consumable>();
-        Speed = 4;
-        MaxHealth = 15;
-        CurrentHealth = MaxHealth;
-        Infamy = 0;
-        Gold = 0;
+        //Note: Requires editing the enemy AI thing
+        data.Consumables = new List<Consumable>();
+        data.Speed = 4;
+        data.MaxHealth = 15;
+        data.CurrentHealth = base.data.MaxHealth;
+        data.Infamy = 0;
+        data.Gold = 0;
 
-        Inventory = new List<ISellable>();
+       
     }
 
     /// <summary>
@@ -57,7 +49,7 @@ public class Player : Entity {
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)
-            OnInfoUpdatedEvent(Infamy, Gold);
+            OnInfoUpdatedEvent(base.data.Infamy, base.data.Gold);
     }
     
     /// <summary>
@@ -140,10 +132,10 @@ public class Player : Entity {
         ISellable existingResource = null;
         resource.Amount-=amount;
 
-        int containsIndex = Inventory.FindIndex(r => r.Name == resource.Name);
+        int containsIndex = data.Inventory.FindIndex(r => r.Name == resource.Name);
 
         if(containsIndex != -1)
-            existingResource = Inventory.Where(r => r.Name == resource.Name).First();
+            existingResource = data.Inventory.Where(r => r.Name == resource.Name).First();
             
         //Resource already in list
         if(existingResource != null)
@@ -155,7 +147,7 @@ public class Player : Entity {
         {
             Resource newResource = new Resource(resource);
             newResource.Amount = amount;
-            Inventory.Add(newResource);
+            data.Inventory.Add(newResource);
         }
     }
 
@@ -163,7 +155,7 @@ public class Player : Entity {
     public string FormattedInventory()
     {
         string s = "";
-        foreach(var item in Inventory)
+        foreach(var item in data.Inventory)
         {
             s += item.Name + "(" + item.Amount + ") ";
         }
