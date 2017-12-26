@@ -98,7 +98,7 @@ public class Enemy : BattleEntity {
                 if (currentAttack!= null && moveForAttack)//TODO remove the first condition
                 {
                     Node nodeToMoveTo = null;
-                    List<Node> movementRangeNodes = Pathfinding.GetRange(battleController.Nodes, nodeParent, (Speed));
+                    List<Node> movementRangeNodes = Pathfinding.GetRange(battleController.Nodes, nodeParent, (data.Speed));
 
                     int minDistance = int.MaxValue;
                     for (int i = 0; i < movementRangeNodes.Count; i++)
@@ -207,13 +207,13 @@ public class Enemy : BattleEntity {
         List<Attack> attacksInReadyRange = new List<Attack>();
         List<Attack> attacksInMovementRange = new List<Attack>();
 
-        foreach (Attack attack in Attacks)
+        foreach (Attack attack in data.Attacks)
         {
             int valueOne, valueTwo; 
             valueOne = valueTwo = (attack.Range - distanceToTarget);
 
             if (canMove)
-                valueTwo += Speed;
+                valueTwo += data.Speed;
 
             //entity is able to attack
             if (valueOne >= 0)
@@ -228,7 +228,7 @@ public class Enemy : BattleEntity {
             {
                 allAttacks.Add(attack);
                 attacksInMovementRange.Add(attack);
-                attackingScore += Speed;
+                attackingScore += data.Speed;
                 moveForAttack = true;
             }
         }
@@ -249,7 +249,7 @@ public class Enemy : BattleEntity {
         }
 
         //target can be killed in one hit
-        if (currentAttack != null && target.CurrentHealth <= currentAttack.Damage)
+        if (currentAttack != null && target.data.CurrentHealth <= currentAttack.Damage)
         {
             print("Setting attack score to max");
             attackingScore = 999;
@@ -272,17 +272,17 @@ public class Enemy : BattleEntity {
         Consumable selectedAbsoluteConsumable = null;
         HealingConsumable selectedHealingConsumable = null;
         //Seperate all current consumables into list
-        List<HealingConsumable> healingConsumables = Consumables.Where(c => c is HealingConsumable)
+        List<HealingConsumable> healingConsumables = data.Consumables.Where(c => c is HealingConsumable)
                                                                 .Select(c => c as HealingConsumable)
                                                                 .ToList();
         int healingScore = -1;
-        if (MaxHealth != CurrentHealth && healingConsumables.Count > 0)
+        if (data.MaxHealth != data.CurrentHealth && healingConsumables.Count > 0)
         {
             selectedHealingConsumable = healingConsumables[0];
-            healingScore = (MaxHealth - CurrentHealth) + selectedHealingConsumable.HealingValue;
+            healingScore = (data.MaxHealth - data.CurrentHealth) + selectedHealingConsumable.HealingValue;
             for (int i = 1; i < healingConsumables.Count; i++)
             {
-                int _value = (MaxHealth - CurrentHealth) + healingConsumables[i].HealingValue;
+                int _value = (data.MaxHealth - data.CurrentHealth) + healingConsumables[i].HealingValue;
                 if (_value < healingScore)
                 {
                     healingScore = _value;
@@ -293,7 +293,7 @@ public class Enemy : BattleEntity {
 
         if(selectedHealingConsumable != null)
         {
-            int healthDifference = MaxHealth - CurrentHealth;
+            int healthDifference = data. MaxHealth - data.CurrentHealth;
             print("Healing score: "+ healingScore + " health diff: "+healthDifference);
             //Potion would replenish all health
             if(selectedHealingConsumable.HealingValue == healthDifference)
@@ -315,7 +315,7 @@ public class Enemy : BattleEntity {
 
     private Node DetermineMoveScore(BattleEntity target, bool canAttack, bool canConsume)
     {
-        List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, Speed);
+        List<Node> movementRange = Pathfinding.GetRange(battleController.Nodes, nodeParent, data.Speed);
 
         Node node = null;
         if (!canMove)
@@ -337,7 +337,7 @@ public class Enemy : BattleEntity {
 
        
         int minDistance = int.MinValue; 
-        if(CurrentHealth <= MaxHealth/2 && canConsume)
+        if(data.CurrentHealth <= data.MaxHealth/2 && canConsume)
         {
             //Find node farthest from target but within range
             foreach(Node _node in movementRange)
@@ -353,12 +353,12 @@ public class Enemy : BattleEntity {
         }
 
         //Get highest range attack
-        Attack highestRangeAttack = Attacks[0];
-        for(int i = 1; i < Attacks.Count; i++)
+        Attack highestRangeAttack = data.Attacks[0];
+        for(int i = 1; i < data.Attacks.Count; i++)
         {
-            if(Attacks[i].Range > highestRangeAttack.Range)
+            if(data.Attacks[i].Range > highestRangeAttack.Range)
             {
-                highestRangeAttack = Attacks[i];
+                highestRangeAttack = data.Attacks[i];
             }
         }
 

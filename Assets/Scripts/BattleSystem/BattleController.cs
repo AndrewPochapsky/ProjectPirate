@@ -19,7 +19,6 @@ public class BattleController : MonoBehaviour {
     public enum Turn { Player, Enemy }
     public Turn CurrentTurn { get; private set; } = Turn.Player;
 
-    TileGenerator tileGenerator;
     BattleSystemUI uiController;
 
     [SerializeField]
@@ -58,25 +57,28 @@ public class BattleController : MonoBehaviour {
 
     private void Awake()
     {
+        uiController = GetComponent<BattleSystemUI>();
+
         friendlies = new List<BattleEntity>();
         enemies = new List<Enemy>();
+
+        BattleScriptableObject battleData = Resources.Load<BattleScriptableObject>("Data/BattleData");
+
+        print("Value: " + battleData.Friendlies[0].MaxHealth);
 
         //Colours:
         pathColour = Color.grey;
         movementRangeColour = new Color32(183, 183, 183, 1);
 
-        uiController = FindObjectOfType<BattleSystemUI>();
 
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
-        tileGenerator = FindObjectOfType<TileGenerator>();
+        //tileGenerator = FindObjectOfType<TileGenerator>();
 
         //Nodes = Nodes.Select(n => n as Node).ToList();
 
-        Nodes = tileGenerator.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
-        tileGenerator.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
-
-        print("here");
+        Nodes = TileGenerator.Instance.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
+        TileGenerator.Instance.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         //TODO remove this, IN
         System.Random rnd = new System.Random();
@@ -85,25 +87,27 @@ public class BattleController : MonoBehaviour {
         index = rnd.Next(Nodes.Count);
         Node enemyStartingLocation = Nodes[index];
 
-        friendlies.Add(SetupBattleEntity(nameof(Player), playerStartingLocation.transform));
-        enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
+        //friendlies.Add(SetupBattleEntity(nameof(Player), playerStartingLocation.transform));
+        //enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
-        friendlies[0].OnEndTurnEvent += OnEndTurn;
-        enemies[0].OnEndTurnEvent += OnEndTurn;
+        //TODO: not sure if this line is necessary
+        //friendlies[0].OnEndTurnEvent += OnEndTurn;
 
-        playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
+        //enemies[0].OnEndTurnEvent += OnEndTurn;
+
+        //playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
 
         //Generate the UI
         uiController.CreateGrid(width, height, battleTileSize);
-        uiController.GenerateAttackButtons(friendlies[0]);
+        //uiController.GenerateAttackButtons(friendlies[0]);
     }
 
     private void Start()
     {
         OnTurnValueChangedEvent(CurrentTurn);
-        OnPlayerInfoChangedEvent(friendlies[0].MaxHealth, friendlies[0].CurrentHealth, canMove.ToString());
+        //OnPlayerInfoChangedEvent(friendlies[0].data.MaxHealth, friendlies[0].data.CurrentHealth, canMove.ToString());
         /*if(CurrentTurn == Turn.Enemy)
         {
             OnEnemyTurnEvent(friendlies);
@@ -246,8 +250,8 @@ public class BattleController : MonoBehaviour {
             canDisplayPathTiles = true;
             canMove = true;
 
-            playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].Speed);
-            OnPlayerInfoChangedEvent(friendlies[0].MaxHealth, friendlies[0].CurrentHealth, canMove.ToString());
+            playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
+            OnPlayerInfoChangedEvent(friendlies[0].data.MaxHealth, friendlies[0].data.CurrentHealth, canMove.ToString());
             CurrentTurn = Turn.Player;
         }
         else

@@ -75,6 +75,12 @@ public class WorldController : MonoBehaviour {
     private void Start()
     {
         World.Instance.gameObject.SetActive(true);
+
+        //TODO: remove, is temporary
+        BattleScriptableObject data = Resources.Load<BattleScriptableObject>("Data/BattleData");
+        var x = new EntityData();
+        x.MaxHealth = 999;
+        data.Friendlies.Add(x);
     }
 
     /// <summary>

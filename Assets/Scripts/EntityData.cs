@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class EntityData {
 	public int Speed { get; set; }
     public int MaxHealth { get; set; }

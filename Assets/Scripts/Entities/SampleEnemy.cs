@@ -6,17 +6,18 @@ public class SampleEnemy : Enemy {
 
     private void Awake()
     {
-        Speed = 3;
-        MaxHealth = 10;
-        CurrentHealth = MaxHealth;
+        data = new EntityData();
+        data.Speed = 3;
+        data.MaxHealth = 10;
+        data.CurrentHealth = data.MaxHealth;
 
-        Attacks = new List<Attack>
+        data.Attacks = new List<Attack>
         {
             new Attack("Basic Attack", 2, 4),
             //new Attack("Super Attack", 3, 4)
         };
 
-        Consumables = new List<Consumable>
+        data.Consumables = new List<Consumable>
         {
             new HealingConsumable("Basic Potion", 3),
             new HealingConsumable("Super Potion", 6)

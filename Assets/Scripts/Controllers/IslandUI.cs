@@ -44,6 +44,7 @@ public class IslandUI : MonoBehaviour {
 
 	private void CheckIfPlayerInRange()
 	{
-		canvas.gameObject.SetActive(Vector3.Distance(player.position, transform.position) <= viewingRange);
+		if(this != null && player != null)
+			canvas.gameObject.SetActive(Vector3.Distance(player.position, transform.position) <= viewingRange);
 	}
 }
