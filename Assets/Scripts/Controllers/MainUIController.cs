@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 //TODO: try to clean this class up a bit :/
 public class MainUIController : MonoBehaviour {
@@ -30,10 +31,11 @@ public class MainUIController : MonoBehaviour {
     private Transform worldUIContainer;
 
 	[SerializeField]
-	private CanvasGroup islandUICanvasGroup;
+	private CanvasGroup islandUICanvasGroup, panelCanvasGroup;
 
-	[HideInInspector]
-	public bool fadingIn = false;
+	public bool fadingInIslandUI { get; set; }= false;
+    public bool fadingInPanel { get; set; } = false;
+	public string scene { get; set; } = null;
 
 	private float fadeInModifier = 1.5f;
 	private float fadeOutModifier = 2f;
@@ -67,15 +69,10 @@ public class MainUIController : MonoBehaviour {
 		{
 			interactText.enabled = false;
 		}	
+		//TODO: refactor all of the fade operations into another class
+		FadeCanvasGroup(fadeIn: fadingInIslandUI, canvasGroup: islandUICanvasGroup);
 
-		if(fadingIn)
-		{
-			FadeIslandUI(fadeIn: true);
-		}
-		else
-		{
-			FadeIslandUI(fadeIn: false);
-		}
+		FadeCanvasGroup(fadeIn: fadingInPanel, canvasGroup: panelCanvasGroup, sceneToLoad: scene);
 	}
 
 	private void SetUI(int infamy, int gold)
@@ -90,15 +87,18 @@ public class MainUIController : MonoBehaviour {
         worldUIContainer.gameObject.SetActive(value);
     }
 
-	public void FadeIslandUI(bool fadeIn)
+	public void FadeCanvasGroup(bool fadeIn, CanvasGroup canvasGroup, string sceneToLoad = null)
 	{
 		if(fadeIn)
 		{
-			islandUICanvasGroup.alpha += Time.fixedDeltaTime * fadeInModifier;
+			canvasGroup.alpha += Time.fixedDeltaTime * fadeInModifier;
+			if(sceneToLoad != null && canvasGroup.alpha == 1)
+				WorldController.Instance.LoadScene(sceneToLoad);
+				
 		}
 		else	
 		{
-			islandUICanvasGroup.alpha -= Time.fixedDeltaTime * fadeOutModifier;
+			canvasGroup.alpha -= Time.fixedDeltaTime * fadeOutModifier;
 		}
 	}
 

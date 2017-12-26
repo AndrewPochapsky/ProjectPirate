@@ -73,7 +73,10 @@ public class Player : Entity {
             battleData.ResetData();
             battleData.Friendlies.Add(this.data);
             battleData.Enemies.Add(enemy.data);
-            WorldController.Instance.LoadScene("Battle");
+            //MainUIController.Instance.FadeCanvasGroup(fadeIn: false, );
+            MainUIController.Instance.fadingInPanel = true;
+            MainUIController.Instance.scene = "Battle";
+            //WorldController.Instance.LoadScene("Battle");
         }
     }
 
@@ -94,7 +97,7 @@ public class Player : Entity {
                 anchorDropped = true;
                 //MainUIController.Instance.ToggleWorldUI(false);
                 MainUIController.Instance.islandInteractionUI.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
-                MainUIController.Instance.fadingIn = true;
+                MainUIController.Instance.fadingInIslandUI = true;
                 
                 //TODO: Don't do this
                 cam.zoomOffset = cam.zoomValue;

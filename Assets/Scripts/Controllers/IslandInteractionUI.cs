@@ -191,7 +191,7 @@ public class IslandInteractionUI : MonoBehaviour
         //islandUIContainer.gameObject.SetActive(false);
 		//MainUIController.Instance.ToggleWorldUI(true);
         
-        MainUIController.Instance.fadingIn = false;
+        MainUIController.Instance.fadingInIslandUI = false;
 
         player.RaiseAnchor();
 

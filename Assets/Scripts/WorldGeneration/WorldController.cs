@@ -75,13 +75,6 @@ public class WorldController : MonoBehaviour {
     private void Start()
     {
         World.Instance.gameObject.SetActive(true);
-
-        //TODO: remove, is temporary
-        //BattleScriptableObject data = Resources.Load<BattleScriptableObject>("Data/BattleData");
-        //var x = new EntityData();
-        //x = GameObject.FindObjectOfType<Player>().data;
-        //data.Friendlies.Add(x);
-        //data.Enemies.Add(new EntityData());
     }
 
     /// <summary>
@@ -109,19 +102,9 @@ public class WorldController : MonoBehaviour {
         return chunks;
     }
 
-    private void Update()
-    {
-        //TODO: remove this
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            SceneManager.LoadScene(1);
-            World.Instance.gameObject.SetActive(false);
-        }
-    }
-
     public void LoadScene(string scene)
     {
-        SceneManager.LoadSceneAsync(scene);
+        SceneManager.LoadScene(scene);
         World.Instance.gameObject.SetActive(false);
     }
 
