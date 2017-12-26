@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Enemy : BattleEntity {
+public class BattleEnemy : BattleEntity {
 
     /// <summary>
     /// AI states

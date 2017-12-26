@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 //TODO: create a new subset of classes devoted to battle scene only
 //call them something link BattlePlayer, BattleEnemy, base class can be called BattleEntity
@@ -59,13 +60,20 @@ public class Player : Entity {
     void OnTriggerEnter(Collider other)
     {
         BaseNode node = other.transform.GetComponentInParent<BaseNode>();
+        Enemy enemy = other.GetComponent<Enemy>();
         if (node != null)
         {
-            print("calling event");
-
             List<BaseNode> nodes = WorldController.Instance.GetNodesNearPlayer(this.transform, node);
-
             OnNewTileEnteredEvent(nodes);
+        }
+        
+        if(enemy != null)
+        {
+            BattleScriptableObject battleData = Resources.Load<BattleScriptableObject>("Data/BattleData");
+            battleData.ResetData();
+            battleData.Friendlies.Add(this.data);
+            battleData.Enemies.Add(enemy.data);
+            WorldController.Instance.LoadScene("Battle");
         }
     }
 

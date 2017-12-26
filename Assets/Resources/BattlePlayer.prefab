@@ -22,10 +22,10 @@ GameObject:
   - component: {fileID: 33603984073570904}
   - component: {fileID: 23306786391358922}
   - component: {fileID: 54299153332843718}
-  - component: {fileID: 114648322940991154}
   - component: {fileID: 65996147661691950}
+  - component: {fileID: 114480576384013524}
   m_Layer: 2
-  m_Name: Player
+  m_Name: BattlePlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114648322940991154
+--- !u!114 &114480576384013524
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -118,8 +118,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1442582605181028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc44370cc85e1a94491d04364f24f15e, type: 3}
+  m_Script: {fileID: 11500000, guid: aa4742aae2419d749817dee191cfdf3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canMove: 1
-  nodeParent: {fileID: 0}

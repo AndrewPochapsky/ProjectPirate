@@ -31,7 +31,7 @@ public class BattleController : MonoBehaviour {
 
     List<BattleEntity> friendlies;
 
-    List<Enemy> enemies;
+    List<BattleEnemy> enemies;
 
     Transform parent;
 
@@ -57,14 +57,15 @@ public class BattleController : MonoBehaviour {
 
     private void Awake()
     {
+        //Doesnt require singleton patttern since this is the only time it is being accessed
         uiController = GetComponent<BattleSystemUI>();
 
         friendlies = new List<BattleEntity>();
-        enemies = new List<Enemy>();
+        enemies = new List<BattleEnemy>();
 
         BattleScriptableObject battleData = Resources.Load<BattleScriptableObject>("Data/BattleData");
 
-        print("Value: " + battleData.Friendlies[0].MaxHealth);
+        //print("Value: " + battleData.Friendlies[0].MaxHealth);
 
         //Colours:
         pathColour = Color.grey;
@@ -73,11 +74,10 @@ public class BattleController : MonoBehaviour {
 
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
-        //tileGenerator = FindObjectOfType<TileGenerator>();
 
-        //Nodes = Nodes.Select(n => n as Node).ToList();
 
         Nodes = TileGenerator.Instance.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
+        //TODO: generate ocean tiles instad of grass tiles
         TileGenerator.Instance.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
         //TODO remove this, IN
@@ -86,28 +86,38 @@ public class BattleController : MonoBehaviour {
         Node playerStartingLocation = Nodes[index];
         index = rnd.Next(Nodes.Count);
         Node enemyStartingLocation = Nodes[index];
-
-        //friendlies.Add(SetupBattleEntity(nameof(Player), playerStartingLocation.transform));
-        //enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform) as Enemy);        
+        
+        for(int i = 0; i < battleData.Friendlies.Count; i++)
+        {
+            friendlies.Add(SetupBattleEntity(nameof(BattlePlayer), playerStartingLocation.transform, battleData.Friendlies[i]));
+        }
+        
+        for (int i = 0; i < battleData.Enemies.Count; i++)
+        {
+            enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform, battleData.Enemies[i]) as BattleEnemy);
+        }
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
         //TODO: not sure if this line is necessary
-        //friendlies[0].OnEndTurnEvent += OnEndTurn;
+        friendlies[0].OnEndTurnEvent += OnEndTurn;
 
-        //enemies[0].OnEndTurnEvent += OnEndTurn;
+        for(int i = 0; i < enemies.Count; i++)
+        {
+            enemies[i].OnEndTurnEvent += OnEndTurn;
+        }
 
-        //playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
+        playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
 
         //Generate the UI
         uiController.CreateGrid(width, height, battleTileSize);
-        //uiController.GenerateAttackButtons(friendlies[0]);
+        uiController.GenerateAttackButtons(friendlies[0]);
     }
 
     private void Start()
     {
         OnTurnValueChangedEvent(CurrentTurn);
-        //OnPlayerInfoChangedEvent(friendlies[0].data.MaxHealth, friendlies[0].data.CurrentHealth, canMove.ToString());
+        OnPlayerInfoChangedEvent(friendlies[0].data.MaxHealth, friendlies[0].data.CurrentHealth, canMove.ToString());
         /*if(CurrentTurn == Turn.Enemy)
         {
             OnEnemyTurnEvent(friendlies);
@@ -196,7 +206,7 @@ public class BattleController : MonoBehaviour {
         if(hit.collider != null && !EventSystem.current.IsPointerOverGameObject())
         {
             Tile tile = hit.collider.gameObject.GetComponent<Tile>();
-            Enemy enemy = hit.collider.gameObject.GetComponent<Enemy>();
+            BattleEnemy enemy = hit.collider.gameObject.GetComponent<BattleEnemy>();
 
             //For movement
             if (tile != null && !Attacking && movementRange.Contains(GetTargetNode(tile)))
@@ -224,7 +234,7 @@ public class BattleController : MonoBehaviour {
     /// </summary>
     /// <param name="parent">The node parent</param>
     /// <returns>The created player</returns>
-    private BattleEntity SetupBattleEntity(string type, Transform parent)
+    private BattleEntity SetupBattleEntity(string type, Transform parent, EntityData data)
     {
         GameObject obj = Instantiate(Resources.Load(type), Vector3.zero, Quaternion.identity) as GameObject;
         obj.transform.localScale = new Vector3(battleTileSize, battleTileSize, battleTileSize);
@@ -232,6 +242,7 @@ public class BattleController : MonoBehaviour {
         obj.transform.localPosition = new Vector3(0, battleTileSize / 2, 0);
 
         BattleEntity entity = obj.GetComponent<BattleEntity>();
+        entity.data = data;
         entity.RefreshParent();
 
         return entity;
@@ -242,7 +253,7 @@ public class BattleController : MonoBehaviour {
         //print("Ending Turn...");
         if (CurrentTurn == Turn.Enemy)
         {
-            foreach(Enemy enemy in enemies)
+            foreach(BattleEnemy enemy in enemies)
             {
                 enemy.ResetScores();
             }

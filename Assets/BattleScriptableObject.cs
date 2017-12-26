@@ -6,4 +6,10 @@ using UnityEngine;
 public class BattleScriptableObject : ScriptableObject {
 	public List<EntityData> Friendlies = new List<EntityData>();
 	public List<EntityData> Enemies = new List<EntityData>();
+
+	public void ResetData()
+	{
+		Friendlies = new List<EntityData>();
+		Enemies = new List<EntityData>();
+	}
 }

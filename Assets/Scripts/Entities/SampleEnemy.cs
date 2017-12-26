@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SampleEnemy : Enemy {
+public class SampleEnemy : BattleEnemy {
 
     private void Awake()
     {
@@ -14,7 +14,7 @@ public class SampleEnemy : Enemy {
         data.Attacks = new List<Attack>
         {
             new Attack("Basic Attack", 2, 4),
-            //new Attack("Super Attack", 3, 4)
+            new Attack("Super Attack", 3, 4)
         };
 
         data.Consumables = new List<Consumable>

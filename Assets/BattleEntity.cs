@@ -25,6 +25,7 @@ public class BattleEntity : MonoBehaviour {
 
     protected virtual void Start()
     {
+        //data = new EntityData();
         pathNodes = new List<Node>();
         nodeParent = GetComponentInParent<Node>();
         movementSpeed = 200 * Time.deltaTime;

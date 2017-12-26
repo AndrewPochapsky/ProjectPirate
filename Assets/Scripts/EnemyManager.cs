@@ -29,7 +29,12 @@ public class EnemyManager : MonoBehaviour {
 		foreach(BaseNode node in nodes)
 		{
 			float f = Random.Range(0f, 1f);
-			if(f <= enemySpawnChance && enemyAmount < maxEnemyAmount)
+			EnemyController existingEnemy = null;
+		
+			if(node.transform.childCount >= 2)
+				existingEnemy = node.transform.GetChild(1).GetComponent<EnemyController>();
+
+			if(f <= enemySpawnChance && enemyAmount < maxEnemyAmount && existingEnemy == null)
 			{
 				//spawn enemy at node
 				enemyAmount++;

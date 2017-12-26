@@ -77,10 +77,11 @@ public class WorldController : MonoBehaviour {
         World.Instance.gameObject.SetActive(true);
 
         //TODO: remove, is temporary
-        BattleScriptableObject data = Resources.Load<BattleScriptableObject>("Data/BattleData");
-        var x = new EntityData();
-        x.MaxHealth = 999;
-        data.Friendlies.Add(x);
+        //BattleScriptableObject data = Resources.Load<BattleScriptableObject>("Data/BattleData");
+        //var x = new EntityData();
+        //x = GameObject.FindObjectOfType<Player>().data;
+        //data.Friendlies.Add(x);
+        //data.Enemies.Add(new EntityData());
     }
 
     /// <summary>
@@ -116,6 +117,12 @@ public class WorldController : MonoBehaviour {
             SceneManager.LoadScene(1);
             World.Instance.gameObject.SetActive(false);
         }
+    }
+
+    public void LoadScene(string scene)
+    {
+        SceneManager.LoadSceneAsync(scene);
+        World.Instance.gameObject.SetActive(false);
     }
 
     public List<BaseNode> GetNodesNearPlayer(Transform player, BaseNode node)
