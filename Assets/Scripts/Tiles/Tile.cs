@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(BoxCollider))]
-public abstract class Tile : MonoBehaviour {
+public class Tile : MonoBehaviour {
 
     protected Vector2 gridLocation;
 
@@ -19,12 +18,6 @@ public abstract class Tile : MonoBehaviour {
         if(SceneManager.GetActiveScene().name == "Battle")
             regularColour = _renderer.sharedMaterial.color;
     }
-
-    /// <summary>
-    /// Enables/Disables the object according to value
-    /// </summary>
-    /// <param name="value">If true, enable, if false, disable</param>
-    public abstract void Enable(bool value);
 
     public Vector2 GridLocation
     {

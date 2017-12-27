@@ -28,7 +28,7 @@ public class BattleEntity : MonoBehaviour {
         //data = new EntityData();
         pathNodes = new List<Node>();
         nodeParent = GetComponentInParent<Node>();
-        movementSpeed = 200 * Time.deltaTime;
+        movementSpeed = 200; //* Time.deltaTime;
     }
 
     protected virtual void Update()
@@ -99,7 +99,7 @@ public class BattleEntity : MonoBehaviour {
     {
         if (location != null && IsMoving)
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(location.transform.position.x,
-                transform.position.y, location.transform.position.z), movementSpeed);
+                transform.position.y, location.transform.position.z), movementSpeed * Time.deltaTime);
     }
 
     /// <summary>

@@ -10,12 +10,6 @@ public class OceanTile : Tile
         base.Awake();
         //_renderer.materials[0].SetFloat("_StartTime", Time.time);
     }
-
-    public override void Enable(bool value)
-    {
-        throw new NotImplementedException();
-    }
-
    
     void Update()
     {

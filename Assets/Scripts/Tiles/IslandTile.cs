@@ -56,11 +56,6 @@ public class IslandTile : Tile {
         islandUI.SetUI(info.Name, info.Visited);
     }
 
-    public override void Enable(bool value)
-    {
-
-    }
-
     /// <summary>
     /// Calls functions which generate island
     /// </summary>

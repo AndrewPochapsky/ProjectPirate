@@ -65,33 +65,28 @@ public class BattleController : MonoBehaviour {
 
         BattleScriptableObject battleData = Resources.Load<BattleScriptableObject>("Data/BattleData");
 
-        //print("Value: " + battleData.Friendlies[0].MaxHealth);
-
         //Colours:
         pathColour = Color.grey;
         movementRangeColour = new Color32(183, 183, 183, 1);
 
-
         //Generate the map
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
-
-
         Nodes = TileGenerator.Instance.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
-        //TODO: generate ocean tiles instad of grass tiles
-        TileGenerator.Instance.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
-
-        //TODO remove this, unless I do want random placement
-        System.Random rnd = new System.Random();
-        int index = rnd.Next(Nodes.Count);
-        Node playerStartingLocation = Nodes[index];
-        index = rnd.Next(Nodes.Count);
-        Node enemyStartingLocation = Nodes[index];
         
+        TileGenerator.Instance.GenerateTileMap("BattleOceanQuadTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
+
+        TileGenerator.Instance.GenerateTileMap("BattleOceanCubeTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent, isBase: true);
+
+        Node playerStartingLocation = Nodes.Where(n => n.location.x == width - 1 && n.location.y == 0).Single();
+        Node enemyStartingLocation = Nodes.Where(n => n.location.x == 0 && n.location.y == height - 1).Single();
+
+        //TODO: choose the player(friendly) location in this loop so each location is different
         for(int i = 0; i < battleData.Friendlies.Count; i++)
         {
             friendlies.Add(SetupBattleEntity(nameof(BattlePlayer), playerStartingLocation.transform, battleData.Friendlies[i]));
         }
         
+        //TODO: choose the enemy location in this loop so each location is different
         for (int i = 0; i < battleData.Enemies.Count; i++)
         {
             enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform, battleData.Enemies[i]) as BattleEnemy);

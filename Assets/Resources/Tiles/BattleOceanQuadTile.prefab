@@ -21,10 +21,10 @@ GameObject:
   - component: {fileID: 4235622957588254}
   - component: {fileID: 33072862761867452}
   - component: {fileID: 23477253272990324}
-  - component: {fileID: 65029961857771160}
-  - component: {fileID: 114946088296927238}
+  - component: {fileID: 65659936065382828}
+  - component: {fileID: 114134242907347218}
   m_Layer: 0
-  m_Name: GrassTile
+  m_Name: BattleOceanQuadTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -82,7 +82,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1100611280435862}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65029961857771160
+--- !u!65 &65659936065382828
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -94,7 +94,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.0000002, z: 6.123235e-17}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114946088296927238
+--- !u!114 &114134242907347218
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -102,6 +102,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1100611280435862}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7649f0002b653344982ececafdd13c63, type: 3}
+  m_Script: {fileID: 11500000, guid: 29389c3dff2aa474b88be8a34aa3c74e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

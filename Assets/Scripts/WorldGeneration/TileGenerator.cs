@@ -165,7 +165,7 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="parent">The parent</param>
     /// <param name="forIsland">True if forIsland</param>
     /// <returns>The created tile</returns>
-    private Tile AddAnyTile(string tileName, BaseNode node, int tileSize, Transform parent, int offset, bool forIsland = false, bool forBattle = false)
+    private Tile AddAnyTile(string tileName, BaseNode node, int tileSize, Transform parent, int offset, bool forIsland = false, bool forBattle = false, bool isBase = false)
     {
         Vector3 position = new Vector3(node.transform.position.x, node.transform.position.y + offset, node.transform.position.z);
 
@@ -180,8 +180,16 @@ public class TileGenerator : MonoBehaviour {
         }
         else
         {
-            obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
-            obj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            if(isBase)
+            {
+                obj.transform.localScale = new Vector3(tileSize, tileSize, tileSize);
+                obj.transform.localPosition = new Vector3(obj.transform.localPosition.x, (-tileSize / 2) - 1, obj.transform.localPosition.z);
+            }
+            else
+            {
+                obj.transform.localScale = new Vector3(tileSize, tileSize, 1);
+                obj.transform.localRotation = Quaternion.Euler(90, 0, 0);
+            } 
         }
 
 
@@ -201,12 +209,12 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileName">Tile name to create</param>
     /// <param name="removeNodes">If true nodes will be removed</param>
     /// <param name="tileSize">The tileSize</param>
-    public void GenerateTileMap(string tileName, List<Node> nodes, bool removeNodes, int tileSize, Transform parent)
+    public void GenerateTileMap(string tileName, List<Node> nodes, bool removeNodes, int tileSize, Transform parent, bool isBase = false)
     {
         print(nodes.Count);
         foreach(Node node in nodes)
         {
-            Tile createdTile = AddAnyTile(tileName, node, tileSize, parent, offset: 0, forBattle: true);
+            Tile createdTile = AddAnyTile(tileName, node, tileSize, parent, offset: 0, forBattle: true, isBase: isBase);
 
             if (removeNodes)
             {
