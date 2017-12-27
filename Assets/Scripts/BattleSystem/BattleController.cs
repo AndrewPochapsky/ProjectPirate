@@ -73,8 +73,10 @@ public class BattleController : MonoBehaviour {
         parent = GameObject.FindGameObjectWithTag("BattleZone").transform;
         Nodes = TileGenerator.Instance.AddNodes(width, height, battleTileSize, nodeType: nameof(Node)).Select(n => n as Node).ToList();
         
+        //Generate the actual tiles
         TileGenerator.Instance.GenerateTileMap("BattleOceanQuadTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
+        //Generate the cubes underneath the tiles
         TileGenerator.Instance.GenerateTileMap("BattleOceanCubeTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent, isBase: true);
 
         Node playerStartingLocation = Nodes.Where(n => n.location.x == width - 1 && n.location.y == 0).Single();
