@@ -80,7 +80,7 @@ public class BattleController : MonoBehaviour {
         //TODO: generate ocean tiles instad of grass tiles
         TileGenerator.Instance.GenerateTileMap("GrassTile", Nodes, removeNodes: false, tileSize: battleTileSize, parent: parent);
 
-        //TODO remove this, IN
+        //TODO remove this, unless I do want random placement
         System.Random rnd = new System.Random();
         int index = rnd.Next(Nodes.Count);
         Node playerStartingLocation = Nodes[index];

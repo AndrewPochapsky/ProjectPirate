@@ -37,8 +37,7 @@ public class MainUIController : MonoBehaviour {
     public bool fadingInPanel { get; set; } = false;
 	public string scene { get; set; } = null;
 
-	private float fadeInModifier = 1.5f;
-	private float fadeOutModifier = 2f;
+	FadeController fadeController;
 
 	// Use this for initialization
 	void Awake () {
@@ -47,6 +46,9 @@ public class MainUIController : MonoBehaviour {
 		}else{
 			Instance = this;
 		}
+
+		fadeController = new FadeController();
+
 		player = GameObject.FindObjectOfType<Player>();
 		islandInteractionUI = GetComponent<IslandInteractionUI>();
 		player.OnInfoUpdatedEvent += SetUI;
@@ -58,7 +60,7 @@ public class MainUIController : MonoBehaviour {
 	/// </summary>
 	void Update()
 	{
-		CheckIfIslandUIInteractable();
+		fadeController.CheckIfCanvasGroupInteractable(islandUICanvasGroup);
 
 		if(WorldController.Instance.currentIsland != null && !player.anchorDropped)
 		{
@@ -69,10 +71,10 @@ public class MainUIController : MonoBehaviour {
 		{
 			interactText.enabled = false;
 		}	
-		//TODO: refactor all of the fade operations into another class
-		FadeCanvasGroup(fadeIn: fadingInIslandUI, canvasGroup: islandUICanvasGroup);
+		//TODO: try to find a better solution than just calling this in update constantly
+		fadeController.FadeCanvasGroup(fadeIn: fadingInIslandUI, canvasGroup: islandUICanvasGroup);
 
-		FadeCanvasGroup(fadeIn: fadingInPanel, canvasGroup: panelCanvasGroup, sceneToLoad: scene);
+		fadeController.FadeCanvasGroup(fadeIn: fadingInPanel, canvasGroup: panelCanvasGroup, sceneToLoad: scene);
 	}
 
 	private void SetUI(int infamy, int gold)
@@ -86,26 +88,6 @@ public class MainUIController : MonoBehaviour {
     {
         worldUIContainer.gameObject.SetActive(value);
     }
-
-	public void FadeCanvasGroup(bool fadeIn, CanvasGroup canvasGroup, string sceneToLoad = null)
-	{
-		if(fadeIn)
-		{
-			canvasGroup.alpha += Time.fixedDeltaTime * fadeInModifier;
-			if(sceneToLoad != null && canvasGroup.alpha == 1)
-				WorldController.Instance.LoadScene(sceneToLoad);
-				
-		}
-		else	
-		{
-			canvasGroup.alpha -= Time.fixedDeltaTime * fadeOutModifier;
-		}
-	}
-
-	private void CheckIfIslandUIInteractable()
-	{
-		islandUICanvasGroup.interactable = islandUICanvasGroup.alpha == 1;
-		islandUICanvasGroup.blocksRaycasts = islandUICanvasGroup.alpha == 1;
-	}
+	
 }
 

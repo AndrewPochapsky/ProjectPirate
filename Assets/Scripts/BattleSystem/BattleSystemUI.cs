@@ -9,6 +9,9 @@ public class BattleSystemUI : MonoBehaviour {
     private enum ButtonType { Regular, Attack, Consumable };
 
     [SerializeField]
+    private CanvasGroup panel;
+
+    [SerializeField]
     private Text turnText, healthText, canMoveText;
 
     [SerializeField]
@@ -35,12 +38,14 @@ public class BattleSystemUI : MonoBehaviour {
 
     Color pressedColor = Color.gray;
     BattleController battleController;
+    FadeController fadeController;
 
     private void Awake()
     {
         battleController = FindObjectOfType<BattleController>();
         battleController.OnTurnValueChangedEvent += UpdateTurnUI;
         battleController.OnPlayerInfoChangedEvent += UpdatePlayerUI;
+        fadeController = new FadeController();
     }
 
     private void Update()
@@ -54,6 +59,8 @@ public class BattleSystemUI : MonoBehaviour {
                 battleController.Attacking = false;
             }
         }
+
+        fadeController.FadeCanvasGroup(false, panel);
     }
 
     private void UpdateTurnUI(BattleController.Turn turn)
