@@ -5,6 +5,26 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using UnityEngine.EventSystems;
 
+/*Battle rework idea:
+    You can assign crew to have a job on the ship
+    Possible Jobs:
+        -Steering
+        -Repairs
+        -Cannons
+    -How effective each action is depends on the skill level of the crew member
+    -This wont change enemy class too much, just need to do some assigning the the start
+    -Not a big deal since the same code will exist on the player to allow for auto assign
+    -This will also possibly eliminate the need for consumables as it seems kinda hard to implement them
+    at the moment
+
+    -The whole idea is somewhat similar to FTL but is not realtime
+    -Every turn you can assign crew to different tasks
+    -AI will probably not do this but we'll see 
+
+    -This rework also makes crew more valuable which is necessary since they dont do much at the moment
+    -I dont think that this will be done by the first playable demo but should be the goal for the final game
+*/
+
 public class BattleController : MonoBehaviour {
 
     public delegate void OnTurnValueChanged(Turn turn);
@@ -17,6 +37,8 @@ public class BattleController : MonoBehaviour {
     public event OnEnemyTurn OnEnemyTurnEvent;
 
     public enum Turn { Player, Enemy }
+    public enum BattleStatus { PlayerVic, EnemyVic, InProgress }
+
     public Turn CurrentTurn { get; private set; } = Turn.Player;
 
     BattleSystemUI uiController;
@@ -102,6 +124,12 @@ public class BattleController : MonoBehaviour {
         for(int i = 0; i < enemies.Count; i++)
         {
             enemies[i].OnEndTurnEvent += OnEndTurn;
+            enemies[i].OnEntityDeathEvent += OnEntityDeath;
+        }
+
+        for (int i = 0; i < friendlies.Count; i++)
+        {
+            friendlies[i].OnEntityDeathEvent += OnEntityDeath;
         }
 
         playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
@@ -241,7 +269,6 @@ public class BattleController : MonoBehaviour {
 
     public void OnEndTurn()
     {
-        //print("Ending Turn...");
         if (CurrentTurn == Turn.Enemy)
         {
             foreach(BattleEnemy enemy in enemies)
@@ -259,11 +286,63 @@ public class BattleController : MonoBehaviour {
         else
         {
             CurrentTurn = Turn.Enemy;
-            //friendlies[0].SetPathNodes(new List<Node>());
+            //This line is required or else a super weird bug happens
             canMove = false;
         }
         OnTurnValueChangedEvent(CurrentTurn);
     }
 
+    private void OnEntityDeath(BattleEntity entity)
+    {
+        BattleEnemy enemy = entity as BattleEnemy;
+        if(enemy != null)
+        {
+            enemies.Remove(enemy);
+        }
+        else
+        {
+            friendlies.Remove(entity);
+        }
+        Destroy(entity.gameObject);
+
+        BattleStatus status = CheckBattleStatus();
+        ProcessBattleStatus(status);
+    }
+
+    /// <summary>
+    /// Checks if player or enemy lost/won or if battle in progress
+    /// </summary>
+    /// <returns>BattleStatus value depending on verdict</returns>
+    private BattleStatus CheckBattleStatus()
+    {
+        if(friendlies.Count == 0)
+        {
+            return BattleStatus.EnemyVic;
+        }
+        else if(enemies.Count == 0)
+        {
+            return BattleStatus.PlayerVic;
+        }
+
+        return BattleStatus.InProgress;
+    }
+
+    private void ProcessBattleStatus(BattleStatus status)
+    {
+        switch(status)
+        {
+            case BattleStatus.InProgress:
+                print("Battle in progress");
+                return;
+            
+            case BattleStatus.PlayerVic:
+                print("Player is victorious!");
+                break;
+
+            case BattleStatus.EnemyVic:
+                print("Enemy is victorious!");
+                break;
+        }
+    }
 
 }

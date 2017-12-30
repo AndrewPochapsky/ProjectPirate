@@ -12,7 +12,7 @@ public class Enemy : Entity {
 	{
 		data = new EntityData();
 		data.Speed = 3;
-        data.MaxHealth = 10;
+        data.MaxHealth = 1;
         data.CurrentHealth = data.MaxHealth;
 
         data.Attacks = new List<Attack>

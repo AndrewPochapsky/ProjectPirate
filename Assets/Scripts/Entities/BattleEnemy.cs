@@ -142,6 +142,7 @@ public class BattleEnemy : BattleEntity {
                 //print("consuming");
                 consumable.Consume(this);
                 data.Consumables.Remove(consumable);
+                
                 print("Consuming "+consumable.Name);
                 //TODO allow selecting other targets(party members)
                 RaiseEndTurnEvent();

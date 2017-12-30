@@ -33,7 +33,7 @@ public class Player : Entity {
         //Note: Requires editing the enemy AI thing
         data.Consumables = new List<Consumable>();
         data.Speed = 4;
-        data.MaxHealth = 15;
+        data.MaxHealth = 1;
         data.CurrentHealth = base.data.MaxHealth;
         data.Infamy = 0;
         data.Gold = 0;

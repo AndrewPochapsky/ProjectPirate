@@ -7,6 +7,9 @@ public class BattleEntity : MonoBehaviour {
 	public delegate void OnEndTurn();
     public event OnEndTurn OnEndTurnEvent;
 
+    public delegate void OnEntityDeath(BattleEntity entity);
+    public event OnEntityDeath OnEntityDeathEvent;
+
     public EntityData data { get; set; }
     private StatusIndicator statusIndicator;
 
@@ -124,9 +127,11 @@ public class BattleEntity : MonoBehaviour {
     }
 
     public void RefreshParent()
-    {
-        nodeParent = GetComponentInParent<Node>();
-        nodeParent.isTraversable = false;
+    {   if(this != null)
+        {
+            nodeParent = GetComponentInParent<Node>();
+            nodeParent.isTraversable = false;
+        } 
     }
 
     public void ModifyHealth(int value)
@@ -137,6 +142,9 @@ public class BattleEntity : MonoBehaviour {
         
         if(statusIndicator != null)
             statusIndicator.SetHealth();
+
+        if(data.CurrentHealth <= 0)
+            OnEntityDeathEvent(this);
     }
 
     protected void RaiseEndTurnEvent()
