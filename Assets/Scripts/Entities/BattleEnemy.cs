@@ -61,7 +61,7 @@ public class BattleEnemy : BattleEntity {
                 {
                     ResetScores();
                     //Do another action
-                    print("Recursion");
+                    //print("Recursion");
                     OnEnemyTurn(new List<BattleEntity>() { target });
                 }
                
@@ -81,7 +81,7 @@ public class BattleEnemy : BattleEntity {
         Consumable consumable = DetermineConsumableScore();
         node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
-        print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
+        //print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
 
         //If enemy cant do anything just end turn
         if(currentAttack == null && consumable == null && !canMove)
@@ -141,6 +141,7 @@ public class BattleEnemy : BattleEntity {
             case State.Consumable:
                 //print("consuming");
                 consumable.Consume(this);
+                data.Consumables.Remove(consumable);
                 print("Consuming "+consumable.Name);
                 //TODO allow selecting other targets(party members)
                 RaiseEndTurnEvent();
@@ -251,7 +252,7 @@ public class BattleEnemy : BattleEntity {
         //target can be killed in one hit
         if (currentAttack != null && target.data.CurrentHealth <= currentAttack.Damage)
         {
-            print("Setting attack score to max");
+            //print("Setting attack score to max");
             attackingScore = 999;
         }
         else if(currentAttack != null)
@@ -294,7 +295,7 @@ public class BattleEnemy : BattleEntity {
         if(selectedHealingConsumable != null)
         {
             int healthDifference = data. MaxHealth - data.CurrentHealth;
-            print("Healing score: "+ healingScore + " health diff: "+healthDifference);
+            //print("Healing score: "+ healingScore + " health diff: "+healthDifference);
             //Potion would replenish all health
             if(selectedHealingConsumable.HealingValue == healthDifference)
             {
@@ -327,7 +328,7 @@ public class BattleEnemy : BattleEntity {
         //IF cant attack or consume, then moving is the only option
         if(!canAttack && !canConsume)
         {
-            print("cant attack or comsume");
+            //print("cant attack or comsume");
             moveScore = 1000;
         }
         //TODO do stuff if health is slow aka RETREAT

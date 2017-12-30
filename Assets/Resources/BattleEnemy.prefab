@@ -59,9 +59,9 @@ GameObject:
   - component: {fileID: 23411291209925040}
   - component: {fileID: 54672744360598260}
   - component: {fileID: 65317188520654216}
-  - component: {fileID: 114443423661855188}
+  - component: {fileID: 114280831754021902}
   m_Layer: 0
-  m_Name: BattlePlayer
+  m_Name: BattleEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,7 +111,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 680f681cc96f8354ab3ebb24cb916fb7, type: 2}
+  - {fileID: 2100000, guid: 8c8250c4f3c738c428b9aa501eee0868, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -185,6 +185,19 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+--- !u!114 &114280831754021902
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1548199070762142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e8946d7c6b289549a307f0ad90c225a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canMove: 1
+  nodeParent: {fileID: 0}
 --- !u!114 &114413352876675546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,19 +225,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114443423661855188
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1548199070762142}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa4742aae2419d749817dee191cfdf3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  canMove: 1
-  nodeParent: {fileID: 0}
 --- !u!114 &114551889316939032
 MonoBehaviour:
   m_ObjectHideFlags: 1

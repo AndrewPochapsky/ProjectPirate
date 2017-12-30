@@ -8,6 +8,7 @@ public class BattleEntity : MonoBehaviour {
     public event OnEndTurn OnEndTurnEvent;
 
     public EntityData data { get; set; }
+    private StatusIndicator statusIndicator;
 
     [HideInInspector]
     public bool canMove = true;
@@ -21,14 +22,23 @@ public class BattleEntity : MonoBehaviour {
     protected List<Node> pathNodes;
 
     int currentNodeIndex = 0;
-    public bool IsMoving { get; private set; } = false;
+    public bool IsMoving { get;  set; } = false;
 
     protected virtual void Start()
     {
         //data = new EntityData();
         pathNodes = new List<Node>();
         nodeParent = GetComponentInParent<Node>();
-        movementSpeed = 200; //* Time.deltaTime;
+        movementSpeed = 200; 
+        try
+        {
+            statusIndicator = transform.GetChild(0).GetComponent<StatusIndicator>();
+        }
+        catch(UnityException)
+        {
+            Debug.LogError(this.name + " doesnt have a status indicator!");
+        }
+       
     }
 
     protected virtual void Update()
@@ -124,6 +134,9 @@ public class BattleEntity : MonoBehaviour {
         data.CurrentHealth += value;
         if (data.CurrentHealth > data.MaxHealth)
             data.CurrentHealth = data.MaxHealth;
+        
+        if(statusIndicator != null)
+            statusIndicator.SetHealth();
     }
 
     protected void RaiseEndTurnEvent()

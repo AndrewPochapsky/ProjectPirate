@@ -91,13 +91,13 @@ public class BattleController : MonoBehaviour {
         //TODO: choose the enemy location in this loop so each location is different
         for (int i = 0; i < battleData.Enemies.Count; i++)
         {
-            enemies.Add(SetupBattleEntity(nameof(SampleEnemy), enemyStartingLocation.transform, battleData.Enemies[i]) as BattleEnemy);
+            enemies.Add(SetupBattleEntity(nameof(BattleEnemy), enemyStartingLocation.transform, battleData.Enemies[i]) as BattleEnemy);
         }
 
         Pathfinding.OnPathUpdatedEvent += OnPathUpdated;
 
         //TODO: not sure if this line is necessary
-        friendlies[0].OnEndTurnEvent += OnEndTurn;
+        //friendlies[0].OnEndTurnEvent += OnEndTurn;
 
         for(int i = 0; i < enemies.Count; i++)
         {
@@ -161,12 +161,6 @@ public class BattleController : MonoBehaviour {
         {
             eventCalled = true;
             OnEnemyTurnEvent(friendlies);
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
-            SceneManager.LoadScene(0);
         }
     }
 
@@ -265,6 +259,8 @@ public class BattleController : MonoBehaviour {
         else
         {
             CurrentTurn = Turn.Enemy;
+            //friendlies[0].SetPathNodes(new List<Node>());
+            canMove = false;
         }
         OnTurnValueChangedEvent(CurrentTurn);
     }
