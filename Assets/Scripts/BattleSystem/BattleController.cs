@@ -79,6 +79,7 @@ public class BattleController : MonoBehaviour {
 
     private void Awake()
     {
+        print("battle controller is awake");
         //Doesnt require singleton patttern since this is the only time it is being accessed
         uiController = GetComponent<BattleSystemUI>();
 
@@ -107,8 +108,10 @@ public class BattleController : MonoBehaviour {
         //TODO: choose the player(friendly) location in this loop so each location is different
         for(int i = 0; i < battleData.Friendlies.Count; i++)
         {
+            print("adding");
             friendlies.Add(SetupBattleEntity(nameof(BattlePlayer), playerStartingLocation.transform, battleData.Friendlies[i]));
         }
+        print("0th index: " + friendlies[0].name);
         
         //TODO: choose the enemy location in this loop so each location is different
         for (int i = 0; i < battleData.Enemies.Count; i++)
@@ -341,12 +344,17 @@ public class BattleController : MonoBehaviour {
                 //Get rewards (infamy, item drops)
                 //Exit to main scene(fade)
                 uiController.fadeOut = true;
-
+                friendlies = new List<BattleEntity>();
+                enemies = new List<BattleEnemy>();
+                Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
                 break;
 
             case BattleStatus.EnemyVic:
                 print("Enemy is victorious!");
                 uiController.fadeOut = true;
+                friendlies = new List<BattleEntity>();
+                enemies = new List<BattleEnemy>();
+                Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
                 break;
         }
     }
