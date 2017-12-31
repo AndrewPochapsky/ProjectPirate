@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FadeController  {
 
@@ -18,13 +19,17 @@ public class FadeController  {
 		FadeOutModifier = outModifier;
 	}
 
-	public void FadeCanvasGroup(bool fadeIn, CanvasGroup canvasGroup, string sceneToLoad = null)
+	public void FadeCanvasGroup(bool fadeIn, CanvasGroup canvasGroup, bool worldValue, string sceneToLoad = null)
     {
         if (fadeIn)
         {
             canvasGroup.alpha += Time.fixedDeltaTime * FadeInModifier;
             if (sceneToLoad != null && canvasGroup.alpha == 1)
-                WorldController.Instance.LoadScene(sceneToLoad);
+            {
+                World.Instance.gameObject.SetActive(worldValue);
+                SceneManager.LoadScene(sceneToLoad);
+            }
+                
         }
         else
         {

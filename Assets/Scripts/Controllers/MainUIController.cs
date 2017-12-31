@@ -72,9 +72,9 @@ public class MainUIController : MonoBehaviour {
 			interactText.enabled = false;
 		}	
 		//TODO: try to find a better solution than just calling this in update constantly
-		fadeController.FadeCanvasGroup(fadeIn: fadingInIslandUI, canvasGroup: islandUICanvasGroup);
+		fadeController.FadeCanvasGroup(fadingInIslandUI, islandUICanvasGroup, false);
 
-		fadeController.FadeCanvasGroup(fadeIn: fadingInPanel, canvasGroup: panelCanvasGroup, sceneToLoad: scene);
+		fadeController.FadeCanvasGroup(fadingInPanel, panelCanvasGroup, false,scene);
 	}
 
 	private void SetUI(int infamy, int gold)

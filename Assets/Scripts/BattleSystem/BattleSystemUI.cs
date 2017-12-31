@@ -39,6 +39,9 @@ public class BattleSystemUI : MonoBehaviour {
     Color pressedColor = Color.gray;
     BattleController battleController;
     FadeController fadeController;
+    
+    [HideInInspector]
+    public bool fadeOut = false;
 
     private void Awake()
     {
@@ -59,8 +62,10 @@ public class BattleSystemUI : MonoBehaviour {
                 battleController.Attacking = false;
             }
         }
-
-        fadeController.FadeCanvasGroup(false, panel);
+        if(!fadeOut)
+            fadeController.FadeCanvasGroup(fadeOut, panel, false);
+        else
+            fadeController.FadeCanvasGroup(fadeOut, panel, true, "Main");
     }
 
     private void UpdateTurnUI(BattleController.Turn turn)

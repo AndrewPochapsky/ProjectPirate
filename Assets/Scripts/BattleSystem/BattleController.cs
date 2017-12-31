@@ -337,10 +337,16 @@ public class BattleController : MonoBehaviour {
             
             case BattleStatus.PlayerVic:
                 print("Player is victorious!");
+                //Show some nutty UI
+                //Get rewards (infamy, item drops)
+                //Exit to main scene(fade)
+                uiController.fadeOut = true;
+
                 break;
 
             case BattleStatus.EnemyVic:
                 print("Enemy is victorious!");
+                uiController.fadeOut = true;
                 break;
         }
     }

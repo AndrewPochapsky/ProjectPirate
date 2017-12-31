@@ -211,7 +211,6 @@ public class TileGenerator : MonoBehaviour {
     /// <param name="tileSize">The tileSize</param>
     public void GenerateTileMap(string tileName, List<Node> nodes, bool removeNodes, int tileSize, Transform parent, bool isBase = false)
     {
-        print(nodes.Count);
         foreach(Node node in nodes)
         {
             Tile createdTile = AddAnyTile(tileName, node, tileSize, parent, offset: 0, forBattle: true, isBase: isBase);
