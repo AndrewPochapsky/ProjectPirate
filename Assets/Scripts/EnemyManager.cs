@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/*TODO: create an object pooling system for this instead of just instantiating*/
 public class EnemyManager : MonoBehaviour {
 	Player player;
 

@@ -8,6 +8,10 @@ public class WorldController : MonoBehaviour {
 
     public static WorldController Instance;
 
+    private Player player;
+    private LocalData localData;
+    private BattleData battleData;
+
     /// <summary>
     /// Location at which to generate the chunk
     /// </summary>
@@ -69,12 +73,20 @@ public class WorldController : MonoBehaviour {
             Chunks = GenerateWorld();
             hasGenerated = true;
         }
+        localData = Resources.Load<LocalData>("Data/LocalData");
+        battleData = Resources.Load<BattleData>("Data/LocalData");
        
     }
 
     private void Start()
     {
         World.Instance.gameObject.SetActive(true);
+        player = GameObject.FindObjectOfType<Player>();
+        player.transform.position = localData.playerShipPos;
+
+        player.entityData.Infamy += battleData.InfamyReward;
+        print("Player has been awarded " + battleData.InfamyReward + " Infamy!");
+        battleData.InfamyReward = 0;
     }
 
     /// <summary>

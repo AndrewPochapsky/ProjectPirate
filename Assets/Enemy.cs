@@ -10,18 +10,18 @@ public class Enemy : Entity {
 	/// </summary>
 	void Start()
 	{
-		data = new EntityData();
-		data.Speed = 3;
-        data.MaxHealth = 1;
-        data.CurrentHealth = data.MaxHealth;
+		entityData = new EntityData();
+		entityData.Speed = 3;
+        entityData.MaxHealth = 1;
+        entityData.CurrentHealth = entityData.MaxHealth;
 
-        data.Attacks = new List<Attack>
+        entityData.Attacks = new List<Attack>
         {
             new Attack("Basic Attack", 2, 4),
             new Attack("Super Attack", 3, 4)
         };
 
-        data.Consumables = new List<Consumable>
+        entityData.Consumables = new List<Consumable>
         {
             new HealingConsumable("Basic Potion", 3),
             new HealingConsumable("Super Potion", 6)

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
-    public EntityData data { get; set; }
+    public EntityData entityData { get; set; }
 
 }

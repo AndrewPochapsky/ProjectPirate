@@ -21,22 +21,22 @@ public class Player : Entity {
 
     private void Awake()
     {
-        data = new EntityData();
+        entityData = new EntityData();
         
-        data.Attacks.Add(new Attack("Basic Attack", 2, 3));
-        data.Attacks.Add(new Attack("Super Attack", 5, 4));
+        entityData.Attacks.Add(new Attack("Basic Attack", 2, 3));
+        entityData.Attacks.Add(new Attack("Super Attack", 5, 4));
         
-        data.Crew.Add(new CrewMember("Joe"));
-        data.Crew.Add(new CrewMember("Dave"));
+        entityData.Crew.Add(new CrewMember("Joe"));
+        entityData.Crew.Add(new CrewMember("Dave"));
 
         //TODO: merge this list into inventory
         //Note: Requires editing the enemy AI thing
-        data.Consumables = new List<Consumable>();
-        data.Speed = 4;
-        data.MaxHealth = 1;
-        data.CurrentHealth = base.data.MaxHealth;
-        data.Infamy = 0;
-        data.Gold = 0;
+        entityData.Consumables = new List<Consumable>();
+        entityData.Speed = 4;
+        entityData.MaxHealth = 1;
+        entityData.CurrentHealth = base.entityData.MaxHealth;
+        entityData.Infamy = 0;
+        entityData.Gold = 0;
 
        
     }
@@ -50,7 +50,7 @@ public class Player : Entity {
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)
-            OnInfoUpdatedEvent(base.data.Infamy, base.data.Gold);
+            OnInfoUpdatedEvent(base.entityData.Infamy, base.entityData.Gold);
     }
     
     /// <summary>
@@ -69,14 +69,20 @@ public class Player : Entity {
         
         if(enemy != null)
         {
-            BattleScriptableObject battleData = Resources.Load<BattleScriptableObject>("Data/BattleData");
+            BattleData battleData = Resources.Load<BattleData>("Data/BattleData");
+            LocalData localData = Resources.Load<LocalData>("Data/LocalData");
+
             battleData.ResetData();
-            battleData.Friendlies.Add(this.data);
-            battleData.Enemies.Add(enemy.data);
-            //MainUIController.Instance.FadeCanvasGroup(fadeIn: false, );
+            battleData.Friendlies.Add(this.entityData);
+            battleData.Enemies.Add(enemy.entityData);
+
+            localData.playerShipPos = transform.position;
+            
             MainUIController.Instance.fadingInPanel = true;
             MainUIController.Instance.scene = "Battle";
-            //WorldController.Instance.LoadScene("Battle");
+
+            //Temporary remove later
+            enemy.gameObject.SetActive(false);
         }
     }
 
@@ -143,10 +149,10 @@ public class Player : Entity {
         ISellable existingResource = null;
         resource.Amount-=amount;
 
-        int containsIndex = data.Inventory.FindIndex(r => r.Name == resource.Name);
+        int containsIndex = entityData.Inventory.FindIndex(r => r.Name == resource.Name);
 
         if(containsIndex != -1)
-            existingResource = data.Inventory.Where(r => r.Name == resource.Name).First();
+            existingResource = entityData.Inventory.Where(r => r.Name == resource.Name).First();
             
         //Resource already in list
         if(existingResource != null)
@@ -158,7 +164,7 @@ public class Player : Entity {
         {
             Resource newResource = new Resource(resource);
             newResource.Amount = amount;
-            data.Inventory.Add(newResource);
+            entityData.Inventory.Add(newResource);
         }
     }
 
@@ -166,7 +172,7 @@ public class Player : Entity {
     public string FormattedInventory()
     {
         string s = "";
-        foreach(var item in data.Inventory)
+        foreach(var item in entityData.Inventory)
         {
             s += item.Name + "(" + item.Amount + ") ";
         }
