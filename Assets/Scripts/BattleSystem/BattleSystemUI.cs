@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
+//using DG.Tweening;
 
 public class BattleSystemUI : MonoBehaviour {
 
@@ -12,7 +14,10 @@ public class BattleSystemUI : MonoBehaviour {
     private CanvasGroup panel;
 
     [SerializeField]
-    private Text turnText, healthText, canMoveText;
+    private Text healthText, canMoveText;
+
+    [SerializeField]
+    private TextMeshProUGUI turnText;
 
     [SerializeField]
     private Transform canvas;
@@ -45,6 +50,8 @@ public class BattleSystemUI : MonoBehaviour {
 
     private void Awake()
     {
+        //DOTween.Init();
+
         battleController = FindObjectOfType<BattleController>();
         battleController.OnTurnValueChangedEvent += UpdateTurnUI;
         battleController.OnPlayerInfoChangedEvent += UpdatePlayerUI;
@@ -69,8 +76,14 @@ public class BattleSystemUI : MonoBehaviour {
     }
 
     private void UpdateTurnUI(BattleController.Turn turn)
-    {
-        this.turnText.text = turn.ToString();
+    {   
+        //Sequence fadeSequence = DOTween.Sequence();
+        //fadeSequence.Append(turnText.DOFade(0, 1f));
+        //fadeSequence.Append(turnText.DOText(turn + " Turn", 0));
+        //fadeSequence.Append(turnText.DOFade(1, 1f));
+        
+        //fadeSequence.Play();
+        
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
 
         DeactivatePanel();

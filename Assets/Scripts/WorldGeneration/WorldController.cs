@@ -75,6 +75,11 @@ public class WorldController : MonoBehaviour {
         }
         localData = Resources.Load<LocalData>("Data/LocalData");
         battleData = Resources.Load<BattleData>("Data/BattleData");
+        if (battleData.enemyObject != null)
+        {
+            Destroy(battleData.enemyObject);
+            battleData.enemyObject = null;
+        }
        
     }
 
@@ -87,12 +92,6 @@ public class WorldController : MonoBehaviour {
         player.entityData.Infamy += battleData.InfamyReward;
         print("Player has been awarded " + battleData.InfamyReward + " Infamy!");
         battleData.InfamyReward = 0;
-
-        if(battleData.enemyObject != null)
-        {
-            Destroy(battleData.enemyObject);
-            battleData.enemyObject = null;
-        }
     }
 
     /// <summary>
@@ -118,12 +117,6 @@ public class WorldController : MonoBehaviour {
             }
         }
         return chunks;
-    }
-
-    public void LoadScene(string scene)
-    {
-        SceneManager.LoadScene(scene);
-        World.Instance.gameObject.SetActive(false);
     }
 
     public List<BaseNode> GetNodesNearPlayer(Transform player, BaseNode node)
