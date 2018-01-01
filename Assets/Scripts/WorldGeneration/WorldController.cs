@@ -74,7 +74,7 @@ public class WorldController : MonoBehaviour {
             hasGenerated = true;
         }
         localData = Resources.Load<LocalData>("Data/LocalData");
-        battleData = Resources.Load<BattleData>("Data/LocalData");
+        battleData = Resources.Load<BattleData>("Data/BattleData");
        
     }
 
@@ -87,6 +87,12 @@ public class WorldController : MonoBehaviour {
         player.entityData.Infamy += battleData.InfamyReward;
         print("Player has been awarded " + battleData.InfamyReward + " Infamy!");
         battleData.InfamyReward = 0;
+
+        if(battleData.enemyObject != null)
+        {
+            Destroy(battleData.enemyObject);
+            battleData.enemyObject = null;
+        }
     }
 
     /// <summary>

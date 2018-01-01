@@ -75,6 +75,7 @@ public class Player : Entity {
             battleData.ResetData();
             battleData.Friendlies.Add(this.entityData);
             battleData.Enemies.Add(enemy.entityData);
+            battleData.enemyObject = enemy.gameObject;
 
             localData.playerShipPos = transform.position;
             
@@ -82,7 +83,7 @@ public class Player : Entity {
             MainUIController.Instance.scene = "Battle";
 
             //Temporary remove later
-            enemy.gameObject.SetActive(false);
+            //enemy.gameObject.SetActive(false);
         }
     }
 

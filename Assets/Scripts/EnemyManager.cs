@@ -9,7 +9,7 @@ public class EnemyManager : MonoBehaviour {
 
 	float enemySpawnChance = 0.2f;
 	int enemyAmount = 0;
-	int maxEnemyAmount = 100;
+	int maxEnemyAmount = 3;
 
 	/// <summary>
 	/// Awake is called when the script instance is being loaded.
