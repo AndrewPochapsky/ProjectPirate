@@ -13,8 +13,22 @@ public class BattleSystemUI : MonoBehaviour {
     [SerializeField]
     private CanvasGroup panel;
 
+    [Header("Battle Summary")]
     [SerializeField]
-    private Text healthText, canMoveText;
+    private CanvasGroup summaryPanel;
+
+    [SerializeField]
+    private Button continueButton, doneButton;
+    
+    [SerializeField]
+    private TextMeshProUGUI resultText, infamyHeader, infamyChange, currentInfamyHeader, infamyValue;
+
+    [SerializeField]
+    private Image divider;
+
+    [Header("Other UI")]
+    [SerializeField]
+    private Text canMoveText;
 
     [SerializeField]
     private TextMeshProUGUI turnText;
@@ -55,7 +69,11 @@ public class BattleSystemUI : MonoBehaviour {
         battleController = FindObjectOfType<BattleController>();
         battleController.OnTurnValueChangedEvent += UpdateTurnUI;
         battleController.OnPlayerInfoChangedEvent += UpdatePlayerUI;
+        battleController.OnBattleOverEvent += OnBattleOver;
         fadeController = new FadeController();
+
+        continueButton.interactable = false;
+        summaryPanel.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -77,13 +95,21 @@ public class BattleSystemUI : MonoBehaviour {
 
     private void UpdateTurnUI(BattleController.Turn turn)
     {   
+        Color transitionColor = Color.black;
+        if (turn == BattleController.Turn.Player)
+            transitionColor = Color.blue;
+        else
+            transitionColor = Color.red;
+        
+        float fadeDuration = 0.5f;
+
         Sequence fadeSequence = DOTween.Sequence();
-        fadeSequence.Append(turnText.DOFade(0, 0.5f));
-        fadeSequence.Append(turnText.DOText(turn + " Turn", 0));
-        fadeSequence.Append(turnText.DOFade(1, 0.5f));
-        
-        fadeSequence.Play();
-        
+        fadeSequence
+            .Append(turnText.DOFade(0, fadeDuration))
+            .Append(turnText.DOText(turn + " Turn", 0))
+            .Append(turnText.DOColor(transitionColor, 0))
+            .Append(turnText.DOFade(1, fadeDuration));          
+
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
 
         DeactivatePanel();
@@ -95,7 +121,7 @@ public class BattleSystemUI : MonoBehaviour {
     {
         if(maxHealth != null)
         {
-            healthText.text = "HP:" + currentHealth + "/" + maxHealth;
+            //healthText.text = "HP:" + currentHealth + "/" + maxHealth;
         }
         
         if(canMove != null)
@@ -121,7 +147,7 @@ public class BattleSystemUI : MonoBehaviour {
     /// <param name="size">The size</param>
     public void CreateGrid(int width, int height, int size)
     {
-        Vector3 nextPosition = Vector3.zero;
+        Vector3 nextPosition = new Vector3(0, 0, -1);
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -236,5 +262,63 @@ public class BattleSystemUI : MonoBehaviour {
 
         battleController.lastSelectedAttack = attack;
         battleController.Attacking = true;
+    }
+
+    private void OnBattleOver(BattleController.BattleStatus status)
+    {
+        if(status == BattleController.BattleStatus.PlayerVic)
+        {
+            resultText.text = "Victory";
+        }
+        else
+        {
+            resultText.text = "Defeat";
+        }
+        Sequence sequence = DOTween.Sequence();
+
+        sequence
+            .Append(resultText.DOFade(1, 0.5f))
+            .AppendInterval(0.5f)
+            .Append(continueButton.GetComponent<CanvasGroup>().DOFade(1, 0.5f));
+     
+        continueButton.interactable = true;
+    }
+
+    public void OnContinuePressed()
+    {
+        BattleData data = Resources.Load<BattleData>("Data/BattleData");
+
+        if(data.InfamyReward > 0) 
+            infamyChange.color = Color.green;
+        else 
+            infamyChange.color = Color.red;
+
+        infamyChange.text = data.InfamyReward.ToString();
+        //In future, consider incrementing the new infamy onto the old one when the value gets revealed
+        infamyValue.text = (data.Friendlies[0].Infamy + data.InfamyReward).ToString();    
+        
+        infamyChange.alpha = 0;
+        summaryPanel.gameObject.SetActive(true);
+        Sequence firstSequence = DOTween.Sequence();
+        firstSequence
+            .Append(summaryPanel.DOFade(1, 0.5f))
+            .Append(infamyHeader.DOFade(1, 0.5f))
+            .Append(infamyChange.DOFade(1, 0.5f));
+        
+        //Scale the infamyChange text up and then down
+        firstSequence.Insert(1, infamyChange.DOScale(2f, 0.25f));
+        firstSequence.Insert(1.25f, infamyChange.DOScale(1f, 0.25f));
+
+        firstSequence
+            .AppendInterval(0.25f)
+            .Append(currentInfamyHeader.DOFade(1, 0.5f))
+            .Append(infamyValue.DOFade(1, 0.5f))
+            .Append(divider.DOFade(1, 0.5f))
+            .Append(doneButton.GetComponent<CanvasGroup>().DOFade(1, 0.5f));
+    }
+
+    public void OnDonePressed()
+    {
+        fadeOut = true;
     }
 }

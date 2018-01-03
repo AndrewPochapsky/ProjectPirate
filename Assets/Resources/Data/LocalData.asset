@@ -11,4 +11,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d5ec75e01c3c14a82e78705b6ed3f7, type: 3}
   m_Name: LocalData
   m_EditorClassIdentifier: 
-  playerShipPos: {x: 0, y: 50, z: 0}
+  playerShipPos: {x: 743.6212, y: 29.700811, z: 4448.938}

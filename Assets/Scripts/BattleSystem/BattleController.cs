@@ -36,6 +36,9 @@ public class BattleController : MonoBehaviour {
     public delegate void OnEnemyTurn(List<BattleEntity> targets);
     public event OnEnemyTurn OnEnemyTurnEvent;
 
+    public delegate void OnBattleOver(BattleStatus status);
+    public event OnBattleOver OnBattleOverEvent;
+
     public enum Turn { Player, Enemy }
     public enum BattleStatus { PlayerVic, EnemyVic, InProgress }
 
@@ -77,6 +80,8 @@ public class BattleController : MonoBehaviour {
     //Colours:
     Color pathColour, movementRangeColour;
 
+    BattleData battleData;
+
     private void Awake()
     {
         //Doesnt require singleton patttern since this is the only time it is being accessed
@@ -85,7 +90,7 @@ public class BattleController : MonoBehaviour {
         friendlies = new List<BattleEntity>();
         enemies = new List<BattleEnemy>();
 
-        BattleData battleData = Resources.Load<BattleData>("Data/BattleData");
+        battleData = Resources.Load<BattleData>("Data/BattleData");
 
         //Colours:
         pathColour = Color.grey;
@@ -329,30 +334,24 @@ public class BattleController : MonoBehaviour {
 
     private void ProcessBattleStatus(BattleStatus status)
     {
-        switch(status)
+        if(status == BattleStatus.InProgress)
         {
-            case BattleStatus.InProgress:
-                print("Battle in progress");
-                return;
-            
-            case BattleStatus.PlayerVic:
-                print("Player is victorious!");
-                //Show some nutty UI
-                //Get rewards (infamy, item drops)
-                //Exit to main scene(fade)
-                uiController.fadeOut = true;
-                friendlies = new List<BattleEntity>();
-                enemies = new List<BattleEnemy>();
-                Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
-                break;
+            return; 
+        }
+        battleData.InfamyReward = Random.Range(1, 10);
 
-            case BattleStatus.EnemyVic:
-                print("Enemy is victorious!");
-                uiController.fadeOut = true;
-                friendlies = new List<BattleEntity>();
-                enemies = new List<BattleEnemy>();
-                Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
-                break;
+        if(status == BattleStatus.EnemyVic)
+            battleData.InfamyReward *= -1;
+
+        if(status == BattleStatus.EnemyVic || status == BattleStatus.PlayerVic)
+        {
+            //uiController.fadeOut = true;
+            friendlies = new List<BattleEntity>();
+            enemies = new List<BattleEnemy>();
+            Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
+            //only do this if player won
+            battleData.enemyObject.GetComponent<Enemy>().dead = true;
+            OnBattleOverEvent(status);
         }
     }
 

@@ -36,7 +36,7 @@ public class EnemyManager : MonoBehaviour {
 			if(node.transform.childCount >= 2)
 				existingEnemy = node.transform.GetChild(1).GetComponent<EnemyController>();
 
-			if(f <= enemySpawnChance && enemyAmount < maxEnemyAmount && existingEnemy == null)
+			if(Time.timeSinceLevelLoad > 2f && f <= enemySpawnChance && enemyAmount < maxEnemyAmount && existingEnemy == null)
 			{
 				//spawn enemy at node
 				enemyAmount++;
@@ -45,5 +45,6 @@ public class EnemyManager : MonoBehaviour {
 
 			}
 		}
+
 	}
 }

@@ -67,7 +67,7 @@ public class Player : Entity {
             OnNewTileEnteredEvent(nodes);
         }
         
-        if(enemy != null)
+        if(enemy != null && !enemy.dead)
         {
             BattleData battleData = Resources.Load<BattleData>("Data/BattleData");
             LocalData localData = Resources.Load<LocalData>("Data/LocalData");

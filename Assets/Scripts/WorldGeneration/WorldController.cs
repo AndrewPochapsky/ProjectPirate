@@ -46,7 +46,7 @@ public class WorldController : MonoBehaviour {
     /// The current node the player is in
     /// </summary>
     /// <returns>current node</returns>
-    public Node currentNode { get; set; }
+    //public Node currentNode { get; set; }
 
     Transform world;
 
@@ -145,7 +145,7 @@ public class WorldController : MonoBehaviour {
                 {
                     island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
                 }
-                if(!nodes.Contains(adjNode) && island == null && adjNode != node && !tempNodes.Contains(adjNode))
+                if(island == null && adjNode != node && !tempNodes.Contains(adjNode))
                 {
                     //nodes.Add(adjNode);
                     tempNodes.Add(adjNode);
@@ -157,6 +157,7 @@ public class WorldController : MonoBehaviour {
         {
             nodes.Add(n);
         }
+        nodes.Remove(node);
 
         return nodes;
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+//TODO: remake using DOTween
 public class FadeController  {
 
 	private float FadeInModifier = 1.5f;
