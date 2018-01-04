@@ -101,7 +101,7 @@ public class BattleSystemUI : MonoBehaviour {
         else
             transitionColor = Color.red;
         
-        float fadeDuration = 0.5f;
+        float fadeDuration = 0.75f;
 
         Sequence fadeSequence = DOTween.Sequence();
         fadeSequence
@@ -109,6 +109,8 @@ public class BattleSystemUI : MonoBehaviour {
             .Append(turnText.DOText(turn + " Turn", 0))
             .Append(turnText.DOColor(transitionColor, 0))
             .Append(turnText.DOFade(1, fadeDuration));          
+
+        //fadeSequence.SetEase(Ease.InFlash);
 
         buttonsContainer.gameObject.SetActive((turn == BattleController.Turn.Player));
 
@@ -310,7 +312,7 @@ public class BattleSystemUI : MonoBehaviour {
                 itemsValue.text += item.Name + "("+item.Amount + ")";
                 if(i+1 != data.Items.Count)
                 {
-                    itemsValue.text+=", ";
+                    itemsValue.text+=", ";  
                 }
             }
         }
