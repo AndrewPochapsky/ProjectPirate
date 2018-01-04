@@ -21,7 +21,7 @@ public class BattleSystemUI : MonoBehaviour {
     private Button continueButton, doneButton;
     
     [SerializeField]
-    private TextMeshProUGUI resultText, infamyHeader, infamyChange, currentInfamyHeader, infamyValue;
+    private TextMeshProUGUI resultText, infamyHeader, infamyChange, currentInfamyHeader, infamyValue, itemsHeader, itemsValue;
 
     [SerializeField]
     private Image divider;
@@ -293,27 +293,50 @@ public class BattleSystemUI : MonoBehaviour {
         else 
             infamyChange.color = Color.red;
 
+
         infamyChange.text = data.InfamyReward.ToString();
         //In future, consider incrementing the new infamy onto the old one when the value gets revealed
         infamyValue.text = (data.Friendlies[0].Infamy + data.InfamyReward).ToString();    
         
+        if(data.Items.Count == 0)
+        {
+            itemsValue.text = "none";
+        }
+        else
+        {
+            for(int i = 0; i < data.Items.Count; i++)
+            {
+                var item = data.Items[i];
+                itemsValue.text += item.Name + "("+item.Amount + ")";
+                if(i+1 != data.Items.Count)
+                {
+                    itemsValue.text+=", ";
+                }
+            }
+        }
+
+
+
         infamyChange.alpha = 0;
         summaryPanel.gameObject.SetActive(true);
-        Sequence firstSequence = DOTween.Sequence();
-        firstSequence
+
+        Sequence sequence = DOTween.Sequence();
+        sequence
             .Append(summaryPanel.DOFade(1, 0.5f))
             .Append(infamyHeader.DOFade(1, 0.5f))
             .Append(infamyChange.DOFade(1, 0.5f));
         
         //Scale the infamyChange text up and then down
-        firstSequence.Insert(1, infamyChange.DOScale(2f, 0.25f));
-        firstSequence.Insert(1.25f, infamyChange.DOScale(1f, 0.25f));
+        sequence.Insert(1, infamyChange.DOScale(2f, 0.25f));
+        sequence.Insert(1.25f, infamyChange.DOScale(1f, 0.25f));
 
-        firstSequence
+        sequence
             .AppendInterval(0.25f)
             .Append(currentInfamyHeader.DOFade(1, 0.5f))
             .Append(infamyValue.DOFade(1, 0.5f))
             .Append(divider.DOFade(1, 0.5f))
+            .Append(itemsHeader.DOFade(1, 0.5f))
+            .Append(itemsValue.DOFade(1, 0.5f))
             .Append(doneButton.GetComponent<CanvasGroup>().DOFade(1, 0.5f));
     }
 
