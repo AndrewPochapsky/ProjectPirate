@@ -298,8 +298,9 @@ public class BattleSystemUI : MonoBehaviour {
 
         infamyChange.text = data.InfamyReward.ToString();
         //In future, consider incrementing the new infamy onto the old one when the value gets revealed
-        infamyValue.text = (data.Friendlies[0].Infamy + data.InfamyReward).ToString();    
-        
+        //infamyValue.text = (data.Friendlies[0].Infamy + data.InfamyReward).ToString();    
+        infamyValue.text = data.Friendlies[0].Infamy.ToString();
+
         if(data.Items.Count == 0)
         {
             itemsValue.text = "none";
@@ -335,7 +336,27 @@ public class BattleSystemUI : MonoBehaviour {
         sequence
             .AppendInterval(0.25f)
             .Append(currentInfamyHeader.DOFade(1, 0.5f))
-            .Append(infamyValue.DOFade(1, 0.5f))
+            .Append(infamyValue.DOFade(1, 0.5f));
+        
+        int originalInfamyValue = data.Friendlies[0].Infamy;
+        float duration = 0.25f;
+        for(int i = 1; i <= Mathf.Abs(data.InfamyReward); i++)
+        {
+            string s = "";
+            
+            if(data.InfamyReward > 0)
+            {
+                s = (originalInfamyValue + i).ToString();
+            }
+            else
+            {
+                s = (originalInfamyValue - i).ToString();
+            }
+            sequence.Append(infamyValue.DOText(s, duration));
+            duration *= 0.9f;
+        }
+        
+        sequence
             .Append(divider.DOFade(1, 0.5f))
             .Append(itemsHeader.DOFade(1, 0.5f))
             .Append(itemsValue.DOFade(1, 0.5f))
