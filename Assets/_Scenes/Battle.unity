@@ -446,7 +446,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1 &303834960
 GameObject:
@@ -3474,6 +3474,7 @@ GameObject:
   - component: {fileID: 1422633763}
   - component: {fileID: 1422633765}
   - component: {fileID: 1422633764}
+  - component: {fileID: 1422633766}
   m_Layer: 5
   m_Name: BattleResult
   m_TagString: Untagged
@@ -3617,6 +3618,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1422633762}
+--- !u!225 &1422633766
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1422633762}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1494455819
 GameObject:
   m_ObjectHideFlags: 0
@@ -3992,7 +4004,7 @@ CanvasGroup:
   m_Enabled: 1
   m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1001 &1696701123
 Prefab:

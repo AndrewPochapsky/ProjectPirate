@@ -287,6 +287,7 @@ public class BattleSystemUI : MonoBehaviour {
             .Append(continueButton.GetComponent<CanvasGroup>().DOFade(1, 0.5f));
      
         continueButton.interactable = true;
+        continueButton.GetComponent<CanvasGroup>().blocksRaycasts = true;
     }
 
     public void OnContinuePressed()
@@ -325,6 +326,8 @@ public class BattleSystemUI : MonoBehaviour {
 
         infamyChange.alpha = 0;
         summaryPanel.gameObject.SetActive(true);
+
+        summaryPanel.blocksRaycasts = true;
 
         Sequence sequence = DOTween.Sequence();
         sequence
