@@ -4,11 +4,13 @@ using UnityEngine;
 
 [System.Serializable]
 public class EntityData {
+
 	public int Speed { get; set; }
     public int MaxHealth { get; set; }
     public int CurrentHealth { get; set; }
     public int Infamy { get; set; }
     public int Gold { get; set; }
+    public Entity.InfamyTier Tier { get; set; }
 
     public List<Attack> Attacks { get; set; }
     public List<Consumable> Consumables { get; set; }

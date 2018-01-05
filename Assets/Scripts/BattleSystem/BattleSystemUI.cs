@@ -21,10 +21,13 @@ public class BattleSystemUI : MonoBehaviour {
     private Button continueButton, doneButton;
     
     [SerializeField]
-    private TextMeshProUGUI resultText, infamyHeader, infamyChange, currentInfamyHeader, infamyValue, itemsHeader, itemsValue;
+    private TextMeshProUGUI resultText, infamyHeader, infamyChange, currentInfamyTier, nextInfamyTier, infamyValue, itemsHeader, itemsValue;
 
     [SerializeField]
     private Image divider;
+
+    [SerializeField]
+    private RectTransform infamyBar;
 
     [Header("Other UI")]
     [SerializeField]
@@ -318,7 +321,7 @@ public class BattleSystemUI : MonoBehaviour {
             }
         }
 
-
+        infamyBar.localScale = new Vector3((float)data.Friendlies[0].Infamy / (float)Entity.GetNextTier(data.Friendlies[0].Tier), infamyBar.localScale.y, infamyBar.localScale.z);
 
         infamyChange.alpha = 0;
         summaryPanel.gameObject.SetActive(true);
@@ -335,25 +338,48 @@ public class BattleSystemUI : MonoBehaviour {
 
         sequence
             .AppendInterval(0.25f)
-            .Append(currentInfamyHeader.DOFade(1, 0.5f))
-            .Append(infamyValue.DOFade(1, 0.5f));
+            .Append(currentInfamyTier.DOText(data.Friendlies[0].Tier.ToString(), 0))
+            .Append(currentInfamyTier.DOFade(1, 0.5f))
+            .Append(infamyValue.DOFade(1, 0.5f))
+            .Append(nextInfamyTier.DOText(Entity.GetNextTier(data.Friendlies[0].Tier).ToString(), 0))
+            .Append(nextInfamyTier.DOFade(1, 0.5f))
+            .Append(infamyBar.GetComponent<Image>().DOFade(1, 0.5f));
         
         int originalInfamyValue = data.Friendlies[0].Infamy;
-        float duration = 0.25f;
-        for(int i = 1; i <= Mathf.Abs(data.InfamyReward); i++)
+        print("Original value: "+ originalInfamyValue);
+        float interval = 0.25f;
+        int temp = originalInfamyValue;
+        for(int i = 0; i < Mathf.Abs(data.InfamyReward); i++)
         {
             string s = "";
+            float value = 0;
             
             if(data.InfamyReward > 0)
             {
-                s = (originalInfamyValue + i).ToString();
+                temp++;
+                s = temp.ToString();
+                value = (float)temp/ (float)Entity.GetNextTier(data.Friendlies[0].Tier);
             }
             else
             {
-                s = (originalInfamyValue - i).ToString();
+                if (temp <= 0)
+                {
+                    print("breaking");
+                    break;
+                }
+
+                temp--;
+
+                s = temp.ToString();
+                value = (float)temp/ (float)Entity.GetNextTier(data.Friendlies[0].Tier);
             }
-            sequence.Append(infamyValue.DOText(s, duration));
-            duration *= 0.9f;
+            
+            sequence.Append(infamyValue.DOText(s, 0));
+            sequence.Join(infamyBar.DOScale(new Vector3(value, infamyBar.localScale.y, infamyBar.localScale.z), 0));
+            sequence.AppendInterval(interval);
+            interval *= 0.9f;
+
+            
         }
         
         sequence

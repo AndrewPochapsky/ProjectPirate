@@ -13,5 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Friendlies: []
   Enemies: []
-  InfamyReward: 0
+  InfamyReward: -25
   enemyObject: {fileID: 0}

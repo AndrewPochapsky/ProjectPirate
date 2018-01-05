@@ -37,6 +37,7 @@ public class Player : Entity {
         entityData.CurrentHealth = base.entityData.MaxHealth;
         entityData.Infamy = 0;
         entityData.Gold = 0;
+        entityData.Tier = InfamyTier.Level1;
 
        
     }
@@ -180,5 +181,17 @@ public class Player : Entity {
 
         return s;
     }
+
+    public void SetInfamy(int value)
+    {
+        entityData.Infamy += value;
+        if (entityData.Infamy < 0)
+        {
+           entityData.Infamy = 0;
+        }
+        OnInfoUpdatedEvent(entityData.Infamy, entityData.Gold);
+    }
+    
+    
 	
 }

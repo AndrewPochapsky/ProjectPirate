@@ -8,6 +8,7 @@ public class WorldController : MonoBehaviour {
 
     public static WorldController Instance;
 
+
     private Player player;
     private LocalData localData;
     private BattleData battleData;
@@ -89,8 +90,8 @@ public class WorldController : MonoBehaviour {
         player = GameObject.FindObjectOfType<Player>();
         player.transform.position = localData.playerShipPos;
 
-        player.entityData.Infamy += battleData.InfamyReward;
-        print("Player has been awarded " + battleData.InfamyReward + " Infamy!");
+        player.SetInfamy(battleData.InfamyReward);
+        
         battleData.InfamyReward = 0;
     }
 
