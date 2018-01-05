@@ -6,12 +6,17 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour {
 
+    /// <summary>
+    /// The infamy tiers. Each coorresponding number is now much infamy is required to reach
+    /// the next tier. For example to get from the first to second it takes X Infamy, from second
+    /// to third its Y infamy, and from third to fourth its Z Infamy 
+    /// </summary>
     public enum InfamyTier
     {
-        Level1 = 0,
-        Level2 = 50,
-        Level3 = 200,
-        Level4 = 500,
+        Level1 = 0, 
+        Level2 = 50, //X
+        Level3 = 200, //Y
+        Level4 = 500, //Z
         Level5 = 1000,
         Null
     }
@@ -31,6 +36,20 @@ public class Entity : MonoBehaviour {
             }
         }
         return InfamyTier.Null;
+    }
+
+    public static InfamyTier LevelUp(EntityData data)
+    {
+        InfamyTier nextTier = GetNextTier(data.Tier);
+        if(nextTier == InfamyTier.Null)
+        {
+            return InfamyTier.Null;
+        }
+        else
+        {
+            data.Tier = nextTier;
+            return nextTier; 
+        }
     }
     
 

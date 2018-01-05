@@ -302,7 +302,7 @@ public class BattleSystemUI : MonoBehaviour {
 
         infamyChange.text = data.InfamyReward.ToString();
         
-        infamyValue.text = data.Friendlies[0].Infamy.ToString();
+        infamyValue.text = Mathf.Abs((int)data.Friendlies[0].Tier - data.Friendlies[0].Infamy).ToString();
 
         if(data.Items.Count == 0)
         {
@@ -338,18 +338,22 @@ public class BattleSystemUI : MonoBehaviour {
         sequence.Insert(1, infamyChange.DOScale(2f, 0.25f));
         sequence.Insert(1.25f, infamyChange.DOScale(1f, 0.25f));
 
+        int originalInfamyValue = data.Friendlies[0].Infamy;
+        float interval = 0.25f;
+
+        int temp = Mathf.Abs((int)data.Friendlies[0].Tier - originalInfamyValue);
+
         sequence
             .AppendInterval(0.25f)
             .Append(currentInfamyTier.DOText(data.Friendlies[0].Tier.ToString(), 0))
             .Append(currentInfamyTier.DOFade(1, 0.5f))
-            .Append(infamyValue.DOFade(1, 0.5f))
             .Append(nextInfamyTier.DOText(Entity.GetNextTier(data.Friendlies[0].Tier).ToString(), 0))
             .Append(nextInfamyTier.DOFade(1, 0.5f))
+            .Append(infamyValue.DOFade(1, 0.5f))
+            .Append(infamyBar.DOScale(new Vector3((float)temp / (float)Entity.GetNextTier(data.Friendlies[0].Tier), infamyBar.localScale.y, infamyBar.localScale.z), 0))
             .Append(infamyBar.GetComponent<Image>().DOFade(1, 0.5f));
         
-        int originalInfamyValue = data.Friendlies[0].Infamy;
-        float interval = 0.25f;
-        int temp = originalInfamyValue;
+        
         for(int i = 0; i < Mathf.Abs(data.InfamyReward); i++)
         {
             string s = "";
@@ -358,19 +362,16 @@ public class BattleSystemUI : MonoBehaviour {
             if(data.InfamyReward > 0)
             {
                 temp++;
-                //print("Temp: "+temp + " Value: "+ ((int)data.Friendlies[0].Tier));
+                
                 if(temp == (int)Entity.GetNextTier(data.Friendlies[0].Tier))
                 {
-                    print("Yes");
-                    Entity.InfamyTier nextTier = Entity.GetNextTier(data.Friendlies[0].Tier);
-                    if(nextTier != Entity.InfamyTier.Null)
+                    Entity.InfamyTier newLevel = Entity.LevelUp(data.Friendlies[0]);
+                    if(newLevel != Entity.InfamyTier.Null)
                     {
-                        print("Hell Yes: " + nextTier);
-                        data.Friendlies[0].Tier = nextTier;
-                        //currentInfamyTier.text = nextTier.ToString();
-                        //nextInfamyTier.text = Entity.GetNextTier(nextTier).ToString();
-                        sequence.Append(currentInfamyTier.DOText(nextTier.ToString(), 0));
-                        sequence.Append(nextInfamyTier.DOText(Entity.GetNextTier(nextTier).ToString(), 0));
+                        sequence.Append(currentInfamyTier.DOText(newLevel.ToString(), 0));
+
+                        //TODO: Prevent the text from becoming "Null"(IT CURRENTLY DOES IF THE LEVEL IS MAX)
+                        sequence.Append(nextInfamyTier.DOText(Entity.GetNextTier(newLevel).ToString(), 0));
                         temp = 0;
                     }
                 }
@@ -382,7 +383,6 @@ public class BattleSystemUI : MonoBehaviour {
             {
                 if (temp <= 0)
                 {
-                    print("breaking");
                     break;
                 }
 
