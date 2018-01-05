@@ -90,6 +90,9 @@ public class WorldController : MonoBehaviour {
         player = GameObject.FindObjectOfType<Player>();
         player.transform.position = localData.playerShipPos;
 
+        //TODO: Create a function which updates all of the player's stuff after a battle
+
+        player.entityData.Tier = battleData.Friendlies[0].Tier;
         player.SetInfamy(battleData.InfamyReward);
         
         battleData.InfamyReward = 0;

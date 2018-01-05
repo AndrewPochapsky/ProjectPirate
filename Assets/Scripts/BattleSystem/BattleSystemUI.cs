@@ -301,8 +301,7 @@ public class BattleSystemUI : MonoBehaviour {
 
 
         infamyChange.text = data.InfamyReward.ToString();
-        //In future, consider incrementing the new infamy onto the old one when the value gets revealed
-        //infamyValue.text = (data.Friendlies[0].Infamy + data.InfamyReward).ToString();    
+        
         infamyValue.text = data.Friendlies[0].Infamy.ToString();
 
         if(data.Items.Count == 0)
@@ -349,7 +348,6 @@ public class BattleSystemUI : MonoBehaviour {
             .Append(infamyBar.GetComponent<Image>().DOFade(1, 0.5f));
         
         int originalInfamyValue = data.Friendlies[0].Infamy;
-        print("Original value: "+ originalInfamyValue);
         float interval = 0.25f;
         int temp = originalInfamyValue;
         for(int i = 0; i < Mathf.Abs(data.InfamyReward); i++)
@@ -360,6 +358,23 @@ public class BattleSystemUI : MonoBehaviour {
             if(data.InfamyReward > 0)
             {
                 temp++;
+                //print("Temp: "+temp + " Value: "+ ((int)data.Friendlies[0].Tier));
+                if(temp == (int)Entity.GetNextTier(data.Friendlies[0].Tier))
+                {
+                    print("Yes");
+                    Entity.InfamyTier nextTier = Entity.GetNextTier(data.Friendlies[0].Tier);
+                    if(nextTier != Entity.InfamyTier.Null)
+                    {
+                        print("Hell Yes: " + nextTier);
+                        data.Friendlies[0].Tier = nextTier;
+                        //currentInfamyTier.text = nextTier.ToString();
+                        //nextInfamyTier.text = Entity.GetNextTier(nextTier).ToString();
+                        sequence.Append(currentInfamyTier.DOText(nextTier.ToString(), 0));
+                        sequence.Append(nextInfamyTier.DOText(Entity.GetNextTier(nextTier).ToString(), 0));
+                        temp = 0;
+                    }
+                }
+
                 s = temp.ToString();
                 value = (float)temp/ (float)Entity.GetNextTier(data.Friendlies[0].Tier);
             }
@@ -380,9 +395,7 @@ public class BattleSystemUI : MonoBehaviour {
             sequence.Append(infamyValue.DOText(s, 0));
             sequence.Join(infamyBar.DOScale(new Vector3(value, infamyBar.localScale.y, infamyBar.localScale.z), 0));
             sequence.AppendInterval(interval);
-            interval *= 0.9f;
-
-            
+            interval *= 0.95f;
         }
         
         sequence
