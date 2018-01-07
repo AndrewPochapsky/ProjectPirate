@@ -19,5 +19,6 @@ public class BattleData : ScriptableObject {
 		Friendlies = new List<EntityData>();
 		Enemies = new List<EntityData>();
         Items = new List<ISellable>();
+		InfamyReward = 0;
 	}
 }

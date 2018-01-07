@@ -17,18 +17,18 @@ public class MainUIController : MonoBehaviour {
 
 	Player player;
 
-	[Header("WorldUI:")]
-	[SerializeField]
-	private TextMeshProUGUI infamyText;
-
-	[SerializeField]
-	private TextMeshProUGUI goldText;
-
+	
 	[SerializeField]
 	private TextMeshProUGUI interactText;
 
 	[SerializeField]
     private Transform worldUIContainer;
+
+	[SerializeField]
+	private RectTransform infamyBar;
+
+	[SerializeField]
+	private TextMeshProUGUI currentInfamyTier, nextInfamyTier, infamyValue;
 
 	[SerializeField]
 	private CanvasGroup islandUICanvasGroup, panelCanvasGroup;
@@ -51,7 +51,7 @@ public class MainUIController : MonoBehaviour {
 
 		player = GameObject.FindObjectOfType<Player>();
 		islandInteractionUI = GetComponent<IslandInteractionUI>();
-		player.OnInfoUpdatedEvent += SetUI;
+		player.OnInfoUpdatedEvent += UpdateInfamy;
 	}
 
 
@@ -77,17 +77,25 @@ public class MainUIController : MonoBehaviour {
 		fadeController.FadeCanvasGroup(fadingInPanel, panelCanvasGroup, false,scene);
 	}
 
-	private void SetUI(int infamy, int gold)
-	{
-		infamyText.text = "Infamy: " + infamy;
-		goldText.text = "Gold: " + gold;
-	}
-
 	//TODO: if no longer being used, remove
     public void ToggleWorldUI(bool value)
     {
         worldUIContainer.gameObject.SetActive(value);
     }
+
+	public void UpdateInfamy(EntityData data)
+	{
+		currentInfamyTier.text = data.Tier.ToString();
+		nextInfamyTier.text = Entity.GetNextTier(data.Tier).ToString();
+
+		int relativeInfamyValue = Mathf.Abs((int)data.Tier - data.Infamy);
+		
+		infamyValue.text = relativeInfamyValue.ToString();
+
+		float value = (float)relativeInfamyValue / (float)Entity.GetNextTier(data.Tier);
+
+		infamyBar.localScale = new Vector3(value, infamyBar.localScale.y, infamyBar.localScale.z);
+	}
 	
 }
 

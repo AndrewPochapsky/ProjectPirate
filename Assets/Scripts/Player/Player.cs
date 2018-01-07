@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 //Also, refactor normal Entity class to be just for sea based entities
 
 public class Player : Entity {
-    public delegate void OnInfoUpdated(int infamy, int gold);
+    public delegate void OnInfoUpdated(EntityData data);
     public event OnInfoUpdated OnInfoUpdatedEvent;
 
     public delegate void OnNewTileEntered(List<BaseNode> nodes);
@@ -51,7 +51,7 @@ public class Player : Entity {
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)
-            OnInfoUpdatedEvent(base.entityData.Infamy, base.entityData.Gold);
+            OnInfoUpdatedEvent(entityData);
     }
     
     /// <summary>
@@ -184,12 +184,22 @@ public class Player : Entity {
 
     public void SetInfamy(int value)
     {
+        print("value: "+ value);
         entityData.Infamy += value;
-        if (entityData.Infamy < 0)
+
+        int diff = entityData.Infamy - (int)entityData.Tier;
+        
+        //Prevents player from dropping below current tier levels of infamy
+        if(diff < 0)
+        {
+            entityData.Infamy = (int)entityData.Tier;
+        }
+        else if (entityData.Infamy < 0)
         {
            entityData.Infamy = 0;
         }
-        OnInfoUpdatedEvent(entityData.Infamy, entityData.Gold);
+        print("Infamy now at " + entityData.Infamy);
+        OnInfoUpdatedEvent(entityData);
     }
     
     

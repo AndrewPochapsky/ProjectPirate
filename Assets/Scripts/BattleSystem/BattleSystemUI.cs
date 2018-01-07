@@ -93,7 +93,7 @@ public class BattleSystemUI : MonoBehaviour {
         if(!fadeOut)
             fadeController.FadeCanvasGroup(fadeOut, panel, false);
         else
-            fadeController.FadeCanvasGroup(fadeOut, panel, true, "Main");
+            fadeController.FadeCanvasGroup(fadeOut, panel, true, "World");
     }
 
     private void UpdateTurnUI(BattleController.Turn turn)

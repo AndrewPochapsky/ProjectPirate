@@ -338,7 +338,7 @@ public class BattleController : MonoBehaviour {
         {
             return; 
         }
-        battleData.InfamyReward = 55;//Random.Range(1, 10);
+        battleData.InfamyReward = 50;//Random.Range(1, 10);
 
         if(status == BattleStatus.EnemyVic)
             battleData.InfamyReward *= -1;

@@ -86,6 +86,7 @@ public class WorldController : MonoBehaviour {
 
     private void Start()
     {
+        battleData = Resources.Load<BattleData>("Data/BattleData");
         World.Instance.gameObject.SetActive(true);
         player = GameObject.FindObjectOfType<Player>();
         player.transform.position = localData.playerShipPos;
@@ -93,11 +94,13 @@ public class WorldController : MonoBehaviour {
         //TODO: Create a function which updates all of the player's stuff after a battle
         
         if(battleData.Friendlies.Count > 0)
-            player.entityData.Tier = battleData.Friendlies[0].Tier;
+            player.entityData = battleData.Friendlies[0];
             
         player.SetInfamy(battleData.InfamyReward);
         
         battleData.InfamyReward = 0;
+
+        //MainUIController.Instance.UpdateInfamy();
     }
 
     /// <summary>
