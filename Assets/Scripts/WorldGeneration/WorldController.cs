@@ -26,7 +26,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// In a specific direction, actual number is numberOfChunks^2
     /// </summary>
-    public const int numberOfChunks = 3;
+    public const int numberOfChunks = 8;
 
     public const int mapTileSize = 32;
 
