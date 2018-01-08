@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 223585164864941492}
   - component: {fileID: 114369348374582872}
   - component: {fileID: 114050338784902348}
+  - component: {fileID: 225968583439856312}
   m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
@@ -120,7 +121,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1789851191812744}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 561.19824, y: 176.69775, z: -507.18677}
+  m_LocalPosition: {x: 748.28156, y: 26.947882, z: 3554.8323}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4568811954937628}
@@ -577,3 +578,14 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 260}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &225968583439856312
+CanvasGroup:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1426579938929906}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
