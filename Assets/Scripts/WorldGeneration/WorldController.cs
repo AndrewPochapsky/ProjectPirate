@@ -36,7 +36,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
     /// </summary>
-    int newSize = mapTileSize * 24;
+    public int newSize = mapTileSize * 24;
 
     /// <summary>
     /// The current island which the player is near/interacting with
@@ -72,6 +72,8 @@ public class WorldController : MonoBehaviour {
             nodes = new List<BaseNode>();
 
             Chunks = GenerateWorld();
+            RemoveEmptyNodes();
+            World.Instance.SetPositionRelativeToOrigin();
             hasGenerated = true;
         }
         localData = Resources.Load<LocalData>("Data/LocalData");
@@ -169,5 +171,25 @@ public class WorldController : MonoBehaviour {
         nodes.Remove(node);
 
         return nodes;
+    }
+
+    public void RemoveEmptyNodes()
+    {
+        List<BaseNode> nodesToRemove = new List<BaseNode>();
+        foreach(Chunk chunk in Chunks)
+        {
+            foreach(BaseNode child in chunk.transform.GetComponentsInChildren<BaseNode>())
+            {
+                if(child.transform.childCount == 0)
+                {
+                    nodesToRemove.Add(child);
+                }
+            }
+        }
+
+        foreach(var node in nodesToRemove)
+        {
+            Destroy(node.gameObject);
+        }
     }
 }
