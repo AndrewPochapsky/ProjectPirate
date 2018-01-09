@@ -170,7 +170,7 @@ public class IslandInteractionUI : MonoBehaviour
         {
             resourceText.text = "???";
         }
-
+        CheckIfCanRaiseAnchor();
        
     }
 

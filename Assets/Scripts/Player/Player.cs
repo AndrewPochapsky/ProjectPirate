@@ -82,9 +82,6 @@ public class Player : Entity {
             
             MainUIController.Instance.fadingInPanel = true;
             MainUIController.Instance.scene = "Battle";
-
-            //Temporary remove later
-            //enemy.gameObject.SetActive(false);
         }
     }
 
@@ -105,6 +102,7 @@ public class Player : Entity {
                 anchorDropped = true;
                 //MainUIController.Instance.ToggleWorldUI(false);
                 MainUIController.Instance.islandInteractionUI.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
+                //TODO: use DOTween for this
                 MainUIController.Instance.fadingInIslandUI = true;
                 
                 //TODO: Don't do this

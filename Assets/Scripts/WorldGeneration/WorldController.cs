@@ -72,7 +72,7 @@ public class WorldController : MonoBehaviour {
             nodes = new List<BaseNode>();
 
             Chunks = GenerateWorld();
-            RemoveEmptyNodes();
+            //RemoveEmptyNodes();
             World.Instance.SetPositionRelativeToOrigin();
             hasGenerated = true;
         }
@@ -156,7 +156,7 @@ public class WorldController : MonoBehaviour {
                 {
                     island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
                 }
-                if(island == null && adjNode != node && !tempNodes.Contains(adjNode))
+                if(island == null && adjNode.transform.childCount > 0 &&adjNode != node && !tempNodes.Contains(adjNode))
                 {
                     //nodes.Add(adjNode);
                     tempNodes.Add(adjNode);
@@ -173,6 +173,7 @@ public class WorldController : MonoBehaviour {
         return nodes;
     }
 
+    //Not a good solution since it causes a missing reference exception with enemy generation
     public void RemoveEmptyNodes()
     {
         List<BaseNode> nodesToRemove = new List<BaseNode>();

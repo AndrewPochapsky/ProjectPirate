@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 //TODO: try to clean this class up a bit :/
 public class MainUIController : MonoBehaviour {
@@ -62,14 +63,15 @@ public class MainUIController : MonoBehaviour {
 	{
 		fadeController.CheckIfCanvasGroupInteractable(islandUICanvasGroup);
 
+		//TODO: possible change, not an amazing solution
 		if(WorldController.Instance.currentIsland != null && !player.anchorDropped)
 		{
-			interactText.enabled = true;
-			interactText.text = "Press E to drop anchor at "+ WorldController.Instance.currentIsland.Name + ".";
+			interactText.text = "Press E to drop anchor";
+			interactText.DOFade(1, 0.5f);
 		}
 		else
 		{
-			interactText.enabled = false;
+			interactText.DOFade(0, 0.5f);
 		}	
 		//TODO: try to find a better solution than just calling this in update constantly
 		fadeController.FadeCanvasGroup(fadingInIslandUI, islandUICanvasGroup, false);
