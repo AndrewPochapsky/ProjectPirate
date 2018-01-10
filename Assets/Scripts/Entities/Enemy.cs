@@ -5,10 +5,20 @@ using UnityEngine;
 public class Enemy : Entity {
     
     Transform player;
+    [HideInInspector]
+    public Transform model;
     public bool dead = false;
     private int speed = 120;
 
-    Rigidbody rigidbody;
+    new Rigidbody rigidbody;
+
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
+    void Awake()
+    {
+        model = transform.GetChild(0);
+    }
 
 	/// <summary>
 	/// Start is called on the frame when a script is enabled just before
@@ -35,6 +45,7 @@ public class Enemy : Entity {
 
         player = GameObject.FindObjectOfType<Player>().transform;
         rigidbody = GetComponent<Rigidbody>();
+        
         
 	}
 

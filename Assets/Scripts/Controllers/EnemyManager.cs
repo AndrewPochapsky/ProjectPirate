@@ -34,7 +34,7 @@ public class EnemyManager : MonoBehaviour {
 				//spawn enemy at node
 				enemyAmount++;
 				GameObject obj = Instantiate(Resources.Load("Enemy"), new Vector3(node.transform.position.x, 60, node.transform.position.z), Quaternion.identity) as GameObject;
-				Material mat = obj.GetComponent<MeshRenderer>().material;
+				Material mat = obj.GetComponent<Enemy>().model.GetComponent<MeshRenderer>().material;
 
 				mat.DOFade(1, 1f);
 
