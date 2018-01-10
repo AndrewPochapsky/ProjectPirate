@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 
 /*TODO: create an object pooling system for this instead of just instantiating*/
@@ -10,14 +11,6 @@ public class EnemyManager : MonoBehaviour {
 	float enemySpawnChance = 0.2f;
 	int enemyAmount = 0;
 	int maxEnemyAmount = 3;
-
-	/// <summary>
-	/// Awake is called when the script instance is being loaded.
-	/// </summary>
-	void Awake()
-	{
-		
-	}
 
 	// Use this for initialization
 	void Start () {
@@ -41,6 +34,10 @@ public class EnemyManager : MonoBehaviour {
 				//spawn enemy at node
 				enemyAmount++;
 				GameObject obj = Instantiate(Resources.Load("Enemy"), new Vector3(node.transform.position.x, 60, node.transform.position.z), Quaternion.identity) as GameObject;
+				Material mat = obj.GetComponent<MeshRenderer>().material;
+
+				mat.DOFade(1, 1f);
+
 				obj.transform.SetParent(node.transform);
 
 			}
