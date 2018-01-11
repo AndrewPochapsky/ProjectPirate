@@ -11,6 +11,7 @@ TagManager:
   - Original
   - survey
   - gatherResources
+  - RepairButton
   layers:
   - Default
   - TransparentFX

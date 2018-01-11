@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class BattleSystemUI : MonoBehaviour {
 
-    private enum ButtonType { Regular, Attack, Consumable };
+    private enum ButtonType { Regular, Attack };
 
     [SerializeField]
     private CanvasGroup panel;
@@ -90,6 +90,7 @@ public class BattleSystemUI : MonoBehaviour {
                 battleController.Attacking = false;
             }
         }
+        //TODO: use DOTween for this
         if(!fadeOut)
             fadeController.FadeCanvasGroup(fadeOut, panel, false);
         else
@@ -137,9 +138,11 @@ public class BattleSystemUI : MonoBehaviour {
 
     public void GenerateAttackButtons(BattleEntity player)
     {
+        print("called: " + player.data.Attacks.Count);
         attackButtons = new Button[player.data.Attacks.Count];
         for(int i = 0; i < player.data.Attacks.Count; i++)
         {
+            print("Generating 1");
             attackButtons[i] = GenerateButton(attackPanel, player.data.Attacks[i], player);
         }
     }
@@ -183,6 +186,11 @@ public class BattleSystemUI : MonoBehaviour {
     {
         GameObject button = EventSystem.current.currentSelectedGameObject;
         FindPressedButton(buttons, button.GetComponent<Button>(), ButtonType.Regular);
+    }
+
+    public void OnRepairPressed()
+    {
+
     }
 
     /// <summary>
@@ -237,8 +245,16 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Generates attack buttons
+    /// </summary>
+    /// <param name="parent">Parent</param>
+    /// <param name="attack">The attack</param>
+    /// <param name="player">The player</param>
+    /// <returns>The created button</returns>
     private Button GenerateButton(RectTransform parent, Attack attack, BattleEntity player)
     {
+        print("Generating");
         GameObject button = (GameObject)Instantiate(buttonPrefab);
         button.transform.SetParent(parent, false);
         button.transform.localScale = Vector3.one;

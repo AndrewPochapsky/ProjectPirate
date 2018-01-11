@@ -33,7 +33,7 @@ public class Player : Entity {
         //Note: Requires editing the enemy AI thing
         entityData.Consumables = new List<Consumable>();
         entityData.Speed = 4;
-        entityData.MaxHealth = 1;
+        entityData.MaxHealth = 20;
         entityData.CurrentHealth = base.entityData.MaxHealth;
         entityData.Infamy = 0;
         entityData.Gold = 0;
@@ -74,6 +74,7 @@ public class Player : Entity {
             LocalData localData = Resources.Load<LocalData>("Data/LocalData");
 
             battleData.ResetData();
+            print("New Count: "+ battleData.Friendlies.Count);
             battleData.Friendlies.Add(this.entityData);
             battleData.Enemies.Add(enemy.entityData);
             battleData.enemyObject = enemy.gameObject;
@@ -182,7 +183,6 @@ public class Player : Entity {
 
     public void SetInfamy(int value)
     {
-        print("value: "+ value);
         entityData.Infamy += value;
 
         int diff = entityData.Infamy - (int)entityData.Tier;
@@ -196,7 +196,6 @@ public class Player : Entity {
         {
            entityData.Infamy = 0;
         }
-        print("Infamy now at " + entityData.Infamy);
         OnInfoUpdatedEvent(entityData);
     }
     

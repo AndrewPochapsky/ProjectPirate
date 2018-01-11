@@ -101,7 +101,7 @@ public class WorldController : MonoBehaviour {
         player.SetInfamy(battleData.InfamyReward);
         
         battleData.InfamyReward = 0;
-
+        battleData.ResetData();
         //MainUIController.Instance.UpdateInfamy();
     }
 

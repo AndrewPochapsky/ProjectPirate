@@ -139,6 +139,8 @@ public class BattleController : MonoBehaviour {
 
         playerMovementRange = Pathfinding.GetRange(Nodes, friendlies[0].nodeParent, friendlies[0].data.Speed);
 
+        print("First Count: " + friendlies[0].data.Attacks.Count);
+
         //Generate the UI
         uiController.CreateGrid(width, height, battleTileSize);
         uiController.GenerateAttackButtons(friendlies[0]);

@@ -28,7 +28,7 @@ public class Enemy : Entity {
 	{
 		entityData = new EntityData();
 		entityData.Speed = 3;
-        entityData.MaxHealth = 1;
+        entityData.MaxHealth = 10;
         entityData.CurrentHealth = entityData.MaxHealth;
 
         entityData.Attacks = new List<Attack>
