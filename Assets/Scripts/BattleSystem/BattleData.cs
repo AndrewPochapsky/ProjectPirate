@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Battle Data")]
-public class BattleData : ScriptableObject {
+public class BattleData : Data {
 	public List<EntityData> Friendlies = new List<EntityData>();
 	public List<EntityData> Enemies = new List<EntityData>();
 	
@@ -14,7 +14,7 @@ public class BattleData : ScriptableObject {
 	//maybe add bool like playerWon or something
     public GameObject enemyObject = null;
 
-	public void ResetData()
+	public override void ResetData()
 	{
 		Friendlies = new List<EntityData>();
 		Enemies = new List<EntityData>();

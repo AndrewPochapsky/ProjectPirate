@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(BattleData))]
-public class BattleDataEditor : Editor {
+[CustomEditor(typeof(Data))]
+public class DataEditor : Editor {
 
 	public override void OnInspectorGUI()
     {
 		DrawDefaultInspector();
         if(GUILayout.Button("Reset"))
 		{
-			BattleData data = (BattleData)target;
+			Data data = (Data)target;
 			data.ResetData();
         }
     }

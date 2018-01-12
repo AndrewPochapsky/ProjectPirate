@@ -36,6 +36,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
     /// </summary>
+    [HideInInspector]
     public int newSize = mapTileSize * 24;
 
     /// <summary>
@@ -83,6 +84,8 @@ public class WorldController : MonoBehaviour {
             Destroy(battleData.enemyObject);
             battleData.enemyObject = null;
         }
+
+
        
     }
 
@@ -102,6 +105,7 @@ public class WorldController : MonoBehaviour {
         
         battleData.InfamyReward = 0;
         battleData.ResetData();
+        localData.ResetData();
         //MainUIController.Instance.UpdateInfamy();
     }
 

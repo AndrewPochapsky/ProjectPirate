@@ -138,11 +138,9 @@ public class BattleSystemUI : MonoBehaviour {
 
     public void GenerateAttackButtons(BattleEntity player)
     {
-        print("called: " + player.data.Attacks.Count);
         attackButtons = new Button[player.data.Attacks.Count];
         for(int i = 0; i < player.data.Attacks.Count; i++)
         {
-            print("Generating 1");
             attackButtons[i] = GenerateButton(attackPanel, player.data.Attacks[i], player);
         }
     }

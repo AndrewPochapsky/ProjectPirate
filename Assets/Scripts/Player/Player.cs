@@ -74,12 +74,14 @@ public class Player : Entity {
             LocalData localData = Resources.Load<LocalData>("Data/LocalData");
 
             battleData.ResetData();
-            print("New Count: "+ battleData.Friendlies.Count);
             battleData.Friendlies.Add(this.entityData);
             battleData.Enemies.Add(enemy.entityData);
             battleData.enemyObject = enemy.gameObject;
 
             localData.playerShipPos = transform.position;
+            localData.enemies = EnemyManager.enemiesInWorld;
+
+            localData.enemies.Remove(battleData.enemyObject);
             
             MainUIController.Instance.fadingInPanel = true;
             MainUIController.Instance.scene = "Battle";
