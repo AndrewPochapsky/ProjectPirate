@@ -350,7 +350,7 @@ public class BattleController : MonoBehaviour {
             enemies = new List<BattleEnemy>();
             Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
             //only do this if player won
-            battleData.enemyObject.GetComponent<Enemy>().dead = true;
+            //battleData.enemyObject.GetComponent<Enemy>().dead = true;
             OnBattleOverEvent(status);
         }
     }

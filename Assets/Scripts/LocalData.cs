@@ -8,11 +8,15 @@ public class LocalData : Data {
 	public Vector3 playerShipPos;
 
 	//Used to respawn enemies in the same positions after scene load
-	public List<GameObject> enemies;
+	public List<Vector3> enemyPositions;
+	public List<Quaternion> enemyRotations;
+	public List<EntityData> enemyData;
 
     public override void ResetData()
     {
         //playerShipPos = new Vector3(0, 30, 0);
-		enemies = new List<GameObject>();
+		enemyPositions = new List<Vector3>();
+		enemyRotations = new List<Quaternion>();
+		enemyData = new List<EntityData>();
     }
 }

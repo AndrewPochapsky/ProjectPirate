@@ -79,14 +79,7 @@ public class WorldController : MonoBehaviour {
         }
         localData = Resources.Load<LocalData>("Data/LocalData");
         battleData = Resources.Load<BattleData>("Data/BattleData");
-        if (battleData.enemyObject != null)
-        {
-            Destroy(battleData.enemyObject);
-            battleData.enemyObject = null;
-        }
 
-
-       
     }
 
     private void Start()

@@ -65,7 +65,10 @@ public class Player : Entity {
         if (node != null)
         {
             List<BaseNode> nodes = WorldController.Instance.GetNodesNearPlayer(this.transform, node);
-            OnNewTileEnteredEvent(nodes);
+            if(OnInfoUpdatedEvent != null)
+            {
+                OnNewTileEnteredEvent(nodes);
+            }
         }
         
         if(enemy != null && !enemy.dead)
@@ -76,12 +79,12 @@ public class Player : Entity {
             battleData.ResetData();
             battleData.Friendlies.Add(this.entityData);
             battleData.Enemies.Add(enemy.entityData);
-            battleData.enemyObject = enemy.gameObject;
-
+            //battleData.enemyObject = enemy.gameObject;
+            //TODO: this is probably temp so remove it 
+            enemy.dead = true;
             localData.playerShipPos = transform.position;
-            localData.enemies = EnemyManager.enemiesInWorld;
 
-            localData.enemies.Remove(battleData.enemyObject);
+            EnemyManager.PopulateLocalDataEnemyInfo(localData, enemy.gameObject);
             
             MainUIController.Instance.fadingInPanel = true;
             MainUIController.Instance.scene = "Battle";

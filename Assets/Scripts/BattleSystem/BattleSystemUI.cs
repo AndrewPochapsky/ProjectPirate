@@ -252,7 +252,7 @@ public class BattleSystemUI : MonoBehaviour {
     /// <returns>The created button</returns>
     private Button GenerateButton(RectTransform parent, Attack attack, BattleEntity player)
     {
-        print("Generating");
+        
         GameObject button = (GameObject)Instantiate(buttonPrefab);
         button.transform.SetParent(parent, false);
         button.transform.localScale = Vector3.one;

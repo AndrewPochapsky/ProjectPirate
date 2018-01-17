@@ -8,6 +8,7 @@ using DG.Tweening;
 public class EnemyManager : MonoBehaviour {
 
 	LocalData localData;
+	BattleData battleData;
 
 	Player player;
 
@@ -23,28 +24,24 @@ public class EnemyManager : MonoBehaviour {
 	void Awake()
 	{
 		localData = Resources.Load<LocalData>("Data/LocalData");
-		
-		foreach (var enemy in localData.enemies)
-        {
-            print("Destroying");
-			if(enemy != null)
-            	Destroy(enemy.gameObject);
-        }	
-		
+		battleData = Resources.Load<BattleData>("Data/BattleData");
+
+		foreach(Enemy enemy in GameObject.FindObjectsOfType<Enemy>())
+		{
+			Destroy(enemy.gameObject);
+		}
+
+
 		enemiesInWorld = new List<GameObject>();
 		
-		if(localData.enemies != null)
+		if(localData.enemyData != null)
 		{
-			foreach(GameObject enemy in localData.enemies)
+			for(int i = 0; i < localData.enemyData.Count; i++)
 			{
-				if(enemy != null)
-					enemiesInWorld.Add(SpawnEnemyFromData(enemy));
+				if(localData.enemyData[i] != null)
+					enemiesInWorld.Add(SpawnEnemyFromData(localData, i));
 			}
 		}
-	}
-
-	// Use this for initialization
-	void Start () {
 		player = GameObject.FindObjectOfType<Player>();
         player.OnNewTileEnteredEvent += SpawnEnemies;
 	}
@@ -79,12 +76,27 @@ public class EnemyManager : MonoBehaviour {
 
 	}
 
-	private GameObject SpawnEnemyFromData(GameObject enemy)
+	private GameObject SpawnEnemyFromData(LocalData data, int index)
 	{
-		GameObject gameObject = Instantiate(Resources.Load("Enemy"), enemy.transform.position, enemy.transform.rotation) as GameObject;
+		GameObject gameObject = Instantiate(Resources.Load("Enemy"), data.enemyPositions[index], data.enemyRotations[index]) as GameObject;
 		Material mat = gameObject.GetComponent<Enemy>().model.GetComponent<MeshRenderer>().material;
 		mat.DOFade(1, 0);
 
         return gameObject;
+	}
+
+	public static void PopulateLocalDataEnemyInfo(LocalData data, GameObject exclusion)
+	{
+		int exclusionIndex = enemiesInWorld.IndexOf(exclusion);
+		for(int i = 0; i < enemiesInWorld.Count; i++)
+		{
+			if(i == exclusionIndex)
+			{
+				continue;
+			}
+			data.enemyData.Add(enemiesInWorld[i].GetComponent<Enemy>().entityData);
+			data.enemyPositions.Add(enemiesInWorld[i].transform.position);
+			data.enemyRotations.Add(enemiesInWorld[i].transform.rotation);
+		}
 	}
 }

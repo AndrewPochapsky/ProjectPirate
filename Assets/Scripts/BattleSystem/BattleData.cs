@@ -11,9 +11,6 @@ public class BattleData : Data {
 	public List<ISellable> Items = new List<ISellable>();
     //The enemy gameobject which is destroyed after the battle(if player won)
 
-	//maybe add bool like playerWon or something
-    public GameObject enemyObject = null;
-
 	public override void ResetData()
 	{
 		Friendlies = new List<EntityData>();
