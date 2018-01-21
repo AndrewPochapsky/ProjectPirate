@@ -24,7 +24,7 @@ public class CameraFollow : MonoBehaviour {
 	{
 		//transform.position = (0.9f * transform.position) + (0.1f * target.position);
 
-		transform.position += (target.position - transform.position) *0.05f;
+		transform.position += (target.position - (transform.position + zoomOffset)) *0.05f;
 	}
 
 	public void SetTarget(Transform _target)
