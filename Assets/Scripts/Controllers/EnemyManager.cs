@@ -58,10 +58,10 @@ public class EnemyManager : MonoBehaviour {
 			if(node.transform.childCount >= 2)
 				existingEnemy = node.transform.GetChild(1).GetComponent<EnemyController>();
 
-			if(Time.timeSinceLevelLoad > 2f && f <= enemySpawnChance && enemyAmount < maxEnemyAmount && existingEnemy == null)
+			if(Time.timeSinceLevelLoad > 2f && enemiesInWorld.Count < maxEnemyAmount && f <= enemySpawnChance && existingEnemy == null)
 			{
 				//spawn enemy at node
-				enemyAmount++;
+				
 				GameObject obj = Instantiate(Resources.Load("Enemy"), new Vector3(node.transform.position.x, 60, node.transform.position.z), Quaternion.identity) as GameObject;
 				enemiesInWorld.Add(obj);
 				
@@ -98,5 +98,15 @@ public class EnemyManager : MonoBehaviour {
 			data.enemyPositions.Add(enemiesInWorld[i].transform.position);
 			data.enemyRotations.Add(enemiesInWorld[i].transform.rotation);
 		}
+	}
+
+	public static void KillAllEnemies()
+	{
+		foreach(var enemy in enemiesInWorld)
+		{
+			Destroy(enemy.gameObject);
+		}
+
+		enemiesInWorld = new List<GameObject>();
 	}
 }

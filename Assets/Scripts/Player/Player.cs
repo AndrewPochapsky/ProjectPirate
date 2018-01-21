@@ -111,6 +111,9 @@ public class Player : Entity {
                 //TODO: use DOTween for this
                 MainUIController.Instance.fadingInIslandUI = true;
                 
+                //TODO: REMOVE TEMPORARY
+                EnemyManager.KillAllEnemies();
+                
                 //TODO: Don't do this
                 cam.zoomOffset = cam.zoomValue;
                 cam.SetTarget(island.transform);

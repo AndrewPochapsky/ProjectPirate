@@ -62,7 +62,15 @@ public class MovementController : MonoBehaviour {
             WorldController.Instance.oceanTileOffset,
             transform.position.z);
 
-        transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
+		if(_model != null)
+		{
+			_model.position = Vector3.SmoothDamp(_model.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
+		}
+		else
+		{
+			transform.position = Vector3.SmoothDamp(transform.position, bobbingMotion, ref velocity, smoothTime: 0.2f);
+		}
+
 
         Quaternion from = Quaternion.Euler(SideTiltAmount, 90, FrontTiltAmount);
         Quaternion to = Quaternion.Euler(-SideTiltAmount, 90, -FrontTiltAmount);
