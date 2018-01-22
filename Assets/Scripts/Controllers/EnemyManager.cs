@@ -12,7 +12,7 @@ public class EnemyManager : MonoBehaviour {
 
 	Player player;
 
-	float enemySpawnChance = 0.2f;
+	float enemySpawnChance = 0.05f;
 	int enemyAmount = 0;
 	int maxEnemyAmount = 3;
 

@@ -32,17 +32,17 @@ public class PlayerController : MovementController {
 	{
 		if(!player.anchorDropped)
 		{
-			if(Input.GetKey(KeyCode.W))
+			if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
 			{
 				//rb.AddForce(transform.forward * acceleration, ForceMode.Force);
 				rb.MovePosition(transform.position + transform.forward * Time.deltaTime * speed);
 			}
-			if(Input.GetKey(KeyCode.D))
+			if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
 			{
 				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, 1 * rotationSpeed * Time.deltaTime, 0));
 				rb.MoveRotation(rb.rotation * deltaRotation);
 			}
-			else if(Input.GetKey(KeyCode.A))
+			else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.RightArrow))
 			{
 				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, -1 * rotationSpeed * Time.deltaTime, 0));
                 rb.MoveRotation(rb.rotation * deltaRotation);
