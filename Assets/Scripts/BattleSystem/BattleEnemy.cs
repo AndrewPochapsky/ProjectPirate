@@ -82,20 +82,7 @@ public class BattleEnemy : BattleEntity {
         consumable = DetermineConsumableScore();
         node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
-        print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
-
-        /*if(currentAttack == null)
-        {
-            print("attack null");
-        }
-        if(consumable == null)
-        {
-            print("Consumable null");
-        }
-        if(!canMove)
-        {
-            print("cant move");
-        }*/
+        //print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
 
         //If enemy cant do anything just end turn
         if(currentAttack == null && (consumable == null || consumableScore <= 0) && !canMove)

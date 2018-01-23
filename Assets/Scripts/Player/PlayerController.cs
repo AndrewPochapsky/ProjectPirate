@@ -42,7 +42,7 @@ public class PlayerController : MovementController {
 				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, 1 * rotationSpeed * Time.deltaTime, 0));
 				rb.MoveRotation(rb.rotation * deltaRotation);
 			}
-			else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.RightArrow))
+			else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
 			{
 				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, -1 * rotationSpeed * Time.deltaTime, 0));
                 rb.MoveRotation(rb.rotation * deltaRotation);
