@@ -98,10 +98,14 @@ public class BattleEntity : MonoBehaviour {
     /// <param name="_nodes">List of nodes which is set to this.nodes</param>
     public void SetPathNodes(List<Node> _nodes)
     {
-        currentNodeIndex = 0;
-        pathNodes = _nodes;
-        nextLocation = _nodes[currentNodeIndex];
-        IsMoving = true;
+        if(_nodes != null)
+        {
+            currentNodeIndex = 0;
+            pathNodes = _nodes;
+
+            nextLocation = _nodes[currentNodeIndex];
+            IsMoving = true;
+        }
     }
 
     /// <summary>

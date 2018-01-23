@@ -54,7 +54,8 @@ public static class Pathfinding {
                 if (newMovementCostToAdjacent < adjacentNode.gCost || !openSet.Contains(adjacentNode))
                 {
                     adjacentNode.gCost = newMovementCostToAdjacent;
-                    adjacentNode.hCost = GetDistance(adjacentNode, targetNode);
+                    if(targetNode != null && adjacentNode != null)
+                        adjacentNode.hCost = GetDistance(adjacentNode, targetNode);
                     adjacentNode.parent = currentNode;
 
                     if (!openSet.Contains(adjacentNode))

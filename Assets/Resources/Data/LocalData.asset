@@ -11,4 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31d5ec75e01c3c14a82e78705b6ed3f7, type: 3}
   m_Name: LocalData
   m_EditorClassIdentifier: 
-  playerShipPos: {x: 0, y: 30, z: 0}
+  playerShipPos: {x: 1631.5642, y: 0, z: 3761.7107}
+  enemyPositions: []
+  enemyRotations: []
+  enemyData: []

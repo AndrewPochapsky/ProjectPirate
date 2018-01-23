@@ -26,6 +26,7 @@ public class BattleEnemy : BattleEntity {
 
     Node node = null;
     Attack currentAttack = null;
+    Consumable consumable = null;
     BattleEntity target = null;
 
     protected override void Start()
@@ -59,9 +60,9 @@ public class BattleEnemy : BattleEntity {
                 }
                 else
                 {
+
                     ResetScores();
                     //Do another action
-                    //print("Recursion");
                     OnEnemyTurn(new List<BattleEntity>() { target });
                 }
                
@@ -78,13 +79,26 @@ public class BattleEnemy : BattleEntity {
         target = GetTarget(targets);
 
         currentAttack = DetermineAttackScore(target);
-        Consumable consumable = DetermineConsumableScore();
+        consumable = DetermineConsumableScore();
         node = DetermineMoveScore(target, canAttack: currentAttack != null, canConsume: consumable != null);
         
-        //print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
+        print("A-score: " + attackingScore + " C-score: "+ consumableScore + " M-Score: "+moveScore);
+
+        /*if(currentAttack == null)
+        {
+            print("attack null");
+        }
+        if(consumable == null)
+        {
+            print("Consumable null");
+        }
+        if(!canMove)
+        {
+            print("cant move");
+        }*/
 
         //If enemy cant do anything just end turn
-        if(currentAttack == null && consumable == null && !canMove)
+        if(currentAttack == null && (consumable == null || consumableScore <= 0) && !canMove)
         {
             RaiseEndTurnEvent();
         }
@@ -94,7 +108,7 @@ public class BattleEnemy : BattleEntity {
         switch (state)
         {
             case State.Attack:
-                //print("Attacking...");
+                print("Attacking...");
                 if (currentAttack!= null && moveForAttack)//TODO remove the first condition
                 {
                     Node nodeToMoveTo = null;
@@ -139,22 +153,26 @@ public class BattleEnemy : BattleEntity {
                 break;
 
             case State.Consumable:
-                //print("consuming");
+                print("consuming");
                 consumable.Consume(this);
                 data.Consumables.Remove(consumable);
                 
                 print("Consuming "+consumable.Name);
+                consumable = null;
                 //TODO allow selecting other targets(party members)
                 RaiseEndTurnEvent();
                 break;
 
             case State.Move:
-                //print("Moving...");
+                print("Moving...");
                 List<Node> _path = Pathfinding.FindPath(nodeParent, node, reverse: true);
-
-                SetPathNodes(_path);
-                node = _path[_path.Count - 1];
+                if(_path != null)
+                {
+                    SetPathNodes(_path);
+                    node = _path[_path.Count - 1];
+                }
                 checkForLocationReached = true;
+               
                 break;
         }
     }
@@ -322,7 +340,7 @@ public class BattleEnemy : BattleEntity {
         Node node = null;
         if (!canMove)
         {
-            moveScore = -1000;
+            moveScore = -100000;
             return null;
         }
 
