@@ -8,7 +8,7 @@ using DG.Tweening;
 
 public class BattleSystemUI : MonoBehaviour {
 
-    private enum ButtonType { Regular, Attack, Consumable };
+    private enum ButtonType { Regular, Attack };
 
     [SerializeField]
     private CanvasGroup panel;
@@ -90,10 +90,11 @@ public class BattleSystemUI : MonoBehaviour {
                 battleController.Attacking = false;
             }
         }
+        //TODO: use DOTween for this
         if(!fadeOut)
             fadeController.FadeCanvasGroup(fadeOut, panel, false);
         else
-            fadeController.FadeCanvasGroup(fadeOut, panel, true, "Main");
+            fadeController.FadeCanvasGroup(fadeOut, panel, true, "World");
     }
 
     private void UpdateTurnUI(BattleController.Turn turn)
@@ -185,6 +186,11 @@ public class BattleSystemUI : MonoBehaviour {
         FindPressedButton(buttons, button.GetComponent<Button>(), ButtonType.Regular);
     }
 
+    public void OnRepairPressed()
+    {
+        
+    }
+
     /// <summary>
     /// Executes when attacks button pressed
     /// </summary>
@@ -237,8 +243,16 @@ public class BattleSystemUI : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Generates attack buttons
+    /// </summary>
+    /// <param name="parent">Parent</param>
+    /// <param name="attack">The attack</param>
+    /// <param name="player">The player</param>
+    /// <returns>The created button</returns>
     private Button GenerateButton(RectTransform parent, Attack attack, BattleEntity player)
     {
+        
         GameObject button = (GameObject)Instantiate(buttonPrefab);
         button.transform.SetParent(parent, false);
         button.transform.localScale = Vector3.one;

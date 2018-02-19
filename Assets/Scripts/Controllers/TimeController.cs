@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TimeController : MonoBehaviour {
 
@@ -11,6 +12,9 @@ public class TimeController : MonoBehaviour {
 	public string formattedTime { get; private set; }
 
 	public float timeModifier { get; private set; } = 1f;
+
+	[SerializeField]
+	private TextMeshProUGUI pausedText;
 
 	/// <summary>
 	/// Awake is called when the script instance is being loaded.
@@ -31,6 +35,25 @@ public class TimeController : MonoBehaviour {
 	void Start () {
 		formattedTime = GetFormattedTime(minutes, true);
 		InvokeRepeating("IncrementTime", 0f, timeModifier);
+	}
+
+	/// <summary>
+	/// Update is called every frame, if the MonoBehaviour is enabled.
+	/// </summary>
+	void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.Escape))
+		{
+			pausedText.gameObject.SetActive(Time.timeScale == 1);
+			if(Time.timeScale == 0)
+			{
+				Time.timeScale = 1;
+			}
+			else
+			{
+				Time.timeScale = 0;
+			}
+		}
 	}
 
 	private void IncrementTime()

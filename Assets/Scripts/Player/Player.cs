@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 //Also, refactor normal Entity class to be just for sea based entities
 
 public class Player : Entity {
-    public delegate void OnInfoUpdated(int infamy, int gold);
+    public delegate void OnInfoUpdated(EntityData data);
     public event OnInfoUpdated OnInfoUpdatedEvent;
 
     public delegate void OnNewTileEntered(List<BaseNode> nodes);
@@ -33,7 +33,7 @@ public class Player : Entity {
         //Note: Requires editing the enemy AI thing
         entityData.Consumables = new List<Consumable>();
         entityData.Speed = 4;
-        entityData.MaxHealth = 1;
+        entityData.MaxHealth = 20;
         entityData.CurrentHealth = base.entityData.MaxHealth;
         entityData.Infamy = 0;
         entityData.Gold = 0;
@@ -51,7 +51,7 @@ public class Player : Entity {
         cam = FindObjectOfType<CameraFollow>();
         cam.SetTarget(this.transform);
         if(OnInfoUpdatedEvent != null)
-            OnInfoUpdatedEvent(base.entityData.Infamy, base.entityData.Gold);
+            OnInfoUpdatedEvent(entityData);
     }
     
     /// <summary>
@@ -65,7 +65,10 @@ public class Player : Entity {
         if (node != null)
         {
             List<BaseNode> nodes = WorldController.Instance.GetNodesNearPlayer(this.transform, node);
-            OnNewTileEnteredEvent(nodes);
+            if(OnInfoUpdatedEvent != null)
+            {
+                OnNewTileEnteredEvent(nodes);
+            }
         }
         
         if(enemy != null && !enemy.dead)
@@ -76,15 +79,15 @@ public class Player : Entity {
             battleData.ResetData();
             battleData.Friendlies.Add(this.entityData);
             battleData.Enemies.Add(enemy.entityData);
-            battleData.enemyObject = enemy.gameObject;
-
+            //battleData.enemyObject = enemy.gameObject;
+            //TODO: this is probably temp so remove it 
+            enemy.dead = true;
             localData.playerShipPos = transform.position;
+
+            EnemyManager.PopulateLocalDataEnemyInfo(localData, enemy.gameObject);
             
             MainUIController.Instance.fadingInPanel = true;
             MainUIController.Instance.scene = "Battle";
-
-            //Temporary remove later
-            //enemy.gameObject.SetActive(false);
         }
     }
 
@@ -105,7 +108,11 @@ public class Player : Entity {
                 anchorDropped = true;
                 //MainUIController.Instance.ToggleWorldUI(false);
                 MainUIController.Instance.islandInteractionUI.SetIslandInfo(island.info.Name, "It is a bright and sunny day on " + island.info.Name);
+                //TODO: use DOTween for this
                 MainUIController.Instance.fadingInIslandUI = true;
+                
+                //TODO: REMOVE TEMPORARY
+                EnemyManager.KillAllEnemies();
                 
                 //TODO: Don't do this
                 cam.zoomOffset = cam.zoomValue;
@@ -185,11 +192,19 @@ public class Player : Entity {
     public void SetInfamy(int value)
     {
         entityData.Infamy += value;
-        if (entityData.Infamy < 0)
+
+        int diff = entityData.Infamy - (int)entityData.Tier;
+        
+        //Prevents player from dropping below current tier levels of infamy
+        if(diff < 0)
+        {
+            entityData.Infamy = (int)entityData.Tier;
+        }
+        else if (entityData.Infamy < 0)
         {
            entityData.Infamy = 0;
         }
-        OnInfoUpdatedEvent(entityData.Infamy, entityData.Gold);
+        OnInfoUpdatedEvent(entityData);
     }
     
     

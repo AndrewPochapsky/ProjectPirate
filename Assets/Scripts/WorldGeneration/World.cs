@@ -17,4 +17,14 @@ public class World : MonoBehaviour {
 			Instance = this;
 		}
     }
+
+    /// <summary>
+    /// Sets the world container's transform in such a way that makes (0,0) be the middle of it.
+    /// </summary>
+    public void SetPositionRelativeToOrigin()
+    {
+        int position = (WorldController.numberOfChunks/2) * WorldController.chunkSize * WorldController.Instance.newSize;
+
+        transform.position = new Vector3(-position, 0, -position);
+    }
 }

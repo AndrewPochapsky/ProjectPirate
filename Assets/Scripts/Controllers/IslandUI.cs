@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class IslandUI : MonoBehaviour {
 
@@ -45,6 +46,16 @@ public class IslandUI : MonoBehaviour {
 	private void CheckIfPlayerInRange()
 	{
 		if(this != null && player != null)
-			canvas.gameObject.SetActive(Vector3.Distance(player.position, transform.position) <= viewingRange);
+		{
+			if(Vector3.Distance(player.position, transform.position) <= viewingRange)
+			{
+				canvas.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
+			}
+			else
+			{
+				canvas.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
+			}
+		}
+			
 	}
 }

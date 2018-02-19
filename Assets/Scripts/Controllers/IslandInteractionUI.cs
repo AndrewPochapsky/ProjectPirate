@@ -6,6 +6,7 @@ using TMPro;
 using System.Linq;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using DG.Tweening;
 
 //TODO: try to clean this class up a bit :/
 public class IslandInteractionUI : MonoBehaviour
@@ -49,6 +50,9 @@ public class IslandInteractionUI : MonoBehaviour
 
     [SerializeField]
     private Button raiseAnchorButton;
+
+    [SerializeField]
+    private TextMeshProUGUI acquirredResourceText;
 
     [SerializeField]
     private List<Transform> interactionButtons;
@@ -170,7 +174,7 @@ public class IslandInteractionUI : MonoBehaviour
         {
             resourceText.text = "???";
         }
-
+        CheckIfCanRaiseAnchor();
        
     }
 
@@ -531,6 +535,14 @@ public class IslandInteractionUI : MonoBehaviour
                 }
                 resourceText.text = WorldController.Instance.currentIsland.FormattedResourceList();
                
+                //Fade in text which shows what resources the player got
+                string text = "Added " + resource.Name + "(" + amount + ") to inventory";
+                acquirredResourceText.text = text;
+                Sequence sequence = DOTween.Sequence();
+                sequence.Append(acquirredResourceText.DOFade(1, 0.5f));
+                sequence.AppendInterval(2f);
+                sequence.Append(acquirredResourceText.DOFade(0, 0.5f));
+                
 
                 print(player.FormattedInventory());
 

@@ -186,6 +186,11 @@ public class BattleController : MonoBehaviour {
                         OnEndTurn();
                     }
                 }
+                //Else if repairing do similar stuff as the above if 
+                else if(true)
+                {
+
+                }
             }
            
         }
@@ -338,7 +343,7 @@ public class BattleController : MonoBehaviour {
         {
             return; 
         }
-        battleData.InfamyReward = 55;//Random.Range(1, 10);
+        battleData.InfamyReward = Random.Range(10, 29);
 
         if(status == BattleStatus.EnemyVic)
             battleData.InfamyReward *= -1;
@@ -350,7 +355,7 @@ public class BattleController : MonoBehaviour {
             enemies = new List<BattleEnemy>();
             Pathfinding.OnPathUpdatedEvent -= OnPathUpdated;
             //only do this if player won
-            battleData.enemyObject.GetComponent<Enemy>().dead = true;
+            //battleData.enemyObject.GetComponent<Enemy>().dead = true;
             OnBattleOverEvent(status);
         }
     }

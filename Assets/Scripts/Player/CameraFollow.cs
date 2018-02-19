@@ -19,28 +19,12 @@ public class CameraFollow : MonoBehaviour {
 		zoomValue = new Vector3(0, 250, -165);
 		zoomOffset = Vector3.zero;
 	}
-	
-	// Update is called once per frame
-	void LateUpdate () {
-		//If not at island than set position to the target(the player in this case)
-		if(!player.anchorDropped)
-		{
-			//transform.position = new Vector3(target.position.x, 0, target.position.z);
-		}
-		//Otherwise lerp smoothly to this other transform(Island most likely)
-		else
-		{
-			/*Vector3 start = transform.position;
-			Vector3 end = target.position - zoomOffset;
-			float speed = 2;
-			Vector3 newArmPos = Vector3.Lerp(start, end, speed * Time.deltaTime);
-			transform.position = newArmPos;*/
-		}
-		Vector3 start = transform.position;
-		Vector3 end = target.position - zoomOffset;
-		float speed = 2;
-		Vector3 newArmPos = Vector3.Lerp(start, end, speed * Time.deltaTime);
-		transform.position = newArmPos;
+
+	void FixedUpdate()
+	{
+		//transform.position = (0.9f * transform.position) + (0.1f * target.position);
+
+		transform.position += (target.position - (transform.position + zoomOffset)) *0.05f;
 	}
 
 	public void SetTarget(Transform _target)

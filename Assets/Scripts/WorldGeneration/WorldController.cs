@@ -26,7 +26,7 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// In a specific direction, actual number is numberOfChunks^2
     /// </summary>
-    public const int numberOfChunks = 3;
+    public const int numberOfChunks = 8;
 
     public const int mapTileSize = 32;
 
@@ -36,7 +36,8 @@ public class WorldController : MonoBehaviour {
     /// <summary>
     /// This is required in order for the island tiles to match with the ocean tiles
     /// </summary>
-    int newSize = mapTileSize * 24;
+    [HideInInspector]
+    public int newSize = mapTileSize * 24;
 
     /// <summary>
     /// The current island which the player is near/interacting with
@@ -72,20 +73,18 @@ public class WorldController : MonoBehaviour {
             nodes = new List<BaseNode>();
 
             Chunks = GenerateWorld();
+            //RemoveEmptyNodes();
+            World.Instance.SetPositionRelativeToOrigin();
             hasGenerated = true;
         }
         localData = Resources.Load<LocalData>("Data/LocalData");
         battleData = Resources.Load<BattleData>("Data/BattleData");
-        if (battleData.enemyObject != null)
-        {
-            Destroy(battleData.enemyObject);
-            battleData.enemyObject = null;
-        }
-       
+
     }
 
     private void Start()
     {
+        battleData = Resources.Load<BattleData>("Data/BattleData");
         World.Instance.gameObject.SetActive(true);
         player = GameObject.FindObjectOfType<Player>();
         player.transform.position = localData.playerShipPos;
@@ -93,11 +92,14 @@ public class WorldController : MonoBehaviour {
         //TODO: Create a function which updates all of the player's stuff after a battle
         
         if(battleData.Friendlies.Count > 0)
-            player.entityData.Tier = battleData.Friendlies[0].Tier;
+            player.entityData = battleData.Friendlies[0];
             
         player.SetInfamy(battleData.InfamyReward);
         
         battleData.InfamyReward = 0;
+        battleData.ResetData();
+        localData.ResetData();
+        //MainUIController.Instance.UpdateInfamy();
     }
 
     /// <summary>
@@ -151,7 +153,7 @@ public class WorldController : MonoBehaviour {
                 {
                     island = adjNode.transform.GetChild(0).GetComponent<IslandTile>();
                 }
-                if(island == null && adjNode != node && !tempNodes.Contains(adjNode))
+                if(island == null && adjNode.transform.childCount > 0 &&adjNode != node && !tempNodes.Contains(adjNode))
                 {
                     //nodes.Add(adjNode);
                     tempNodes.Add(adjNode);
@@ -166,5 +168,26 @@ public class WorldController : MonoBehaviour {
         nodes.Remove(node);
 
         return nodes;
+    }
+
+    //Not a good solution since it causes a missing reference exception with enemy generation
+    public void RemoveEmptyNodes()
+    {
+        List<BaseNode> nodesToRemove = new List<BaseNode>();
+        foreach(Chunk chunk in Chunks)
+        {
+            foreach(BaseNode child in chunk.transform.GetComponentsInChildren<BaseNode>())
+            {
+                if(child.transform.childCount == 0)
+                {
+                    nodesToRemove.Add(child);
+                }
+            }
+        }
+
+        foreach(var node in nodesToRemove)
+        {
+            Destroy(node.gameObject);
+        }
     }
 }

@@ -5,22 +5,17 @@ using UnityEngine;
 public class PlayerController : MovementController {
 
 	float acceleration = 200;
+	float speed = 250;
 	float maxSpeed = 300;
-	float rotationSpeed = 200;
+	float rotationSpeed = 100;
 	
 	Transform model;
-
-	/*protected override void Awake()
-	{
-		base.Awake();
-		//player = GetComponent<Player>();
-	}*/
 
 	// Use this for initialization
 	protected override void Start () {
 		base.Start();
-		SideTiltAmount = 10;
-		FrontTiltAmount = 8;
+		SideTiltAmount = 15;
+		FrontTiltAmount = 10;
 		model = transform.GetChild(0);
 		//TODO get a better solution to this
 		
@@ -35,22 +30,29 @@ public class PlayerController : MovementController {
 	//TODO fix bug with rotation and movement (A weird drifting effect) - Seems to be improved with using torque
 	protected override void Movement(Transform target = null)
 	{
-		float translation = Input.GetAxisRaw("Vertical");
-		float rotation = Input.GetAxisRaw("Horizontal") * rotationSpeed;
-		rotation *= Time.fixedDeltaTime;
-
 		if(!player.anchorDropped)
 		{
-			//Rotation
-			//Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, rotation, 0));
-			//rb.MoveRotation(rb.rotation * deltaRotation);
-			rb.AddTorque(transform.up * rotation, ForceMode.Acceleration);
+			if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+			{
+				//rb.AddForce(transform.forward * acceleration, ForceMode.Force);
+				rb.MovePosition(transform.position + transform.forward * Time.deltaTime * speed);
+			}
+			if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+			{
+				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, 1 * rotationSpeed * Time.deltaTime, 0));
+				rb.MoveRotation(rb.rotation * deltaRotation);
+			}
+			else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+			{
+				Quaternion deltaRotation = Quaternion.Euler(new Vector3(0, -1 * rotationSpeed * Time.deltaTime, 0));
+                rb.MoveRotation(rb.rotation * deltaRotation);
+			}
 
-			//Acceleration
-			rb.AddForce(transform.forward * acceleration * translation, ForceMode.Acceleration);
+
+
 		}
 		
-		
+		/*
 		//The max velocity
 		Vector3 max = maxSpeed * transform.forward;
 		
@@ -61,10 +63,10 @@ public class PlayerController : MovementController {
 		}
 
 		//Decelleration
-		if(translation == 0 && rb.velocity.magnitude > 0)
+		if(!Input.GetKey(KeyCode.W) && rb.velocity.magnitude > 0)
 		{
 			rb.velocity *= 0.9f;
-		}
+		}*/
 	}
 	
 }
