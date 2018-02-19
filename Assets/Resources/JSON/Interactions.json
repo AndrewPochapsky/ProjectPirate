@@ -1,0 +1,46 @@
+[
+    {
+        "type": "survey",
+        "displayName": "Survey",
+        "duration": 5,
+        "oneTime": true,
+        "prerequisite": "none"
+        
+    },
+    {
+        "type": "gatherResources",
+        "displayName": "Apple",
+        "duration": 5,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gatherResources",
+        "displayName": "Orange",
+        "duration": 5,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gatherResources",
+        "displayName": "Bannana",
+        "duration": 5,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gatherResources",
+        "displayName": "Metal",
+        "duration": 5,
+        "oneTime": false,
+        "prerequisite": "survey"
+    },
+    {
+        "type": "gatherResources",
+        "displayName": "Wood",
+        "duration": 5,
+        "oneTime": false,
+        "prerequisite": "survey"
+    }
+
+]
